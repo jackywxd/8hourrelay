@@ -14,11 +14,11 @@ export interface ButtonProps {
 
 export function Button({ text, onClick }: ButtonProps) {
   console.log(`Pressing button!`);
-  return (
-    <RButton mode="contained" onPress={onClick}>
-      {text}
-    </RButton>
-  );
+  // return (
+  //   <RButton mode="contained" onPress={onClick}>
+  //     {text}
+  //   </RButton>
+  // );
   return (
     <TouchableOpacity style={styles.button} onPress={onClick}>
       <Text style={styles.text}>{text}</Text>
