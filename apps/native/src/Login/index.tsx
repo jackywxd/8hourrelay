@@ -7,7 +7,7 @@ import {
   RegisterScreen,
   ResetPasswordScreen,
   Dashboard,
-} from "login";
+} from "@8hourrelay/login";
 
 const Stack = createStackNavigator();
 

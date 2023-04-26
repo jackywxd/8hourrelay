@@ -9,21 +9,32 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@8hourrelay/login": "*",
+    "@8hourrelay/store": "*",
     "@expo/next-adapter": "^5.0.2",
+    "@stripe/stripe-js": "^1.52.1",
+    "classnames": "^2.3.2",
     "firebase": "^9.20.0",
+    "mobx": "^6.9.0",
+    "mobx-react-lite": "^3.4.3",
     "next": "^13.3.1",
     "next-images": "^1.8.5",
+    "next-theme": "^0.1.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native-web": "^0.19.4",
+    "stripe": "^12.2.0",
     "ui": "*"
   },
   "devDependencies": {
     "@types/node": "^18.16.0",
     "@types/react": "^18.0.38",
     "@types/react-dom": "^18.0.11",
+    "autoprefixer": "^10.4.14",
     "babel-plugin-react-native-web": "^0.19.4",
     "eslint": "^8.39.0",
+    "postcss": "^8.4.23",
+    "tailwindcss": "^3.3.2",
     "tsconfig": "*",
     "typescript": "^5.0.4"
   }

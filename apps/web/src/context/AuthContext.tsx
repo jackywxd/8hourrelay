@@ -1,37 +1,52 @@
-import React from "react";
-import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { app } from "@/firebase/config";
+import React, { createContext, useEffect, ReactNode, useContext } from "react";
+import { onAuthStateChanged, getAuth, User } from "firebase/auth";
+import { RootStore, IRootStore } from "@8hourrelay/store";
 
+import { app } from "@/firebase/config";
 const auth = getAuth(app);
 
-export const AuthContext = React.createContext({});
+interface AuthContextType {
+  store: IRootStore | null;
+}
 
-export const useAuthContext = () => React.useContext(AuthContext);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [user, setUser] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-  React.useEffect(() => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [store] = React.useState<IRootStore | null>(() => {
+    const rootStore = RootStore.create({});
+    if (auth.currentUser) {
+      rootStore.authStore.setUser(auth.currentUser);
+    }
+    rootStore.authStore.setAuth(auth);
+    return rootStore;
+  });
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user);
+        store.authStore.setUser(user);
       } else {
-        setUser(null);
+        store.authStore.setUser(null);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user }}>
-      {loading ? <div>Loading...</div> : children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ store }}>{children}</AuthContext.Provider>
   );
+};
+
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
+  return context;
 };
