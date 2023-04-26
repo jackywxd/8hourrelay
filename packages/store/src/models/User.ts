@@ -5,10 +5,10 @@ export interface IUser extends Instance<typeof User> {}
 export const User = types
   .model("User", {
     uid: types.identifier,
-    name: types.string,
+    name: types.maybe(types.string),
     email: types.string,
-    phone: types.maybeNull(types.string),
-    address: types.maybeNull(types.string),
+    phone: types.maybe(types.string),
+    address: types.maybe(types.string),
     emailVerified: types.boolean,
   })
   .actions((self) => ({

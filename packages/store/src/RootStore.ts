@@ -26,7 +26,7 @@ export const RootStore = types
     ),
     navigationStore: types.optional(NavigationStore, () =>
       NavigationStore.create({
-        userScreenParams: {},
+        // userScreenParams: {},
       })
     ),
   })

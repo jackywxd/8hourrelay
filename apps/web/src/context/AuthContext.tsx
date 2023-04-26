@@ -3,6 +3,7 @@ import { onAuthStateChanged, getAuth, User } from "firebase/auth";
 import { RootStore, IRootStore } from "@8hourrelay/store";
 
 import { app } from "@/firebase/config";
+import { IUser } from "@8hourrelay/store/src/models/User";
 const auth = getAuth(app);
 
 interface AuthContextType {

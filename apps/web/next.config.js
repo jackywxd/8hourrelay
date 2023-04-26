@@ -1,8 +1,9 @@
 module.exports = {
-  i18n: {
-    locales: ["en", "zh", "zh-TW"],
-    defaultLocale: "en",
-  },
+  distDir: "build",
+  // i18n: {
+  //   locales: ["en", "zh", "zh-TW"],
+  //   defaultLocale: "en",
+  // },
   transpilePackages: [
     "ui",
     "@8hourrelay/login",

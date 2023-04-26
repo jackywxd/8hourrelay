@@ -2,10 +2,10 @@ import React from "react";
 import { NumberBox } from "./NumberBox";
 
 interface timeProps {
-  days: number | string;
-  hours: number | string;
-  minutes: number | string;
-  seconds: number | string;
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
 export const TimerContainer = ({
@@ -50,38 +50,42 @@ export const TimerContainer = ({
     }
   }
 
+  let daysStr = days.toString();
+  let hoursStr = hours.toString();
+  let minutesStr = minutes.toString();
+  let secondsStr = seconds.toString();
   if (days < 10) {
-    days = "0" + days;
+    daysStr = "0" + days;
   }
 
   if (hours < 10) {
-    hours = "0" + hours;
+    hoursStr = "0" + hours;
   }
 
   if (minutes < 10) {
-    minutes = "0" + minutes;
+    minutesStr = "0" + minutes;
   }
 
   if (seconds < 10) {
-    seconds = "0" + seconds;
+    secondsStr = "0" + seconds;
   }
 
   return (
     <div className=" mt-2 md:mt-20  rounded-xl">
       <div className="grid grid-cols-2 gap-4 py-6 px-10 md:flex md:items-center md:justify-between md:mt-2  rounded-xl md:px-6 md:py-8 ">
-        <NumberBox num={days} unit="Days" flip={daysFlip} />
+        <NumberBox num={daysStr} unit="Days" flip={daysFlip} />
         <span className=" hidden text-5xl -mt-8 md:inline-block md:text-7xl font-normal text-gray-50 ">
           :
         </span>
-        <NumberBox num={hours} unit="Hours" flip={hoursFlip} />
+        <NumberBox num={hoursStr} unit="Hours" flip={hoursFlip} />
         <span className="hidden text-5xl -mt-8 md:inline-block md:text-7xl font-normal text-gray-50 ">
           :
         </span>
-        <NumberBox num={minutes} unit="Minutes" flip={minutesFlip} />
+        <NumberBox num={minutesStr} unit="Minutes" flip={minutesFlip} />
         <span className="hidden text-5xl -mt-8 md:inline-block md:text-7xl font-normal text-gray-50 ">
           :
         </span>
-        <NumberBox num={seconds} unit="Seconds" flip={secondsFlip} />
+        <NumberBox num={secondsStr} unit="Seconds" flip={secondsFlip} />
       </div>
     </div>
   );

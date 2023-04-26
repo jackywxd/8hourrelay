@@ -1,11 +1,10 @@
 import { types, flow } from "mobx-state-tree";
-import { Auth, signInWithEmailAndPassword } from "firebase/auth";
-
-const User = types.model({
-  uid: types.string,
-  displayName: types.maybeNull(types.string),
-  email: types.string,
-});
+import {
+  Auth,
+  signInWithEmailAndPassword,
+  User as FirebaseUser,
+} from "firebase/auth";
+import { User, IUser } from "./models/User";
 
 export const AuthStore = types
   .model({
@@ -29,8 +28,8 @@ export const AuthStore = types
           email,
           password
         );
-        const { uid, displayName, email: userEmail } = result.user;
-        self.user = { uid, displayName, email: userEmail };
+        console.log(`singIn result`, { result });
+        self.user = result.user;
         self.isAuthenticated = true;
         self.isLoading = false;
         return { result };
@@ -54,11 +53,11 @@ export const AuthStore = types
         self.isLoading = false;
       }
     }),
-    setUser: (user: User | null) => {
+    setUser: (user: FirebaseUser | null) => {
       console.log(`setting user to`, user);
       if (user) {
-        const { uid, displayName, email } = user;
-        self.user = { uid, displayName, email };
+        const { uid, email, emailVerified, displayName } = user;
+        self.user = { uid, email, emailVerified, name: displayName } as IUser;
         self.isAuthenticated = true;
       } else {
         self.user = null;
