@@ -1,21 +1,13 @@
 {
-  "name": "@8hourrelay/backend",
+  "name": "functions",
   "scripts": {
-    "webpack": "yarn webpack-cli",
-    "lint": "eslint --ext .js,.ts .",
-    "build": "tsc",
-    "build:watch": "tsc --watch",
-    "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "deploy": "firebase deploy --only functions"
   },
   "engines": {
     "node": "16"
   },
+  "main": "dist/index.js",
   "dependencies": {
-    "@8hourrelay/store": "*",
     "@slack/webhook": "^6.1.0",
     "firebase-admin": "^11.4.0",
     "firebase-functions": "^4.1.1",

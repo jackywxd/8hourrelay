@@ -3,6 +3,18 @@ import { AuthProvider } from "@/context/AuthContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import React, { useEffect, useMemo } from "react";
 import Router from "next/router";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+
+export const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    text: "#000000",
+    primary: "#560CCE",
+    secondary: "#414757",
+    error: "#f13a59",
+  },
+};
 
 import Layout from "@/components/Layout";
 
@@ -14,7 +26,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     document.body.classList?.remove("loading");
   }, []);
   return (
-    <div className="bg-black">
+    <PaperProvider theme={theme}>
       <AuthProvider>
         <SafeAreaProvider>
           <Layout>
@@ -22,6 +34,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           </Layout>
         </SafeAreaProvider>
       </AuthProvider>
-    </div>
+    </PaperProvider>
   );
 }

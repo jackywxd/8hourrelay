@@ -11,7 +11,7 @@ function Page() {
   } = useAuth();
 
   const onSignUp = async (email: string, password: string) => {
-    const { result, error } = await authStore.login(email, password);
+    const { result, error } = await authStore.signup(email, password);
 
     if (error) {
       return console.log(error);
@@ -25,7 +25,10 @@ function Page() {
     <div className="wrapper">
       <div className="form-wrapper">
         <h1 className="mt-60 mb-30">Sign up</h1>
-        <RegisterScreen onSignUp={onSignUp} />
+        <RegisterScreen
+          onSignUp={onSignUp}
+          onLogin={() => router.push("/login")}
+        />
       </div>
     </div>
   );

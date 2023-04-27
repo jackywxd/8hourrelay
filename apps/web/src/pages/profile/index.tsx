@@ -10,10 +10,11 @@ const ProtectedPage: React.FC = () => {
     <ProtectedRoute>
       <div>
         <h1>This is a protected page</h1>
+        <h1>Click below to Enter 2023 8 Hour Relay</h1>
         <Button
           onClick={() => {
-            authStore.logout();
             console.log(`loging out!`);
+            authStore.logout();
           }}
           text="Logout"
         />

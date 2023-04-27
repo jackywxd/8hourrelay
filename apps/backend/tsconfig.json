@@ -1,12 +1,14 @@
 {
-  "extends": "tsconfig/react-native-library",
+  "extends": "tsconfig/base",
   "include": ["."],
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
+    "paths": {
+      "@/*": ["./libs/*"]
+    },
     "module": "commonjs",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "outDir": "lib",
     "sourceMap": true,
     "strict": true,
     "target": "es2017"
