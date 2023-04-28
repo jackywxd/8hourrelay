@@ -2056,19 +2056,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/next-adapter@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "@expo/next-adapter@npm:5.0.2"
-  peerDependencies:
-    expo: ^46
-    next: ^13
-    react: ^18
-    react-native-web: ~0.18.0
-    webpack: ^4.46.0 || ^5.74.0
-  checksum: 950a813aaa0e54e58494bdd91469083e7f7168046a06b9277ea3c3704273cdae07cab2307d430a30785bd47fdb774eaf01ebaacafedfce805b479cf217f8d54e
-  languageName: node
-  linkType: hard
-
 "@expo/osascript@npm:2.0.33, @expo/osascript@npm:^2.0.31":
   version: 2.0.33
   resolution: "@expo/osascript@npm:2.0.33"
@@ -17763,7 +17750,6 @@ __metadata:
   dependencies:
     "@8hourrelay/login": "*"
     "@8hourrelay/store": "*"
-    "@expo/next-adapter": ^5.0.2
     "@mapbox/rehype-prism": ^0.8.0
     "@mdx-js/loader": ^2.3.0
     "@mdx-js/react": ^2.3.0

@@ -22,7 +22,7 @@ const app =
 // key is the counterpart to the secret key you set in the Firebase console.
 if (typeof window === "object")
   initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_SITE_KEY),
+    provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_SITE_KEY!),
     // Optional argument. If true, the SDK automatically refreshes App Check
     // tokens as needed.
     isTokenAutoRefreshEnabled: true,

@@ -5,11 +5,9 @@ import { useAuth } from "@/context/AuthContext";
 
 function Page() {
   const router = useRouter();
-  const {
-    store: { authStore },
-  } = useAuth();
+  const { store } = useAuth();
   const onLogin = async (email, password) => {
-    const { result, error } = await authStore.login(email, password);
+    const { result, error } = await store.authStore.login(email, password);
 
     if (error) {
       return console.log(error);

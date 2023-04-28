@@ -10,10 +10,10 @@ export function Image({
   return (
     <NextImage
       src={`${relativePath}`}
-      alt={alt}
+      alt={alt!}
       // These are dynamically provided at build-time by `rehypeImageSize`
-      height={height}
-      width={width}
+      height={+height!}
+      width={+width!}
     />
   );
 }

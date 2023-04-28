@@ -4,16 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "yarn env-cmd -f .env.dev next dev",
-    "build": "next build && next export",
-    "build:dev": "env-cmd -f .env.dev next build && next export",
-    "build:prod": "env-cmd -f .env.prod next build && next export",
+    "build": "env-cmd -f .env.dev next build",
+    "build:dev": "env-cmd -f .env.dev next build",
+    "build:prod": "env-cmd -f .env.prod next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@8hourrelay/login": "*",
     "@8hourrelay/store": "*",
-    "@expo/next-adapter": "^5.0.2",
     "@mapbox/rehype-prism": "^0.8.0",
     "@mdx-js/loader": "^2.3.0",
     "@mdx-js/react": "^2.3.0",

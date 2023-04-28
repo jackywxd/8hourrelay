@@ -2,7 +2,7 @@
   "functions": [
     {
       "source": "functions",
-      "runtime":"nodejs16",
+      "runtime": "nodejs16",
       "predeploy": [
         "npm --prefix  \"backend\"  run webpack"
       ]

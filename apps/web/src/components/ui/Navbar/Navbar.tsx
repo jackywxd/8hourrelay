@@ -39,7 +39,6 @@ const Navbar = () => {
               <span
                 className={s.link}
                 onClick={async () => {
-                  await supabaseClient.auth.signOut();
                   router.push("/signin");
                 }}
               >

@@ -1,9 +1,12 @@
+const path = require("path");
 const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class", '[data-theme="dark"]'],
   content: [
+    path.join(__dirname, "./pages/**/*.{js,ts,jsx,tsx}"),
+    path.join(__dirname, "./src/**/*.{js,ts,jsx,tsx,mdx}"),
     "./src/components/**/*.{ts,tsx}",
     "./src/pages/**/*.{ts,tsx}",
     "./src/**/*.{js,ts,jsx,tsx,mdx}",

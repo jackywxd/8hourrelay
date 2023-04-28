@@ -6,19 +6,19 @@ import windLogo from "./wind-logo.jpg";
 export default function Page() {
   return (
     <div className="flex justify-between">
-      <Image
+      <img
         className="object-cover rounded-full w-24 h-24 md:w-36 md:h-36"
-        src={crossnaLogo}
+        src="/assets/crossna-logo.jpg"
         alt="crossna logo"
       />
-      <Image
+      <img
         className="object-cover rounded-full w-24 h-24 md:w-36 md:h-36 "
-        src={irunLogo}
+        src="/assets/irun-logo.jpb"
         alt="irun logo"
       />
-      <Image
+      <img
         className="object-cover rounded-full w-24 h-24 md:w-36 md:h-36"
-        src={windLogo}
+        src="/assets/wind-logo.jpg"
         alt="wind logo"
       />
     </div>

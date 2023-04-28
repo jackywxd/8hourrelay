@@ -4,11 +4,11 @@ import rehypePrism from "@mapbox/rehype-prism";
 
 const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "mdx"],
+  output: "export",
   experimental: {
     appDir: true,
     mdxRs: true,
   },
-  distDir: "build",
   // i18n: {
   //   locales: ["en", "zh", "zh-TW"],
   //   defaultLocale: "en",

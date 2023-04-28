@@ -8,10 +8,12 @@ import { AuthStore } from "@8hourrelay/store/src/AuthStore";
 const auth = getAuth(app);
 
 interface AuthContextType {
-  store: IRootStore | null;
+  store: IRootStore;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType>({
+  store: RootStore.create({}),
+});
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -19,10 +21,8 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter();
-  const [store] = React.useState<IRootStore | null>(() => {
-    const rootStore = RootStore.create({
-      authStore: AuthStore.create({ isAuthenticated: false, isLoading: false }),
-    });
+  const [store] = React.useState<IRootStore>(() => {
+    const rootStore = RootStore.create();
     if (auth.currentUser) {
       console.log(`init authStore with currentUser`, {
         currentUser: auth.currentUser,
@@ -56,9 +56,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-
   return context;
 };

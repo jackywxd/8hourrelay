@@ -1,13 +1,6 @@
-import {
-  types,
-  onSnapshot,
-  getSnapshot,
-  Instance,
-  flow,
-} from "mobx-state-tree";
+import { types, getSnapshot, Instance, flow } from "mobx-state-tree";
 import { UserStore } from "./UserStore";
 import { AuthStore } from "./AuthStore";
-import { NavigationStore } from "./NavigationStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const appStatePersistenceKey = "appStatePersistenceKey";
@@ -23,11 +16,11 @@ export const RootStore = types
     userStore: types.optional(UserStore, () =>
       UserStore.create({ isLoading: false })
     ),
-    navigationStore: types.optional(NavigationStore, () =>
-      NavigationStore.create({
-        // userScreenParams: {},
-      })
-    ),
+    // navigationStore: types.optional(NavigationStore, () =>
+    //   NavigationStore.create({
+    //     // userScreenParams: {},
+    //   })
+    // ),
   })
   .views((self) => ({
     isLoading() {
