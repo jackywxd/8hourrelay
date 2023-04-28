@@ -1,3 +1,4 @@
+"use client";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "ui";

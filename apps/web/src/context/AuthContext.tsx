@@ -3,8 +3,8 @@ import { onAuthStateChanged, getAuth, User } from "firebase/auth";
 import { RootStore, IRootStore } from "@8hourrelay/store";
 
 import { app } from "@/firebase/config";
-import { IUser } from "@8hourrelay/store/src/models/User";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { AuthStore } from "@8hourrelay/store/src/AuthStore";
 const auth = getAuth(app);
 
 interface AuthContextType {
@@ -20,7 +20,9 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter();
   const [store] = React.useState<IRootStore | null>(() => {
-    const rootStore = RootStore.create({});
+    const rootStore = RootStore.create({
+      authStore: AuthStore.create({ isAuthenticated: false, isLoading: false }),
+    });
     if (auth.currentUser) {
       console.log(`init authStore with currentUser`, {
         currentUser: auth.currentUser,
@@ -33,6 +35,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!store) {
+        return;
+      }
       if (user) {
         store.authStore.setUser(user);
         router.push("/profile");

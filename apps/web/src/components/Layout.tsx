@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import Head from "next/head";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
@@ -11,7 +11,7 @@ interface Props extends PropsWithChildren {
   meta?: PageMeta;
 }
 
-export default function Layout({ children, meta: pageMeta }: Props) {
+export default function MyLayout({ children, meta: pageMeta }: Props) {
   const router = useRouter();
   const meta = {
     title: "Next.js Subscription Starter",

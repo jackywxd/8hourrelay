@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 import Logo from "@/components/icons/Logo";
 
@@ -23,10 +23,13 @@ const Navbar = () => {
             </Link>
             <nav className="space-x-2 ml-6 hidden lg:block">
               <Link href="/" className={s.link}>
-                Pricing
+                Register
               </Link>
               <Link href="/account" className={s.link}>
-                Account
+                Sponsors
+              </Link>
+              <Link href="/account" className={s.link}>
+                Volunteers
               </Link>
             </nav>
           </div>

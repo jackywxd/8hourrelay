@@ -26,6 +26,8 @@ export function Button({ text, onClick }: ButtonProps) {
   );
 }
 
+export const MButton = React.memo(Button);
+
 const styles = StyleSheet.create({
   button: {
     maxWidth: 200,

@@ -1,4 +1,3 @@
-import React from "react";
 import { NumberBox } from "./NumberBox";
 
 interface timeProps {

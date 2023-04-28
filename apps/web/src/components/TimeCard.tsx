@@ -1,9 +1,5 @@
-import { useRouter } from "next/router";
-import { Button } from "ui";
 import { useEffect, useState } from "react";
-
-import { TimerContainer } from "../components/TimerContainer";
-import styles from "@/styles/index.module.css";
+import { TimerContainer } from "./TimerContainer";
 
 const useTimer = () => {
   const [time, setTime] = useState<number>(70);
@@ -54,44 +50,18 @@ const useTimer = () => {
     };
   }, [time]);
 
-  const handleClick = () => {
-    setTime(newTime);
-    console.log(time);
-    setNewTime(0);
-  };
-
-  const handleChange = (e: any) => {
-    let inputTime = e.target.value;
-    setNewTime(inputTime);
-  };
   return { days, hours, minutes, seconds };
 };
+
 export default function Web() {
-  const router = useRouter();
   const { days, hours, minutes, seconds } = useTimer();
 
   return (
-    <div className={styles.container}>
-      <div className="flex min-h-screen flex-col items-center bg-[#1e1f29]">
-        <h1>Vancouver 8 Hour Relay 2022</h1>
-        <TimerContainer
-          days={days}
-          hours={hours}
-          minutes={minutes}
-          seconds={seconds}
-        />
-        <div>
-          <Button
-            onClick={() => {
-              router.push("/profile");
-            }}
-            text="Sign up"
-          />
-        </div>
-      </div>
-      <div className="flex min-h-screen flex-col items-center bg-[#6666]">
-        <h1>Context</h1>
-      </div>
-    </div>
+    <TimerContainer
+      days={days}
+      hours={hours}
+      minutes={minutes}
+      seconds={seconds}
+    />
   );
 }

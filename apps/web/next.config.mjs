@@ -1,4 +1,13 @@
-module.exports = {
+import nextMDX from "@next/mdx";
+import remarkGfm from "remark-gfm";
+import rehypePrism from "@mapbox/rehype-prism";
+
+const nextConfig = {
+  pageExtensions: ["ts", "tsx", "js", "jsx", "mdx"],
+  experimental: {
+    appDir: true,
+    mdxRs: true,
+  },
   distDir: "build",
   // i18n: {
   //   locales: ["en", "zh", "zh-TW"],
@@ -56,3 +65,11 @@ module.exports = {
     ],
   },
 };
+
+export default nextMDX({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypePrism],
+  },
+})(nextConfig);

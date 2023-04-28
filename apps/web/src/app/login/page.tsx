@@ -1,6 +1,5 @@
-import React from "react";
+"use client";
 import { useRouter } from "next/navigation";
-import { Button } from "ui";
 import { LoginScreen } from "@8hourrelay/login";
 import { useAuth } from "@/context/AuthContext";
 
