@@ -1,0 +1,8 @@
+{
+  "name": "@8hourrelay/models",
+  "version": "0.0.0",
+  "main": ".",
+  "dependencies": {
+    "mobx-state-tree": "^5.1.8"
+  }
+}
