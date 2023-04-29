@@ -1,4 +1,5 @@
 import { types, getSnapshot, Instance, flow } from "mobx-state-tree";
+import { FirebaseApp } from "firebase/app";
 import { UserStore } from "./UserStore";
 import { AuthStore } from "./AuthStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,20 +15,27 @@ export const RootStore = types
       AuthStore.create({ isAuthenticated: false, isLoading: false })
     ),
     userStore: types.optional(UserStore, () =>
-      UserStore.create({ isLoading: false })
+      UserStore.create({ isLoading: false, error: "" })
     ),
+
     // navigationStore: types.optional(NavigationStore, () =>
     //   NavigationStore.create({
     //     // userScreenParams: {},
     //   })
     // ),
   })
+  .volatile(() => ({
+    firebaseApp: {} as FirebaseApp,
+  }))
   .views((self) => ({
     isLoading() {
       return self.authStore.isLoading || self.userStore.isLoading;
     },
   }))
   .actions((self) => ({
+    setFirebase: (app: FirebaseApp) => {
+      self.firebaseApp = app;
+    },
     init: flow(function* () {
       try {
         yield Promise.all([]);
