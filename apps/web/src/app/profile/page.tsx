@@ -9,16 +9,32 @@ const ProtectedPage: React.FC = () => {
   } = useAuth();
   return (
     <ProtectedRoute>
-      <div>
+      <div className="flex flex-col min-h-fit justify-center items-center">
         <h1>This is a protected page</h1>
-        <h1>Click below to Enter 2023 8 Hour Relay</h1>
-        <Button
-          onClick={() => {
-            console.log(`loging out!`);
-            authStore.logout();
-          }}
-          text="Logout"
-        />
+        <div className="text-zinc-900">
+          <h1>Click below to Enter 2023 8 Hour Relay Adule</h1>
+        </div>
+        <div className="mt-11 mb-11">
+          <Button
+            onClick={() => {
+              console.log(`loging out!`);
+              authStore.logout();
+            }}
+            text="Register Adult"
+          />
+        </div>
+        <div className="text-zinc-900">
+          <h1>Click below to Enter 2023 8 Hour Relay Adule</h1>
+        </div>
+        <div className="mt-11">
+          <Button
+            onClick={() => {
+              console.log(`loging out!`);
+              authStore.logout();
+            }}
+            text="Register Kids"
+          />
+        </div>
       </div>
     </ProtectedRoute>
   );

@@ -1,11 +1,9 @@
 "use client";
-import About from "../../content/about.mdx";
-import Images from "./Images";
+import About from "../../content/race_day_guide.mdx";
 export default function Page() {
   return (
     <div className="prose">
       <About />
-      <Images />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -7,48 +8,111 @@ import s from "./Navbar.module.css";
 
 const Navbar = () => {
   const router = useRouter();
-  const supabaseClient = null;
   const { user } = { user: null };
+  const [navbar, setNavbar] = useState(false);
 
   return (
-    <nav className={s.root}>
-      <a href="#skip" className="sr-only focus:not-sr-only">
-        Skip to content
-      </a>
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="flex justify-between align-center flex-row py-4 md:py-6 relative">
-          <div className="flex flex-1 items-center">
-            <Link href="/" className={s.logo} aria-label="Logo">
-              <Logo />
-            </Link>
-            <nav className="space-x-2 ml-6 hidden lg:block">
-              <Link href="/" className={s.link}>
-                Register
-              </Link>
-              <Link href="/account" className={s.link}>
-                Sponsors
-              </Link>
-              <Link href="/account" className={s.link}>
-                Volunteers
-              </Link>
-            </nav>
-          </div>
-
-          <div className="flex flex-1 justify-end space-x-8">
-            {user ? (
-              <span
-                className={s.link}
-                onClick={async () => {
-                  router.push("/signin");
-                }}
+    <nav
+      className={`w-full bg-gray-800 shadow  ${
+        navbar ? "min-h-screen z-10" : ""
+      }`}
+    >
+      <div className="justify-between px-4 mx-auto lg:max-w-7xl md:items-center md:flex md:px-8">
+        <div>
+          <div className="flex items-center justify-between py-3 md:py-5 md:block">
+            <a href="/">
+              <div className="flex justify-center items-center">
+                <img
+                  className="w-16 h-16 lg:w-24 lg:h-24"
+                  src="/assets/8hour-logo.png"
+                  alt="8 Hour Relay Logo"
+                />
+                <div className="hidden sm:block font-bold">8 Hour Relay</div>
+              </div>
+            </a>
+            <div className="md:hidden">
+              <button
+                className="p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 focus:border"
+                onClick={() => setNavbar(!navbar)}
               >
-                Sign out
-              </span>
-            ) : (
-              <Link href="/signin" className={s.link}>
-                Sign in
-              </Link>
-            )}
+                {navbar ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 text-white"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div
+            className={`flex-1 justify-self-center pb-3 mt-8 md:block md:pb-0 md:mt-0 ${
+              navbar ? "block" : "hidden"
+            }`}
+          >
+            <ul className="items-center justify-center space-y-8 md:flex md:space-x-6 md:space-y-0">
+              <li className="text-white  p-2 hover:bg-slate-500 rounded">
+                <div
+                  onClick={() => {
+                    setNavbar(false);
+                    router.push("/register");
+                  }}
+                >
+                  <Link href="/register">Register</Link>
+                </div>
+              </li>
+              <li className="text-white p-2 hover:bg-slate-500 rounded">
+                <div
+                  onClick={() => {
+                    setNavbar(false);
+                  }}
+                >
+                  <Link href="/event">Event</Link>
+                </div>
+              </li>
+              <li className="text-white  p-2 hover:bg-slate-500 rounded">
+                <div
+                  onClick={() => {
+                    setNavbar(false);
+                  }}
+                >
+                  <Link href="/sponsors">Sponsors</Link>
+                </div>
+              </li>
+              <li className="text-white  p-2 hover:bg-slate-500 rounded">
+                <div
+                  onClick={() => {
+                    setNavbar(false);
+                  }}
+                >
+                  <Link href="/about">About</Link>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

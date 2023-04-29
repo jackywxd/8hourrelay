@@ -17,9 +17,13 @@ function Page() {
     return router.push("/profile");
   };
   return (
-    <div className="wrapper">
-      <div className="form-wrapper">
-        <h1 className="mt-60 mb-30">Sign In</h1>
+    <div className="flex flex-col justify-center items-center min-h-screen">
+      <div>
+        <h1 className="mt-30 mb-30 font-bold text-2xl text-zinc-600">
+          Sign In
+        </h1>
+      </div>
+      <div>
         <LoginScreen onLogin={onLogin} onSignUp={() => router.push("signup")} />
       </div>
     </div>

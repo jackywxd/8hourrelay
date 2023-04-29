@@ -1,8 +1,3 @@
-import Image from "next/image";
-import crossnaLogo from "./crossna-logo.jpg";
-import irunLogo from "./irun-logo.jpg";
-import windLogo from "./wind-logo.jpg";
-
 export default function Page() {
   return (
     <div className="flex justify-between">
@@ -13,7 +8,7 @@ export default function Page() {
       />
       <img
         className="object-cover rounded-full w-24 h-24 md:w-36 md:h-36 "
-        src="/assets/irun-logo.jpb"
+        src="/assets/irun-logo.jpg"
         alt="irun logo"
       />
       <img
