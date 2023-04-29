@@ -19,9 +19,7 @@ function Page() {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
       <div>
-        <h1 className="mt-30 mb-30 font-bold text-2xl text-zinc-600">
-          Sign In
-        </h1>
+        <h1 className="mt-30 mb-30 font-bold text-2xl">Sign In</h1>
       </div>
       <div>
         <LoginScreen onLogin={onLogin} onSignUp={() => router.push("signup")} />
