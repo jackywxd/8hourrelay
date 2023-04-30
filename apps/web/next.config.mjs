@@ -1,6 +1,12 @@
 import nextMDX from "@next/mdx";
 import remarkGfm from "remark-gfm";
 import rehypePrism from "@mapbox/rehype-prism";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 
 const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "mdx"],
@@ -34,6 +40,8 @@ const nextConfig = {
       ...(config.resolve.alias || {}),
       // Transform all direct `react-native` imports to `react-native-web`
       "react-native$": "react-native-web",
+      "react-native-vector-icons/MaterialCommunityIcons":
+        "react-native-vector-icons/dist/MaterialCommunityIcons",
     };
     config.resolve.extensions = [
       ".web.js",
@@ -42,15 +50,19 @@ const nextConfig = {
       ".web.tsx",
       ...config.resolve.extensions,
     ];
+
     config.module.rules.push({
-      test: /\.(woff|woff2|ttf|eot|svg)$/,
-      loader: "file-loader",
-      options: {
-        esModule: false,
-        name: "[name].[ext]",
-        outputPath: "static/media/fonts/",
-        publicPath: "../assets/fonts/",
-      },
+      test: /\.ttf$/,
+      loader: "url-loader", // or directly file-loader
+      include: [
+        // as reported by the error, imported from monorepo shared code package
+        path.resolve(
+          __dirname,
+          ".",
+          "node_modules",
+          "react-native-vector-icons"
+        ), // from this package
+      ],
     });
     return config;
   },
