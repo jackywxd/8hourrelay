@@ -1,13 +1,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-import Logo from "@/components/icons/Logo";
-
-import s from "./Navbar.module.css";
+import { useTheme } from "react-native-paper";
 
 const Navbar = () => {
   const router = useRouter();
+  const { colors } = useTheme();
   const { user } = { user: null };
   const [navbar, setNavbar] = useState(false);
 
@@ -16,6 +14,7 @@ const Navbar = () => {
       className={`w-full bg-gray-800 shadow  ${
         navbar ? "min-h-screen z-10" : ""
       }`}
+      style={{ backgroundColor: colors.background }}
     >
       <div className="justify-between px-4 mx-auto lg:max-w-7xl md:items-center md:flex md:px-8">
         <div>

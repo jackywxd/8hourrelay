@@ -1,4 +1,10 @@
-import { types, getSnapshot, Instance, flow } from "mobx-state-tree";
+import {
+  types,
+  getSnapshot,
+  Instance,
+  flow,
+  SnapshotIn,
+} from "mobx-state-tree";
 import { FirebaseApp } from "firebase/app";
 import { UserStore } from "./UserStore";
 import { AuthStore } from "./AuthStore";
@@ -12,7 +18,11 @@ export const RootStore = types
   .model("RootStore", {
     identifier: types.optional(types.identifier, "RootStore"),
     authStore: types.optional(AuthStore, () =>
-      AuthStore.create({ isAuthenticated: false, isLoading: false })
+      AuthStore.create({
+        isAuthenticated: false,
+        isLoading: false,
+        state: "INIT",
+      })
     ),
     userStore: types.optional(UserStore, () =>
       UserStore.create({ isLoading: false, error: "" })

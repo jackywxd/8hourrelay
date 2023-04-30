@@ -22,9 +22,11 @@ function Page() {
     return router.push("/admin");
   };
   return (
-    <div className="wrapper">
-      <div className="form-wrapper">
-        <h1 className="mt-60 mb-30">Sign up</h1>
+    <div className="flex flex-col justify-center items-center h-screen">
+      <div>
+        <h1 className="mt-30 mb-30 font-bold text-2xl">Sign Up</h1>
+      </div>
+      <div className="w-screen">
         <RegisterScreen
           onSignUp={onSignUp}
           onLogin={() => router.push("/login")}

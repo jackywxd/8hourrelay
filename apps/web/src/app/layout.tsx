@@ -2,20 +2,24 @@
 import { AuthProvider } from "@/context/AuthContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import React, { useEffect, useMemo } from "react";
-import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import {
+  DefaultTheme,
+  MD3DarkTheme,
+  Provider as PaperProvider,
+} from "react-native-paper";
 
 import Layout from "@/components/Layout";
 import "../styles/main.css";
 import "../styles/chrome-bug.css";
 
 export const theme = {
-  ...DefaultTheme,
+  ...MD3DarkTheme,
   colors: {
-    ...DefaultTheme.colors,
+    ...MD3DarkTheme.colors,
     text: "#000000",
-    primary: "#560CCE",
-    secondary: "#414757",
-    error: "#f13a59",
+    primary: "#FFC700",
+    secondary: "#BB4D00",
+    // error: "#f13a59",
   },
 };
 

@@ -17774,6 +17774,7 @@ __metadata:
     postcss: ^8.4.23
     react: 18.2.0
     react-dom: 18.2.0
+    react-native-paper: ^5.7.0
     react-native-web: ^0.19.4
     rehype-image-size: ^1.0.0
     remark-gfm: ^3.0.1

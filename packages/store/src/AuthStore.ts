@@ -1,4 +1,4 @@
-import { types, flow } from "mobx-state-tree";
+import { types, flow, Instance } from "mobx-state-tree";
 import {
   Auth,
   signInWithEmailAndPassword,
@@ -9,11 +9,22 @@ import {
   User,
 } from "firebase/auth";
 
+export type IRegisterState = Instance<typeof RegisterState>;
+
+const RegisterState = types.union(
+  types.literal("INIT"),
+  types.literal("VERIFY_EMAIL_SEND"),
+  types.literal("RECEIVED_CODE"),
+  types.literal("CODE_VERIFIED"),
+  types.literal("FORGOT_EMAIL_SEND")
+);
+
 export const AuthStore = types
   .model({
     isAuthenticated: types.boolean,
     isLoading: types.boolean,
     error: types.maybeNull(types.string),
+    state: RegisterState,
   })
   .volatile(() => ({
     user: {} as User | null,
@@ -67,9 +78,20 @@ export const AuthStore = types
         if (!self.auth.currentUser) {
           throw new Error(`No user created!`);
         }
-
-        yield sendEmailVerification(result.user);
-
+        const actionCodeSettings = {
+          url: `https://autotext.mobi?email=${email}`,
+          iOS: {
+            bundleId: "com.8hourrelay",
+          },
+          android: {
+            packageName: "com.8hourrelay",
+            installApp: true,
+          },
+          handleCodeInApp: false,
+        };
+        console.log(`actionCodeSettings`, actionCodeSettings);
+        yield sendEmailVerification(result.user, actionCodeSettings);
+        self.state = "VERIFY_EMAIL_SEND";
         self.user = result.user;
         self.isAuthenticated = true;
         self.isLoading = false;
@@ -85,6 +107,20 @@ export const AuthStore = types
       self.isLoading = true;
       try {
         yield applyActionCode(self.auth, code);
+        self.state = "CODE_VERIFIED";
+      } catch (error) {
+        self.error = error;
+      }
+      self.isLoading = false;
+    }),
+    resendCode: flow(function* () {
+      if (!self.user) {
+        throw new Error(`No current login user`);
+      }
+      self.isLoading = true;
+      try {
+        yield sendEmailVerification(self.user);
+        self.state = "CODE_VERIFIED";
       } catch (error) {
         self.error = error;
       }
@@ -97,6 +133,7 @@ export const AuthStore = types
       }
       try {
         yield sendPasswordResetEmail(self.auth, self.user.email);
+        self.state = "FORGOT_EMAIL_SEND";
       } catch (error) {
         self.error = error;
       }
@@ -108,6 +145,7 @@ export const AuthStore = types
         console.log(`logging current user`, self.user);
         yield self.auth.signOut();
         self.user = null;
+        self.state = "INIT";
         self.isAuthenticated = false;
         self.isLoading = false;
       } catch (error) {

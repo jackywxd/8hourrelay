@@ -67,7 +67,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ store }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ store }}>
+      {/* <div className="relative">
+        {queue.map((snack, index) => (
+          <Snackbar
+            key={snack.key}
+            text={snack.text}
+            variant={snack.variant}
+            icon={snack.icon}
+            handleClose={() =>
+              dispatch({ type: "REMOVE_SNACKBAR", payload: { key: snack.key } })
+            }
+          />
+        ))}
+      </div> */}
+      {children}
+    </AuthContext.Provider>
   );
 };
 

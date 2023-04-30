@@ -1,9 +1,3 @@
-import { MDXRemote } from "next-mdx-remote/rsc";
+import { default as LayoutMdx } from "../../components/LayboutMdx";
 
-export default function DashboardLayout({
-  children, // will be a page or nested layout
-}: {
-  children: React.ReactNode;
-}) {
-  return <div className="flex justify-center bg-white">{children}</div>;
-}
+export default LayoutMdx;

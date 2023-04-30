@@ -4,7 +4,7 @@ export interface ITeam extends SnapshotOut<typeof Team> {}
 
 export const Team = types.model("Team", {
   id: types.identifier,
-  adminId: types.identifier,
+  adminId: types.string,
   name: types.string,
   year: types.string,
   description: types.string,

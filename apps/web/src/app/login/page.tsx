@@ -17,12 +17,16 @@ function Page() {
     return router.push("/profile");
   };
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="flex flex-col justify-center items-center h-screen">
       <div>
         <h1 className="mt-30 mb-30 font-bold text-2xl">Sign In</h1>
       </div>
-      <div>
-        <LoginScreen onLogin={onLogin} onSignUp={() => router.push("signup")} />
+      <div className="w-screen">
+        <LoginScreen
+          onLogin={onLogin}
+          onSignUp={() => router.push("signup")}
+          onForgot={() => router.push("/reset")}
+        />
       </div>
     </div>
   );

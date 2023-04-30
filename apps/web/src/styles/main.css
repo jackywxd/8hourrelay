@@ -50,3 +50,5 @@ a {
 .height-screen-helper {
   height: calc(100vh - 80px);
 }
+
+@font-face { font-family: MaterialCommunityIcons; src: url('../../../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf'); }

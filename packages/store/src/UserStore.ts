@@ -1,7 +1,6 @@
-import { Instance, flow, getParent, getRoot, types } from "mobx-state-tree";
+import { flow, getRoot, types } from "mobx-state-tree";
 import { IUser, User } from "@8hourrelay/models";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore/lite";
-import { RootStore } from "./RootStore";
 import { FirebaseApp } from "firebase/app";
 
 export const UserStore = types
@@ -11,16 +10,37 @@ export const UserStore = types
     isLoading: types.boolean,
     error: types.string,
   })
+  .views((self) => ({
+    get db() {
+      const app = (getRoot(self) as any).firebaseApp;
+      const db = getFirestore(app);
+      return db;
+    },
+  }))
   .actions((self) => ({
     setUser: (user: IUser) => {
       self.user = User.create(user);
     },
+    setEmailVerified: flow(function* () {
+      if (!self.user) {
+        throw new Error(`No current login user!!`);
+      }
+      if (self.user?.emailVerified) {
+        throw new Error(`User email already verified!`);
+      }
+      try {
+        yield setDoc(doc(self.db, "Users", self.user.uid), {
+          emailVerified: true,
+        });
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }),
     getUser: flow(function* (uid: string) {
       self.isLoading = true;
       try {
-        const app = getRoot(self).firebaseApp as unknown as FirebaseApp;
-        const db = getFirestore(app);
-        const result = yield getDoc(doc(db, "Users", uid));
+        const result = yield getDoc(doc(self.db, "Users", uid));
         if (!result.exists()) {
           throw new Error(`No user data!`);
         }
