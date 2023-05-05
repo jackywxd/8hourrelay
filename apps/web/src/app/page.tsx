@@ -16,7 +16,7 @@ export default function Web() {
     router.push("/register");
   }, []);
 
-  console.log(`colors background: ${colors.background}`);
+  console.log(`process.env`, { env: process.env.NEXT_PUBLIC_ENV });
   return (
     <div className={styles.container}>
       <div className="relative h-[675px] ">

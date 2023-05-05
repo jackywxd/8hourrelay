@@ -20,7 +20,7 @@
       "**/node_modules/**"
     ],
     "predeploy": [
-      "npm --prefix  \"web\"  run build:dev"
+      "npm --prefix  \"web\"  run build:staging"
     ]
   },
   "storage": {

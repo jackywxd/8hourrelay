@@ -29,7 +29,7 @@ function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { store } = useAuth();
-  const { authStore, userStore, registerStore } = store;
+  const { authStore, userStore } = store;
 
   const [state, setState] = useState("init");
 
@@ -37,18 +37,6 @@ function Page() {
   const apiKey = searchParams.get("apiKey");
   const success = searchParams.get("success");
   const canceled = searchParams.get("canceled");
-
-  // user completed the payment will trigger below event
-  useEffect(() => {
-    const getCustomer = async () => {
-      if (sessionId) {
-        const result = await registerStore.getStripeSession(sessionId);
-        console.log(`Get Session ID result`, result);
-        setState("");
-      }
-    };
-    getCustomer();
-  }, [success, sessionId]);
 
   // use click on login link will trigger below event
   useEffect(() => {
@@ -64,19 +52,6 @@ function Page() {
     }
     siginin();
   }, [apiKey]);
-
-  const onRegister = async ({ email }) => {
-    registerStore.setEmail(email);
-    const [stripe, response] = await Promise.all([
-      stripePromise,
-      registerStore.createCheckOutSession(),
-    ]);
-    console.log(`response`, response);
-    if (stripe && response?.id) {
-      await stripe.redirectToCheckout({ sessionId: response.id });
-      setState("IN_PROGRESS");
-    }
-  };
 
   if (canceled) {
     return <div>Your payment canceled!</div>;

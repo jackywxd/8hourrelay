@@ -45,15 +45,16 @@ export class RootStore extends Model({
   protected onInit(): void {
     // load raceEntryForm from local storage
     // if not present in localStorage, raceEntry will be initializd later on
-    AsyncStorage.getItem(entryFormSnapshot).then((data) => {
-      console.log(`${entryFormSnapshot} snapshot is ${data}`);
-      if (data) {
-        const parsedData = JSON.parse(data);
-        console.log(`Parsed Data is`, { parsedData });
-        const form = fromSnapshot(RaceEntryForm, parsedData);
-        this.setEntryForm(form);
-      }
-    });
+    if (typeof window === "object")
+      AsyncStorage.getItem(entryFormSnapshot).then((data) => {
+        console.log(`${entryFormSnapshot} snapshot is ${data}`);
+        if (data) {
+          const parsedData = JSON.parse(data);
+          console.log(`Parsed Data is`, { parsedData });
+          const form = fromSnapshot(RaceEntryForm, parsedData);
+          this.setEntryForm(form);
+        }
+      });
   }
 
   resetError() {

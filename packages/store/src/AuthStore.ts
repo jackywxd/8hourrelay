@@ -44,12 +44,13 @@ export class AuthStore extends Model({
   // try to get email from local storage
   onAttachedToRootStore() {
     console.log(`init authStore`);
-    AsyncStorage.getItem(this.emailLocalKey).then((data) => {
-      console.log(`${this.emailLocalKey} email is ${data}`);
-      if (data) {
-        this.setEmail(data);
-      }
-    });
+    if (typeof window === "object")
+      AsyncStorage.getItem(this.emailLocalKey).then((data) => {
+        console.log(`${this.emailLocalKey} email is ${data}`);
+        if (data) {
+          this.setEmail(data);
+        }
+      });
 
     const disposer = onSnapshot(this, (newSnapshot, prev) => {
       console.log(`new authstore snapshot`, { newSnapshot, prev });
@@ -80,10 +81,9 @@ export class AuthStore extends Model({
     this.email = email;
     this.isLoading = true;
     try {
+      console.log(`env`, process.env);
       const actionCodeSettings = {
-        url: process.env.ENV
-          ? `http://localhost:3000/${path ?? `register`}`
-          : `http://localhost:3000/${path ?? `register`}`,
+        url: `${process.env.NEXT_PUBLIC_HOST_NAME}/${path ?? `register`}`,
         iOS: {
           bundleId: "com.8hourrelay",
         },
@@ -113,7 +113,8 @@ export class AuthStore extends Model({
     this.isLoading = true;
     try {
       yield signInWithEmailLink(this.auth, this.email, url);
-      yield AsyncStorage.removeItem(this.emailLocalKey);
+      if (typeof window === "object")
+        yield AsyncStorage.removeItem(this.emailLocalKey);
       this.state = "VERFIED";
     } catch (error) {
       console.log(`Failed to signinWithEmail`, { error });

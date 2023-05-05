@@ -63,6 +63,9 @@ function Step1() {
     }),
   });
 
+  if (!form) {
+    return null;
+  }
   const onSubmit = async () => {
     await form.submitForm();
     store.setEntryForm(form);
@@ -106,11 +109,35 @@ function Step1() {
                   props.handleChange(e);
                 }}
               />
-              <FieldItem label="Post Code" fieldName="postCode" />
+              <FieldItem
+                label="Post Code"
+                fieldName="postCode"
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  form.setPhone(e.target.value);
+                  props.handleChange(e);
+                }}
+              />
               <Field as={CustomSelect} name="size" label="Select Shirt Size" />
               <div className="divider">Emergency Contact</div>
-              <FieldItem label="Name" fieldName="emergencyContact.name" />
-              <FieldItem label="Phone" fieldName="emergencyContact.phone" />
+              <FieldItem
+                label="Name"
+                fieldName="emergencyContact.name"
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  form.setPhone(e.target.value);
+                  props.handleChange(e);
+                }}
+              />
+              <FieldItem
+                label="Phone"
+                fieldName="emergencyContact.phone"
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  form.setPhone(e.target.value);
+                  props.handleChange(e);
+                }}
+              />
               <div className="mt-8">
                 <button type="submit" className={styles.button}>
                   Register
