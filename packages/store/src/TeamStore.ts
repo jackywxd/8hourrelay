@@ -31,7 +31,7 @@ export class TeamStore extends Model({
     } catch (error) {
       console.log(`failed to getUser`, error);
       this.setError((error as Error).message);
-      this.setIsLoading(false);
+      this.isLoading = false;
     }
   });
 
@@ -49,7 +49,7 @@ export class TeamStore extends Model({
     } catch (error) {
       console.log(`failed to getUser`, error);
       this.setError((error as Error).message);
-      this.setIsLoading(false);
+      this.isLoading = false;
     }
   });
 }

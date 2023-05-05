@@ -13,7 +13,9 @@
   "dependencies": {
     "@8hourrelay/login": "*",
     "@8hourrelay/store": "*",
+    "@heroicons/react": "^2.0.17",
     "@mapbox/rehype-prism": "^0.8.0",
+    "@material-tailwind/react": "^2.0.0",
     "@mdx-js/loader": "^2.3.0",
     "@mdx-js/react": "^2.3.0",
     "@next/mdx": "^13.3.1",

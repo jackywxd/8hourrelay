@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Button } from "react-native-paper";
+import Email from "../register/Email";
 
 function Page() {
   const router = useRouter();
@@ -38,6 +39,14 @@ function Page() {
           <div>
             Welcome {authStore.email}!!
             <Button onPress={() => router.push("/profile")}>Profile</Button>
+          </div>
+        )}
+        {authStore.state === "MISSING_EMAIL" && (
+          <div className="text-center text-lg pt-10">
+            <div className="text-center text-lg pt-10">
+              Please provide your email for confirmation
+            </div>
+            <Email />
           </div>
         )}
       </div>

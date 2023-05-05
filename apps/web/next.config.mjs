@@ -11,6 +11,9 @@ const __dirname = path.dirname(__filename);
 const nextConfig = {
   trailingSlash: true,
   pageExtensions: ["ts", "tsx", "js", "jsx", "mdx"],
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
   output: "export",
   experimental: {
     appDir: true,
@@ -24,6 +27,7 @@ const nextConfig = {
     "ui",
     "@8hourrelay/login",
     "@8hourrelay/store",
+    "@material-tailwind",
     "react-native-async-storage",
     "react-native-safe-area-context",
     "react-native-paper",

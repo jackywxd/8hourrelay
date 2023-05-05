@@ -8,6 +8,8 @@ import {
   Provider as PaperProvider,
 } from "react-native-paper";
 
+import { ThemeProvider } from "@material-tailwind/react";
+
 import Layout from "@/components/Layout";
 import "../styles/main.css";
 import "../styles/chrome-bug.css";
@@ -35,9 +37,11 @@ export default function RootLayout({
       <head />
       <body>
         <PaperProvider theme={theme}>
-          <AuthProvider>
-            <Layout>{children}</Layout>
-          </AuthProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <Layout>{children}</Layout>
+            </AuthProvider>
+          </ThemeProvider>
         </PaperProvider>
       </body>
     </html>

@@ -6,8 +6,10 @@ import * as Yup from "yup";
 
 import { useAuth } from "@/context/AuthContext";
 import { RaceEntryForm } from "@8hourrelay/store/src/RaceEntryStore";
-import { clone, getSnapshot } from "mobx-keystone";
+import { clone, fromSnapshot, getSnapshot, onSnapshot } from "mobx-keystone";
 import { RaceEntry, User } from "@8hourrelay/models";
+import AsyncStorage from "@react-native-community/async-storage";
+import SelectRace from "./SelectRace";
 
 const styles = {
   label: "block uppercase tracking-wide text-gray-600 text-xs font-bold mb-2",
@@ -16,35 +18,43 @@ const styles = {
   button: "btn btn-primary py-2 px-4 w-full",
   errorMsg: "text-red-500 text-sm",
 };
+const entryFormSnapshot = "entryformsnapshot";
 
 function Step1() {
   const { store } = useAuth();
+  const [form] = useState(() => {
+    if (store.entryForm) return clone(store.entryForm);
+    return new RaceEntryForm({});
+  });
+
   useEffect(() => {
-    if (!store.entryForm) {
-      store.setEntryForm(
-        new RaceEntryForm({
-          raceEntry: new RaceEntry({
-            uid: store.userStore.user!.uid,
-            isActive: true,
-          }),
-        })
-      );
-    }
+    form.initForm(store);
+    const snapshot = onSnapshot(form, (newSnapshot) => {
+      console.log(`Saving new form data`, { newSnapshot });
+      const jsonData = JSON.stringify(newSnapshot);
+      AsyncStorage.setItem(entryFormSnapshot, jsonData);
+    });
+    return () => snapshot();
   }, []);
-  const form = store.entryForm;
+
   console.log(`entryForm`, { form: getSnapshot(form) });
 
   const initialValues = {
-    firstName: form?.firstName ?? "",
-    lastName: "",
-    phone: "",
-    postCode: "",
-    size: "Pick one",
+    race: form.race ?? "",
+    firstName: form.firstName ?? "",
+    lastName: form.lastName ?? "",
+    phone: form.phone ?? "",
+    gender: form.gender ?? "Pick one",
+    wechatId: form.wechatId ?? "",
+    birthYear: form.birthYear ?? "",
+    pesonalBest: form.personalBest ?? "",
+    size: form.size ?? "Pick one",
     emergencyContact: {
-      name: "",
-      phone: "",
+      name: form.emergencyName ?? "",
+      phone: form.setEmergencyPhone ?? "",
     },
   };
+
   const SignupSchema = Yup.object().shape({
     firstName: Yup.string()
       .min(2, "Too Short!")
@@ -55,8 +65,8 @@ function Step1() {
       .max(50, "Too Long!")
       .required("Required"),
     phone: Yup.string().required("Required"),
-    postCode: Yup.string().required("Required"),
-    size: Yup.string().required("Required"),
+    gender: Yup.string().required("Required"),
+    birthYear: Yup.string().required("Required"),
     emergencyContact: Yup.object().shape({
       name: Yup.string().required("Required"),
       phone: Yup.string().required("Required"),
@@ -66,26 +76,28 @@ function Step1() {
   if (!form) {
     return null;
   }
-  const onSubmit = async () => {
-    await form.submitForm();
-    store.setEntryForm(form);
+  const onSubmit = async (values) => {
+    console.log(`Submitting form`, { values });
+    // remove inital form in root store
+    store.setEntryForm(undefined);
+    await form.submitForm(values);
   };
   return (
     <div className="w-full max-w-lg">
       <div>Email: {store.userStore.user?.email}</div>
       <div className="divider">Basic Info</div>
-      <div className="flex flex-wrap -mx-3 mb-6">
+      <SelectRace />
+      <div className="flex flex-wrap min-w-full -mx-3 mb-6">
         <Formik
           initialValues={initialValues}
           validationSchema={SignupSchema}
-          onSubmit={(values) => {
-            console.log(values);
-          }}
+          onSubmit={onSubmit}
         >
           {(props) => (
             <Form>
+              <Field as={RaceSelect} name="race" label="Race*" />
               <FieldItem
-                label="First Name"
+                label="First Name*"
                 fieldName="firstName"
                 onChange={(e) => {
                   form.setFirstName(e.target.value);
@@ -93,15 +105,32 @@ function Step1() {
                 }}
               />
               <FieldItem
-                label="Last Name"
+                label="Last Name*"
                 fieldName="lastName"
                 onChange={(e) => {
                   form.setLastName(e.target.value);
                   props.handleChange(e);
                 }}
               />
+              <div>
+                <Field
+                  as={GenderSelect}
+                  name="gender"
+                  label="Gender*"
+                  onChange={(values) => {
+                    if (values.gener === "Pick one") {
+                      props.setFieldError("gender", "Required");
+                    }
+                  }}
+                />
+                <ErrorMessage
+                  component="div"
+                  className={styles.errorMsg}
+                  name="gender"
+                />
+              </div>
               <FieldItem
-                label="Phone"
+                label="Phone*"
                 fieldName="phone"
                 onChange={(e) => {
                   console.log(e.target.value);
@@ -110,8 +139,17 @@ function Step1() {
                 }}
               />
               <FieldItem
-                label="Post Code"
-                fieldName="postCode"
+                label="Year of birth*"
+                fieldName="birthYear"
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  form.setPhone(e.target.value);
+                  props.handleChange(e);
+                }}
+              />
+              <FieldItem
+                label="Personal Best Time"
+                fieldName="personalBest"
                 onChange={(e) => {
                   console.log(e.target.value);
                   form.setPhone(e.target.value);
@@ -121,7 +159,7 @@ function Step1() {
               <Field as={CustomSelect} name="size" label="Select Shirt Size" />
               <div className="divider">Emergency Contact</div>
               <FieldItem
-                label="Name"
+                label="Name*"
                 fieldName="emergencyContact.name"
                 onChange={(e) => {
                   console.log(e.target.value);
@@ -130,7 +168,7 @@ function Step1() {
                 }}
               />
               <FieldItem
-                label="Phone"
+                label="Phone*"
                 fieldName="emergencyContact.phone"
                 onChange={(e) => {
                   console.log(e.target.value);
@@ -191,17 +229,48 @@ const CustomSelect = (props) => (
       <span className="label-text">Select your shirt size</span>
     </label>
     <select className="select select-bordered" {...props}>
-      <option disabled selected>
+      <option disabled value="DEFAULT">
         Pick one
       </option>
-      <option>XS</option>
-      <option>Small</option>
-      <option>Medium</option>
-      <option>Large</option>
-      <option>XLarge</option>
+      <option value="XS">XS</option>
+      <option value="Small">Small</option>
+      <option value="Medium">Medium</option>
+      <option value="Large">Large</option>
+      <option value="XLarge">XLarge</option>
     </select>
   </div>
 );
+
+const GenderSelect = (props) => (
+  <div className="form-control w-full max-w-xs">
+    <label className="label">
+      <span className="label-text">Gender*</span>
+    </label>
+    <select className="select select-bordered" {...props}>
+      <option disabled value="DEFAULT">
+        Pick one
+      </option>
+      <option value="Male">Male</option>
+      <option value="Femal">Femal</option>
+    </select>
+  </div>
+);
+const RaceSelect = (props) => {
+  return (
+    <div className="form-control w-full max-w-xs">
+      <label className="label">
+        <span className="label-text">Select Race*</span>
+      </label>
+      <select className="select select-bordered" {...props}>
+        <option disabled value="DEFAULT">
+          Pick one
+        </option>
+        <option value="Adult">Adult</option>
+        <option value="Kids">Kids Run</option>
+      </select>
+    </div>
+  );
+};
 /*
   <form className="w-full max-w-lg">
         <div className="flex flex-wrap -mx-3 mb-6">

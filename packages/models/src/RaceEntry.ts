@@ -6,8 +6,10 @@ export class RaceEntry extends Model({
   uid: tProp(types.string), // the uid for the user
   isActive: tProp(types.boolean), // the uid for the user
   size: tProp(types.maybe(types.string)), // size of the T-shirt
-  raceId: tProp(types.maybe(types.string)).withSetter(), // participate race ID
-  teamId: tProp(types.maybe(types.string)).withSetter(), // team ID
+  emergencyName: tProp(types.maybe(types.string)).withSetter(), // emergency contact name
+  emergencyPhone: tProp(types.maybe(types.string)).withSetter(), // emergency contact phone
+  race: tProp(types.maybe(types.string)).withSetter(), // participate race name
+  team: tProp(types.maybe(types.string)).withSetter(), // team name
   isCaptain: tProp(types.maybe(types.boolean)).withSetter(),
   paymentId: tProp(types.maybe(types.string)).withSetter(), // payment ID in stripe
   sessionId: tProp(types.maybe(types.string)).withSetter(), // session ID in stripe

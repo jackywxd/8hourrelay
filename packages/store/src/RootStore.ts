@@ -29,22 +29,14 @@ export class RootStore extends Model({
 }) {
   @computed
   get isLoading() {
-    return (
-      this.userStore.isLoading ||
-      this.authStore.isLoading ||
-      this.entryForm?.isLoading
-    );
+    return this.userStore.isLoading || this.authStore.isLoading;
   }
 
   get error() {
-    return (
-      this.userStore.error || this.authStore.error || this.entryForm?.error
-    );
+    return this.userStore.error || this.authStore.error;
   }
 
   protected onInit(): void {
-    // load raceEntryForm from local storage
-    // if not present in localStorage, raceEntry will be initializd later on
     if (typeof window === "object")
       AsyncStorage.getItem(entryFormSnapshot).then((data) => {
         console.log(`${entryFormSnapshot} snapshot is ${data}`);
@@ -60,7 +52,6 @@ export class RootStore extends Model({
   resetError() {
     this.userStore.setError("");
     this.authStore.setError("");
-    this.entryForm && this.entryForm.setError("");
   }
 
   dispose() {

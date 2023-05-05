@@ -58,7 +58,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const _loadPersistedState = async () => {
-      store.authStore.setIsLoading(true);
       const retrievedState = await AsyncStorage.getItem(appStatePersistenceKey);
       if (retrievedState) {
         const rootStoreJson: SnapshotOutOf<RootStore> =
@@ -69,7 +68,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           applySnapshot(store, rootStoreJson);
         }
       }
-      store.authStore.setIsLoading(false);
     };
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!store) {

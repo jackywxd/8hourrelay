@@ -12,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { LoginWithEmailScreen } from "@8hourrelay/login";
 import Step1 from "./Step1";
 import Login from "./Login";
+import Email from "./Email";
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe(
@@ -40,18 +41,22 @@ function Page() {
 
   // use click on login link will trigger below event
   useEffect(() => {
-    async function siginin() {
-      if (apiKey && typeof window !== "undefined") {
-        // const fullURL = `${window.location.protocol}//${window.location.hostname}${asPath}`;
+    async function sigininWithEmail() {
+      if (typeof window !== "undefined") {
         const fullUrl = window.location.href;
-        if (authStore.email && fullUrl) {
-          await authStore.signinWithEmailLink(fullUrl);
-          router.push("/register?continue");
-        }
+        await authStore.signinWithEmailLink(fullUrl);
       }
     }
-    siginin();
-  }, [apiKey]);
+    sigininWithEmail();
+  }, []);
+
+  // use click on login link will trigger below event
+  useEffect(() => {
+    if (authStore.state === "VERFIED") {
+      router.push("/register?continue");
+      authStore.setState("INIT");
+    }
+  }, [authStore.state]);
 
   if (canceled) {
     return <div>Your payment canceled!</div>;
@@ -64,9 +69,6 @@ function Page() {
     );
   }
 
-  if (store.isLoading) {
-    return <div>Loading...</div>;
-  }
   // if no logined user yet
   if (!userStore.user) {
     return (
@@ -84,6 +86,14 @@ function Page() {
           <div>
             Check your email {authStore.email} and click the link to continue
             the register
+          </div>
+        )}
+        {authStore.state === "MISSING_EMAIL" && (
+          <div className="text-center text-lg pt-10">
+            <div className="text-center text-lg pt-10">
+              Please provide your email for confirmation
+            </div>
+            <Email />
           </div>
         )}
       </div>

@@ -13,6 +13,10 @@ export class User extends Model({
   updatedAt: tProp(types.number).withSetter(),
   firstName: tProp(types.maybe(types.string)).withSetter(),
   lastName: tProp(types.maybe(types.string)).withSetter(),
+  gender: tProp(types.maybe(types.string)).withSetter(),
+  wechatId: tProp(types.maybe(types.string)).withSetter(),
+  birthYear: tProp(types.maybe(types.string)).withSetter(),
+  personalBest: tProp(types.maybe(types.string)).withSetter(),
   photoUrl: tProp(types.maybe(types.string)).withSetter(),
   emergencyContact: tProp(
     types.maybe(

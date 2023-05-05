@@ -25,11 +25,16 @@ import { RaceEntry } from "@8hourrelay/models/src/RaceEntry";
 export class UserStore extends Model({
   uid: tProp(types.maybe(types.string)).withSetter(),
   user: tProp(types.maybe(User)).withSetter(),
-  isLoading: tProp(types.boolean, () => false).withSetter(),
-  error: tProp(types.string, () => "").withSetter(),
 }) {
+  isLoading = false;
+  error = "";
   userListner: null | (() => void) = null;
   raceEntryListner: null | (() => void) = null;
+
+  @modelAction
+  setError(error: string) {
+    this.error = error;
+  }
 
   @computed
   get db() {
@@ -100,8 +105,8 @@ export class UserStore extends Model({
       this.isLoading = false;
     } catch (error) {
       console.log(`failed to getUser`, error);
-      this.setError((error as Error).message);
-      this.setIsLoading(false);
+      this.error = (error as Error).message;
+      this.isLoading = false;
     }
   });
 }

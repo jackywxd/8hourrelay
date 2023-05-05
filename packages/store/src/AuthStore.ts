@@ -2,6 +2,7 @@ import {
   Auth,
   sendSignInLinkToEmail,
   signInWithEmailLink,
+  isSignInWithEmailLink,
 } from "firebase/auth";
 import { computed } from "mobx";
 import {
@@ -14,6 +15,7 @@ import {
   _async,
   onSnapshot,
   getRoot,
+  modelAction,
 } from "mobx-keystone";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStore } from "./RootStore";
@@ -21,6 +23,7 @@ import { RootStore } from "./RootStore";
 export type RegisterState =
   | "INIT"
   | "EMAIL_LINK_SENT"
+  | "MISSING_EMAIL"
   | "VERIFY_EMAIL_SEND"
   | "VERFIED";
 
@@ -28,9 +31,15 @@ export type RegisterState =
 export class AuthStore extends Model({
   email: prop<string | null>(() => null).withSetter(),
   state: prop<RegisterState>(() => "INIT").withSetter(),
-  isLoading: tProp(types.boolean, () => false).withSetter(),
-  error: tProp(types.maybe(types.string), () => "").withSetter(),
 }) {
+  isLoading = false;
+  error = "";
+
+  @modelAction
+  setError(error: string) {
+    this.error = error;
+  }
+
   // Firebase Auth object
   auth: Auth | null = null;
   @computed
@@ -101,26 +110,41 @@ export class AuthStore extends Model({
     this.isLoading = false;
   });
   @modelFlow
-  signinWithEmailLink = _async(function* (this: AuthStore, url: string) {
+  signinWithEmailLink = _async(function* (
+    this: AuthStore,
+    url: string,
+    email?: string
+  ) {
     console.log(`signining with url`, { url });
-    if (!this.auth || !this.email) {
-      throw new Error(`No user email or no Auth!`);
+    if (!this.auth) {
+      throw new Error(`No Auth yet!`);
     }
-    if (this.state === "VERFIED") {
-      console.log(`already verified with this url`, { url });
-      return;
+    if (email) {
+      this.email = email;
     }
-    this.isLoading = true;
-    try {
-      yield signInWithEmailLink(this.auth, this.email, url);
-      if (typeof window === "object")
-        yield AsyncStorage.removeItem(this.emailLocalKey);
-      this.state = "VERFIED";
-    } catch (error) {
-      console.log(`Failed to signinWithEmail`, { error });
-      this.error = (error as Error).message;
+    if (isSignInWithEmailLink(this.auth, url)) {
+      // no email has been set yet
+      if (!this.email) {
+        this.setState("MISSING_EMAIL");
+        return;
+      }
+
+      if (this.state === "VERFIED") {
+        console.log(`already verified with this url`, { url });
+        return;
+      }
+      this.isLoading = true;
+      try {
+        yield signInWithEmailLink(this.auth, this.email, url);
+        if (typeof window === "object")
+          yield AsyncStorage.removeItem(this.emailLocalKey);
+        this.state = "VERFIED";
+      } catch (error) {
+        console.log(`Failed to signinWithEmail`, { error });
+        this.error = (error as Error).message;
+      }
+      this.isLoading = false;
     }
-    this.isLoading = false;
   });
   @modelFlow
   logout = _async(function* (this: AuthStore) {
