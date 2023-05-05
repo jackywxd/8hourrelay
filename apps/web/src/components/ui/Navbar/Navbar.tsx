@@ -6,7 +6,6 @@ import { useTheme } from "react-native-paper";
 const Navbar = () => {
   const router = useRouter();
   const { colors } = useTheme();
-  const { user } = { user: null };
   const [navbar, setNavbar] = useState(false);
 
   return (
@@ -109,6 +108,15 @@ const Navbar = () => {
                   }}
                 >
                   <Link href="/about">About</Link>
+                </div>
+              </li>
+              <li className="text-white  p-2 hover:bg-slate-500 rounded">
+                <div
+                  onClick={() => {
+                    setNavbar(false);
+                  }}
+                >
+                  <Link href="/profile">Profile</Link>
                 </div>
               </li>
             </ul>

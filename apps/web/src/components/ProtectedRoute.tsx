@@ -11,19 +11,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = observer(
   ({ children }) => {
     const {
       store: {
-        authStore: { isAuthenticated },
+        authStore: { currentUser },
+        userStore: { user },
       },
     } = useAuth();
 
     const router = useRouter();
-    console.log(`router and user is `, { router, isAuthenticated });
+    console.log(`router and user is `, { router, currentUser });
     useEffect(() => {
-      if (!isAuthenticated) {
+      if (!currentUser) {
         router.push("/login");
       }
-    }, [isAuthenticated]);
+    }, [currentUser]);
 
-    return isAuthenticated ? <>{children}</> : null;
+    return currentUser ? <>{children}</> : null;
   }
 );
 

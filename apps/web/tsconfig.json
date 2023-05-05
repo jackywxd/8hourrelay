@@ -10,7 +10,8 @@
         "name": "next"
       }
     ],
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
   },
   "extends": "tsconfig/nextjs.json",
   "include": [

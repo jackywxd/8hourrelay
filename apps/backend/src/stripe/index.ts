@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { slackSendMsg } from "../../libs/slack";
+import { slackSendMsg } from "../libs/slack";
 import Stripe from "stripe";
 const db = admin.firestore();
 
@@ -20,7 +20,7 @@ export const stripeWebhook = functions.https.onRequest(
     response: functions.Response<void>
   ) => {
     logger.info("Stripe Webhook Event", { body: request });
-    const sig = request.headers["Stripe-Signature"];
+    const sig = request.headers["stripe-signature"];
     let event: Stripe.Event;
     try {
       if (!sig) {
@@ -29,7 +29,7 @@ export const stripeWebhook = functions.https.onRequest(
       }
       try {
         event = stripe.webhooks.constructEvent(
-          request.body,
+          request.rawBody,
           sig,
           endpointSecret!
         );
@@ -114,7 +114,16 @@ export const stripeWebhook = functions.https.onRequest(
           await slackSendMsg(msg);
           break;
         }
-
+        case "checkout.session.completed": {
+          const session = object as Stripe.Checkout.Session;
+          const msg = `🔔  Session ${session.customer_email} completed!`;
+          logger.info(msg);
+          await Promise.all([
+            slackSendMsg(msg),
+            db.collection("StripeEvents").doc(session.id).create(event),
+          ]);
+          break;
+        }
         default:
       }
       response.status(200).end();

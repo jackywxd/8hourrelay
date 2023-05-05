@@ -1,67 +1,68 @@
-import {
-  types,
-  getSnapshot,
-  Instance,
-  flow,
-  SnapshotIn,
-} from "mobx-state-tree";
-import { FirebaseApp } from "firebase/app";
 import { UserStore } from "./UserStore";
 import { AuthStore } from "./AuthStore";
+import { computed } from "mobx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  Model,
+  model,
+  prop,
+  onSnapshot,
+  applySnapshot,
+  fromSnapshot,
+  modelAction,
+} from "mobx-keystone";
+import { EventStore } from "./EventStore";
+import { TeamStore } from "./TeamStore";
+import { RaceEntryForm } from "./RaceEntryStore";
+import { RaceEntry } from "@8hourrelay/models";
 
 export const appStatePersistenceKey = "appStatePersistenceKey";
+export const entryFormSnapshot = "entryformsnapshot";
 
-export interface IRootStore extends Instance<typeof RootStore> {}
+@model("8HourRelay/root")
+export class RootStore extends Model({
+  authStore: prop<AuthStore>(() => new AuthStore({})),
+  userStore: prop<UserStore>(() => new UserStore({})),
+  eventStore: prop<EventStore>(() => new EventStore({})),
+  teamStore: prop<TeamStore>(() => new TeamStore({})),
+  entryForm: prop<RaceEntryForm | undefined>().withSetter(),
+}) {
+  @computed
+  get isLoading() {
+    return (
+      this.userStore.isLoading ||
+      this.authStore.isLoading ||
+      this.entryForm?.isLoading
+    );
+  }
 
-export const RootStore = types
-  .model("RootStore", {
-    identifier: types.optional(types.identifier, "RootStore"),
-    authStore: types.optional(AuthStore, () =>
-      AuthStore.create({
-        isAuthenticated: false,
-        isLoading: false,
-        state: "INIT",
-      })
-    ),
-    userStore: types.optional(UserStore, () =>
-      UserStore.create({ isLoading: false, error: "" })
-    ),
+  get error() {
+    return (
+      this.userStore.error || this.authStore.error || this.entryForm?.error
+    );
+  }
 
-    // navigationStore: types.optional(NavigationStore, () =>
-    //   NavigationStore.create({
-    //     // userScreenParams: {},
-    //   })
-    // ),
-  })
-  .volatile(() => ({
-    firebaseApp: {} as FirebaseApp,
-  }))
-  .views((self) => ({
-    isLoading() {
-      return self.authStore.isLoading || self.userStore.isLoading;
-    },
-  }))
-  .actions((self) => ({
-    setFirebase: (app: FirebaseApp) => {
-      self.firebaseApp = app;
-    },
-    init: flow(function* () {
-      try {
-        yield Promise.all([]);
-      } catch (error) {
-        console.log(error);
+  protected onInit(): void {
+    // load raceEntryForm from local storage
+    // if not present in localStorage, raceEntry will be initializd later on
+    AsyncStorage.getItem(entryFormSnapshot).then((data) => {
+      console.log(`${entryFormSnapshot} snapshot is ${data}`);
+      if (data) {
+        const parsedData = JSON.parse(data);
+        console.log(`Parsed Data is`, { parsedData });
+        const form = fromSnapshot(RaceEntryForm, parsedData);
+        this.setEntryForm(form);
       }
-    }),
-    async save() {
-      try {
-        const transformedSnapshot = getSnapshot(self);
-        const json = JSON.stringify(transformedSnapshot);
+    });
+  }
 
-        await AsyncStorage.setItem(appStatePersistenceKey, json);
-      } catch (err) {
-        console.warn("unexpected error " + err);
-      }
-      return self;
-    },
-  }));
+  resetError() {
+    this.userStore.setError("");
+    this.authStore.setError("");
+    this.entryForm && this.entryForm.setError("");
+  }
+
+  dispose() {
+    this.userStore.dispose();
+  }
+}

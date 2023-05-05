@@ -3,10 +3,12 @@
   "include": ["."],
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
+    "experimentalDecorators": true,
     "paths": {
       "@/*": ["./libs/*"]
     },
     "module": "commonjs",
+    "outDir": "dist",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "sourceMap": true,

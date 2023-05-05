@@ -3,6 +3,6 @@
   "version": "0.0.0",
   "main": ".",
   "dependencies": {
-    "mobx-state-tree": "^5.1.8"
+    "mobx-keystone": "^1.5.0"
   }
 }

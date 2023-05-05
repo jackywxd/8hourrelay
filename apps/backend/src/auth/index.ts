@@ -5,16 +5,23 @@
  * @param {Object} context Details about the event.
  */
 import * as functions from "firebase-functions";
-import { logger } from "firebase-functions";
 import * as admin from "firebase-admin";
-import { IUser } from "@8hourrelay/store/src/models/User";
-import { slackSendText } from "../../libs/slack";
+import Stripe from "stripe";
+import { logger } from "firebase-functions";
+import { IUser } from "@8hourrelay/models";
+import { slackSendText } from "../libs/slack";
 
 const db = admin.firestore();
+const apiKey = process.env.STRIPE_SECRET;
+const stripe = new Stripe(apiKey!, {
+  apiVersion: "2022-11-15",
+  typescript: true,
+});
 
 const authOnCreate = functions.auth.user().onCreate(async (user, _context) => {
   const now = new Date().getTime();
   try {
+    const { email } = user;
     // below are for VpnUsers data
     if (user.email) {
       logger.info(`New User`, user);
@@ -30,7 +37,11 @@ const authOnCreate = functions.auth.user().onCreate(async (user, _context) => {
         address: undefined,
         customerId: undefined,
       };
-
+      // create a new customer in Stripe
+      const newCustomer = await stripe.customers.create({
+        email,
+      });
+      u.customerId = newCustomer.id;
       await Promise.all([
         db.collection("Users").doc(user.uid).set(u, { merge: true }),
         slackSendText(`New user ${user.uid} registered!`),

@@ -23,6 +23,7 @@ const nextConfig = {
     "ui",
     "@8hourrelay/login",
     "@8hourrelay/store",
+    "react-native-async-storage",
     "react-native-safe-area-context",
     "react-native-paper",
     "react-native-vector-icons",

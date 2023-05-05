@@ -1,10 +1,10 @@
 "use client";
-import Sponsors from "../../content/sponsors.mdx";
+import Volunteer from "../../content/volunteer.mdx";
 
 export default function Page() {
   return (
     <div className="prose m-2">
-      <Sponsors />
+      <Volunteer />
     </div>
   );
 }

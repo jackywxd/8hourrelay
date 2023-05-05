@@ -31,14 +31,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html data-theme="coffee" lang="en">
       <head />
       <body>
         <PaperProvider theme={theme}>
           <AuthProvider>
-            <SafeAreaProvider>
-              <Layout>{children}</Layout>
-            </SafeAreaProvider>
+            <Layout>{children}</Layout>
           </AuthProvider>
         </PaperProvider>
       </body>

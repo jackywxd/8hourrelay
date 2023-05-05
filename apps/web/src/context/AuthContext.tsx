@@ -1,22 +1,30 @@
-import React, { createContext, useEffect, ReactNode, useContext } from "react";
+import React, {
+  createContext,
+  useEffect,
+  ReactNode,
+  useContext,
+  useState,
+} from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { doc, getFirestore, onSnapshot } from "firebase/firestore";
+import AsyncStorage from "@react-native-community/async-storage";
 
-import { RootStore, IRootStore } from "@8hourrelay/store";
-
+import { RootStore, appStatePersistenceKey } from "@8hourrelay/store";
 import { app } from "@/firebase/config";
-import { useRouter } from "next/navigation";
-import { IUser } from "@8hourrelay/models";
+import {
+  SnapshotOutOf,
+  applySnapshot,
+  connectReduxDevTools,
+  registerRootStore,
+} from "mobx-keystone";
 
 const auth = getAuth(app);
-const db = getFirestore(app);
 
 interface AuthContextType {
-  store: IRootStore;
+  store: RootStore;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  store: RootStore.create({}),
+  store: new RootStore({}),
 });
 
 interface AuthProviderProps {
@@ -24,47 +32,63 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const router = useRouter();
-  const [store] = React.useState<IRootStore>(() => {
-    const rootStore = RootStore.create();
-    rootStore.setFirebase(app);
+  const [store] = useState<RootStore>(() => {
+    const rootStore = new RootStore({});
+    // register our root store
     if (auth.currentUser) {
       console.log(`init authStore with currentUser`, {
         currentUser: auth.currentUser,
       });
-      rootStore.authStore.setUser(auth.currentUser);
+      rootStore.userStore.setUid(auth.currentUser.uid);
     }
     rootStore.authStore.setAuth(auth);
+
+    registerRootStore(rootStore);
+    // we can also connect the store to the redux dev tools
+    if (process.env.NODE_ENV === "development") {
+      const remotedev = require("remotedev");
+      const connection = remotedev.connectViaExtension({
+        name: "8HourRelay",
+      });
+
+      connectReduxDevTools(remotedev, connection, rootStore);
+    }
     return rootStore;
   });
 
   useEffect(() => {
-    let userListner: (() => void) | null = null;
+    const _loadPersistedState = async () => {
+      store.authStore.setIsLoading(true);
+      const retrievedState = await AsyncStorage.getItem(appStatePersistenceKey);
+      if (retrievedState) {
+        const rootStoreJson: SnapshotOutOf<RootStore> =
+          JSON.parse(retrievedState);
+        console.log(`Parsed root store json`, { rootStoreJson });
+        if (rootStoreJson.$modelType === store.$modelType) {
+          console.log(`applying rootstore snapshot!!`);
+          applySnapshot(store, rootStoreJson);
+        }
+      }
+      store.authStore.setIsLoading(false);
+    };
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!store) {
         return;
       }
-      if (user) {
-        console.log(`Getting user data`);
-        store.authStore.setUser(user);
-        // store.userStore.getUser(user.uid);
-        userListner = onSnapshot(doc(db, "Users", user.uid), (doc) => {
-          const user = doc.data() as IUser;
-          console.log(`New User data`, user);
-          store.userStore.setUser(user);
-        });
-        router.push("/profile");
-      } else {
-        store.authStore.setUser(null);
+      store.authStore.setAuth(auth);
+      if (user && user.uid) {
+        store.userStore.setUid(user.uid);
       }
     });
 
+    _loadPersistedState();
+
+    // clean up
     return () => {
       unsubscribe();
-      userListner && userListner();
-      userListner = null;
+      store.dispose();
     };
-  }, []);
+  }, [auth, store]);
 
   return (
     <AuthContext.Provider value={{ store }}>

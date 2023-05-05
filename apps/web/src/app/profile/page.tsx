@@ -2,14 +2,39 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { Button } from "ui";
 
 const ProtectedPage: React.FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     store: { authStore, userStore },
   } = useAuth();
+
   const user = userStore.user;
-  console.log(`current user`, { user });
+  const apiKey = searchParams.get("apiKey");
+
+  // use click on login link will trigger below event
+  useEffect(() => {
+    async function siginin() {
+      if (apiKey && typeof window !== "undefined") {
+        const fullUrl = window.location.href;
+        if (authStore.email && fullUrl) {
+          await authStore.signinWithEmailLink(fullUrl);
+        }
+      }
+    }
+    siginin();
+  }, [apiKey]);
+
+  useEffect(() => {
+    if (!apiKey && !authStore.currentUser) {
+      router.push("/login");
+    }
+  }, [apiKey, authStore.currentUser]);
+
   if (!user) {
     return null;
   }
@@ -43,6 +68,7 @@ const ProtectedPage: React.FC = () => {
             onClick={() => {
               console.log(`loging out!`);
               authStore.logout();
+              router.push("/");
             }}
             text="Logout"
           />
