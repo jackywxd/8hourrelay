@@ -37,7 +37,7 @@ export default function RootLayout({
       <head />
       <body>
         <PaperProvider theme={theme}>
-          <ThemeProvider>
+          <ThemeProvider value={theme}>
             <AuthProvider>
               <Layout>{children}</Layout>
             </AuthProvider>

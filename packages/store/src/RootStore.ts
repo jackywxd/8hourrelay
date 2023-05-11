@@ -1,52 +1,39 @@
 import { UserStore } from "./UserStore";
 import { AuthStore } from "./AuthStore";
-import { computed } from "mobx";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  Model,
-  model,
-  prop,
-  onSnapshot,
-  applySnapshot,
-  fromSnapshot,
-  modelAction,
-} from "mobx-keystone";
-import { EventStore } from "./EventStore";
-import { TeamStore } from "./TeamStore";
-import { RaceEntryForm } from "./RaceEntryStore";
-import { RaceEntry } from "@8hourrelay/models";
+import { makeAutoObservable } from "mobx";
+import { Race, Event } from "@8hourrelay/models";
 
 export const appStatePersistenceKey = "appStatePersistenceKey";
 export const entryFormSnapshot = "entryformsnapshot";
 
-@model("8HourRelay/root")
-export class RootStore extends Model({
-  authStore: prop<AuthStore>(() => new AuthStore({})),
-  userStore: prop<UserStore>(() => new UserStore({})),
-  eventStore: prop<EventStore>(() => new EventStore({})),
-  teamStore: prop<TeamStore>(() => new TeamStore({})),
-  entryForm: prop<RaceEntryForm | undefined>().withSetter(),
-}) {
-  @computed
+export class RootStore {
+  authStore: AuthStore;
+  userStore: UserStore;
+  event = new Event({
+    name: `8HourRealy`,
+    description: `2023 8 Hour Realy Race`,
+    year: `2023`,
+    location: "TBD",
+    time: "Sep 10, 2023",
+    isActive: true,
+    createdAt: new Date().getTime(),
+    races: [
+      new Race("2023-8HourRealy-Adult", "Adult", "Adult Race", 30),
+      new Race("2023-8HourRelya-Kids", "Kids", "Kids Run", 5),
+    ],
+  });
+  constructor() {
+    this.authStore = new AuthStore(this);
+    this.userStore = new UserStore(this);
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
+
   get isLoading() {
     return this.userStore.isLoading || this.authStore.isLoading;
   }
 
   get error() {
     return this.userStore.error || this.authStore.error;
-  }
-
-  protected onInit(): void {
-    if (typeof window === "object")
-      AsyncStorage.getItem(entryFormSnapshot).then((data) => {
-        console.log(`${entryFormSnapshot} snapshot is ${data}`);
-        if (data) {
-          const parsedData = JSON.parse(data);
-          console.log(`Parsed Data is`, { parsedData });
-          const form = fromSnapshot(RaceEntryForm, parsedData);
-          this.setEntryForm(form);
-        }
-      });
   }
 
   resetError() {
@@ -56,5 +43,6 @@ export class RootStore extends Model({
 
   dispose() {
     this.userStore.dispose();
+    this.authStore.dispose();
   }
 }

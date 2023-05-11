@@ -12,6 +12,7 @@
     ],
     "strictNullChecks": true,
     "experimentalDecorators": true,
+    "useDefineForClassFields": true
   },
   "extends": "tsconfig/nextjs.json",
   "include": [

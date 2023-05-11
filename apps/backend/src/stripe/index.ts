@@ -49,6 +49,16 @@ export const stripeWebhook = functions.https.onRequest(
           const paymentIntent = object as Stripe.PaymentIntent;
           const msg = `🔔  Webhook received! Payment for PaymentIntent ${paymentIntent.id} succeeded.`;
           logger.info(msg);
+          const email = paymentIntent.receipt_email;
+          const userSnapshot = await db
+            .collectionGroup("RaceEntry")
+            .where("email", "==", email)
+            .where("isActive", "==", true)
+            .get();
+          if (userSnapshot.size === 0) {
+            throw new Error(`Could not find this customer ${email}`);
+          }
+          // const data = userSnapshot.docs[0].data();
           // payment intent completed, update user and transaction data
           await Promise.all([
             slackSendMsg(msg),
@@ -56,6 +66,12 @@ export const stripeWebhook = functions.https.onRequest(
               .collection("StripeEvents")
               .doc(paymentIntent.id)
               .create(paymentIntent),
+            userSnapshot.docs[0].ref.set(
+              {
+                paymentId: paymentIntent.id,
+              },
+              { merge: true }
+            ),
           ]);
           break;
         }
@@ -111,7 +127,25 @@ export const stripeWebhook = functions.https.onRequest(
           const charge = object as Stripe.Charge;
           const msg = `🔔  The charge ${charge.id} succeeded.`;
           logger.info(msg);
-          await slackSendMsg(msg);
+          const email = charge.receipt_email;
+          const userSnapshot = await db
+            .collectionGroup("RaceEntry")
+            .where("email", "==", email)
+            .where("isActive", "==", true)
+            .get();
+          if (userSnapshot.size === 0) {
+            throw new Error(`Could not find this customer ${email}`);
+          }
+          await Promise.all([
+            slackSendMsg(msg),
+            db.collection("StripeEvents").doc(charge.id).create(charge),
+            userSnapshot.docs[0].ref.set(
+              {
+                receiptUrl: charge.receipt_url,
+              },
+              { merge: true }
+            ),
+          ]);
           break;
         }
         case "checkout.session.completed": {
@@ -120,7 +154,7 @@ export const stripeWebhook = functions.https.onRequest(
           logger.info(msg);
           await Promise.all([
             slackSendMsg(msg),
-            db.collection("StripeEvents").doc(session.id).create(event),
+            db.collection("StripeEvents").doc(session.id).create(session),
           ]);
           break;
         }

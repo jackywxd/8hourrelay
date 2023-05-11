@@ -13,11 +13,10 @@ const styles = {
 };
 
 function Step1() {
-  const {
-    store: { authStore },
-  } = useAuth();
+  const { store } = useAuth();
+
   const onLogin = async (email) => {
-    await authStore.sendLoginEmailLink(email);
+    await store.authStore.sendLoginEmailLink(email);
   };
 
   const SignupSchema = Yup.object().shape({

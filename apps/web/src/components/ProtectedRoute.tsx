@@ -9,22 +9,19 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = observer(
   ({ children }) => {
-    const {
-      store: {
-        authStore: { currentUser },
-        userStore: { user },
-      },
-    } = useAuth();
-
+    const { store } = useAuth();
     const router = useRouter();
-    console.log(`router and user is `, { router, currentUser });
+    console.log(`router and user is `, {
+      router,
+      currentUser: store.authStore.currentUser,
+    });
     useEffect(() => {
-      if (!currentUser) {
+      if (!store.authStore.currentUser) {
         router.push("/login");
       }
-    }, [currentUser]);
+    }, [store.authStore.currentUser]);
 
-    return currentUser ? <>{children}</> : null;
+    return store.authStore.currentUser ? <>{children}</> : null;
   }
 );
 

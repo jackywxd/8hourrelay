@@ -4,82 +4,110 @@ import {
   signInWithEmailLink,
   isSignInWithEmailLink,
 } from "firebase/auth";
-import { computed } from "mobx";
 import {
-  Model,
-  model,
-  tProp,
-  types,
-  prop,
-  modelFlow,
-  _async,
-  onSnapshot,
-  getRoot,
-  modelAction,
-} from "mobx-keystone";
+  runInAction,
+  makeAutoObservable,
+  reaction,
+  action,
+  flow,
+  IReactionDisposer,
+  computed,
+} from "mobx";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStore } from "./RootStore";
 
 export type RegisterState =
   | "INIT"
   | "EMAIL_LINK_SENT"
+  | "RECEIVE_LINK"
   | "MISSING_EMAIL"
   | "VERIFY_EMAIL_SEND"
-  | "VERFIED";
+  | "VERFIED"
+  | "LOGINED";
 
-@model("8HourRelay/AuthStore")
-export class AuthStore extends Model({
-  email: prop<string | null>(() => null).withSetter(),
-  state: prop<RegisterState>(() => "INIT").withSetter(),
-}) {
+export class AuthStore {
+  root: RootStore;
+  emailLocalKey = `8hourrelayEmailKey`;
+  email?: string;
+  state: RegisterState = "INIT";
   isLoading = false;
   error = "";
-
-  @modelAction
-  setError(error: string) {
-    this.error = error;
-  }
-
+  disposer: IReactionDisposer | null = null;
   // Firebase Auth object
   auth: Auth | null = null;
-  @computed
-  get emailLocalKey() {
-    return `${this.$modelType}-email`;
+
+  constructor(root: RootStore) {
+    this.root = root;
+    this.state = "INIT";
+    this.onInit();
+    makeAutoObservable(
+      this,
+      {
+        setEmail: action,
+        setState: action,
+        signinWithEmailLink: flow,
+        sendLoginEmailLink: flow,
+        currentUser: computed,
+      },
+      { autoBind: true }
+    );
   }
-  @computed
+
+  setError = (error: string) => {
+    this.error = error;
+  };
+
+  setEmail = (email: string) => {
+    this.email = email;
+  };
+
   get currentUser() {
+    console.log(`getting current user ${this.auth?.currentUser?.email}`);
     return this.auth?.currentUser;
   }
+
   // try to get email from local storage
-  onAttachedToRootStore() {
+  onInit() {
     console.log(`init authStore`);
+    this.disposer = reaction(
+      () => this.email,
+      (newEmail, prev) => {
+        console.log(`new authstore snapshot`, { newEmail, prev });
+        // save new email
+        if (newEmail) {
+          AsyncStorage.setItem(this.emailLocalKey, newEmail);
+        }
+      }
+    );
     if (typeof window === "object")
       AsyncStorage.getItem(this.emailLocalKey).then((data) => {
         console.log(`${this.emailLocalKey} email is ${data}`);
         if (data) {
-          this.setEmail(data);
+          runInAction(() => {
+            this.email = data;
+          });
         }
       });
-
-    const disposer = onSnapshot(this, (newSnapshot, prev) => {
-      console.log(`new authstore snapshot`, { newSnapshot, prev });
-      // save new email
-      if (newSnapshot.email && newSnapshot.email !== prev.email) {
-        AsyncStorage.setItem(this.emailLocalKey, newSnapshot.email);
-      }
-    });
-    return () => {
-      disposer();
-    };
   }
 
-  setAuth(auth: Auth) {
+  dispose() {
+    if (this.disposer) {
+      this.disposer();
+      this.disposer = null;
+    }
+  }
+
+  setState = (state: RegisterState) => {
+    console.log(`settting auth state to ${state}`);
+    this.state = state;
+  };
+
+  setAuth = (auth: Auth) => {
     this.auth = auth;
-  }
+  };
 
-  @modelFlow
-  sendLoginEmailLink = _async(function* (
-    this: AuthStore,
+  *sendLoginEmailLink(
     email: string,
     path?: string // continue link path
   ) {
@@ -87,7 +115,7 @@ export class AuthStore extends Model({
       throw new Error(`No auth being set`);
     }
     console.log(`loging with email now`);
-    this.email = email;
+    this.setEmail(email);
     this.isLoading = true;
     try {
       console.log(`env`, process.env);
@@ -102,29 +130,29 @@ export class AuthStore extends Model({
         },
         handleCodeInApp: true,
       };
-      yield sendSignInLinkToEmail(this.auth, email, actionCodeSettings);
+      yield Promise.all([
+        AsyncStorage.setItem(this.emailLocalKey, email),
+        sendSignInLinkToEmail(this.auth, email, actionCodeSettings),
+      ]);
       this.state = "EMAIL_LINK_SENT";
     } catch (error) {
       this.error = (error as Error).message;
     }
     this.isLoading = false;
-  });
-  @modelFlow
-  signinWithEmailLink = _async(function* (
-    this: AuthStore,
-    url: string,
-    email?: string
-  ) {
-    console.log(`signining with url`, { url });
+  }
+
+  *signinWithEmailLink(url: string, email?: string) {
+    console.log(`signining with url`, { url, email });
     if (!this.auth) {
       throw new Error(`No Auth yet!`);
     }
-    if (email) {
-      this.email = email;
+    if (this.isLoading) {
+      return;
     }
+    const loginEmail = email ?? this.email;
     if (isSignInWithEmailLink(this.auth, url)) {
       // no email has been set yet
-      if (!this.email) {
+      if (!loginEmail) {
         this.setState("MISSING_EMAIL");
         return;
       }
@@ -135,7 +163,7 @@ export class AuthStore extends Model({
       }
       this.isLoading = true;
       try {
-        yield signInWithEmailLink(this.auth, this.email, url);
+        yield signInWithEmailLink(this.auth, loginEmail, url);
         if (typeof window === "object")
           yield AsyncStorage.removeItem(this.emailLocalKey);
         this.state = "VERFIED";
@@ -145,18 +173,16 @@ export class AuthStore extends Model({
       }
       this.isLoading = false;
     }
-  });
-  @modelFlow
-  logout = _async(function* (this: AuthStore) {
+  }
+
+  *logout() {
     console.log(`signing out`);
     if (!this.auth) {
       throw new Error(`No Auth!`);
     }
     this.isLoading = true;
     try {
-      // we should dispose all the listner prior logging out
-      const root: RootStore = getRoot(this);
-      root.dispose();
+      this.root.dispose();
       yield this.auth.signOut();
       this.state = "INIT";
     } catch (error) {
@@ -164,190 +190,5 @@ export class AuthStore extends Model({
       console.log(`Failed to signinWithEmail`, { error });
     }
     this.isLoading = false;
-  });
+  }
 }
-
-// export type IRegisterState = Instance<typeof RegisterState>;
-
-// const RegisterState = types.union(
-//   types.literal("INIT"),
-//   types.literal("EMAIL_LINK_SENT"),
-//   types.literal("VERIFY_EMAIL_SEND"),
-//   types.literal("RECEIVED_CODE"),
-//   types.literal("CODE_VERIFIED"),
-//   types.literal("FORGOT_EMAIL_SEND")
-// );
-
-// export const AuthStore = types
-//   .model({
-//     isAuthenticated: types.boolean,
-//     isLoading: types.boolean,
-//     error: types.maybeNull(types.string),
-//     state: RegisterState,
-//   })
-//   .volatile(() => ({
-//     user: {} as User | null,
-//     auth: {} as Auth,
-//   }))
-//   .actions((self) => ({
-//     setAuth(auth: Auth) {
-//       self.auth = auth;
-//     },
-//     setUser: (user: User | null) => {
-//       console.log(`setting user to`, user);
-//       if (user) {
-//         self.user = user;
-//         self.isAuthenticated = true;
-//       } else {
-//         self.user = null;
-//         self.isAuthenticated = false;
-//       }
-//     },
-//     login: flow(function* (email: string, password: string) {
-//       self.isLoading = true;
-//       try {
-//         console.log(`loging with user ${email}`);
-//         const result = yield signInWithEmailAndPassword(
-//           self.auth,
-//           email,
-//           password
-//         );
-//         console.log(`singIn result`, { result });
-//         self.isAuthenticated = true;
-//         self.isLoading = false;
-//         return { result };
-//       } catch (error) {
-//         console.log(`failed to login`, error);
-//         self.error = error.message;
-//         self.isAuthenticated = false;
-//         self.isLoading = false;
-//         return { error };
-//       }
-//     }),
-//     signup: flow(function* (email: string, password: string) {
-//       self.isLoading = true;
-//       try {
-//         const result = yield createUserWithEmailAndPassword(
-//           self.auth,
-//           email,
-//           password
-//         );
-//         console.log(`singup result`, { result });
-
-//         if (!self.auth.currentUser) {
-//           throw new Error(`No user created!`);
-//         }
-//         const actionCodeSettings = {
-//           url: `https://autotext.mobi?email=${email}`,
-//           iOS: {
-//             bundleId: "com.8hourrelay",
-//           },
-//           android: {
-//             packageName: "com.8hourrelay",
-//             installApp: true,
-//           },
-//           handleCodeInApp: false,
-//         };
-//         console.log(`actionCodeSettings`, actionCodeSettings);
-//         yield sendEmailVerification(result.user, actionCodeSettings);
-//         self.state = "VERIFY_EMAIL_SEND";
-//         self.user = result.user;
-//         self.isAuthenticated = true;
-//         self.isLoading = false;
-//         return { result };
-//       } catch (error) {
-//         self.error = error.message;
-//         self.isAuthenticated = false;
-//         self.isLoading = false;
-//         return { error };
-//       }
-//     }),
-//     verifyEmail: flow(function* (code: string) {
-//       self.isLoading = true;
-//       try {
-//         yield applyActionCode(self.auth, code);
-//         self.state = "CODE_VERIFIED";
-//       } catch (error) {
-//         self.error = error;
-//       }
-//       self.isLoading = false;
-//     }),
-//     sendEmailLink: flow(function* (email: string) {
-//       self.isLoading = true;
-//       try {
-//         const actionCodeSettings = {
-//           url: __DEV___
-//             ? `http://localhost:3000/signinemail`
-//             : `https://autotext.mobi?email=${email}`,
-//           iOS: {
-//             bundleId: "com.8hourrelay",
-//           },
-//           android: {
-//             packageName: "com.8hourrelay",
-//             installApp: true,
-//           },
-//           handleCodeInApp: true,
-//         };
-//         yield sendSignInLinkToEmail(self.auth, email, actionCodeSettings);
-//         const root = getRoot(self);
-//         root.save();
-//         self.state = "EMAIL_LINK_SENT";
-//       } catch (error) {
-//         self.error = error;
-//       }
-//       self.isLoading = false;
-//     }),
-//     singinWithEmailLink: flow(function* (url: string) {
-//       self.isLoading = true;
-//       try {
-//         yield signInWithEmailLink(self.auth, self.email, url);
-//         self.state = "EMAIL_LINK_SENT";
-//       } catch (error) {
-//         self.error = error;
-//       }
-//       self.isLoading = false;
-//     }),
-//     resendCode: flow(function* () {
-//       if (!self.user) {
-//         throw new Error(`No current login user`);
-//       }
-//       self.isLoading = true;
-//       try {
-//         yield sendEmailVerification(self.user);
-//         self.state = "CODE_VERIFIED";
-//       } catch (error) {
-//         self.error = error;
-//       }
-//       self.isLoading = false;
-//     }),
-//     forgotPassword: flow(function* (code: string) {
-//       self.isLoading = true;
-//       if (!self.user || !self.user.email) {
-//         throw new Error(`Now user logged in`);
-//       }
-//       try {
-//         yield sendPasswordResetEmail(self.auth, self.user.email);
-//         self.state = "FORGOT_EMAIL_SEND";
-//       } catch (error) {
-//         self.error = error;
-//       }
-//       self.isLoading = false;
-//     }),
-//     logout: flow(function* () {
-//       self.isLoading = true;
-//       try {
-//         console.log(`logging current user`, self.user);
-//         yield self.auth.signOut();
-//         self.user = null;
-//         self.state = "INIT";
-//         self.isAuthenticated = false;
-//         self.isLoading = false;
-//       } catch (error) {
-//         self.error = error.message;
-//         self.isLoading = false;
-//       }
-//     }),
-//     setError: (error: string | null) => {
-//       self.error = error;
-//     },
-//   }));

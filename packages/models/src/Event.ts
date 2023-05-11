@@ -1,26 +1,23 @@
-import { types, model, Model, tProp, SnapshotOutOf } from "mobx-keystone";
-import { computed } from "mobx";
 import { Race } from "./Race";
 
-export type IEvent = SnapshotOutOf<Event>;
-
-// Model for the 8 Hour Relay Event
-@model("8HourRelay/Event")
-export class Event extends Model({
-  name: tProp(types.string).withSetter(), // year of the race
-  year: tProp(types.string, () =>
-    new Date().getFullYear().toString()
-  ).withSetter(), // year of the race
-  location: tProp(types.string), // location will held the event
-  time: tProp(types.string).withSetter(), // event time
-  description: tProp(types.maybe(types.string)), // description
-  isActive: tProp(types.boolean),
-  createdAt: tProp(types.number, () => new Date().getTime()),
-  expiredAt: tProp(types.number, () => new Date().getTime()),
-  races: tProp(types.maybe(types.array(types.model(Race)))),
-}) {
-  @computed
-  get id() {
-    return `${this.name}-${this.year}`;
+export class Event {
+  name: string; // name of the event
+  year: string; // year
+  location: string; //location of the event
+  time: string; // when the event will happen
+  description: string;
+  isActive: boolean; // passed year will be set to false
+  createdAt: number;
+  updatedAt?: number;
+  races: Race[];
+  constructor(e: Event) {
+    this.name = e.name;
+    this.year = e.year;
+    this.location = e.location;
+    this.time = e.time;
+    this.description = e.description;
+    this.isActive = e.isActive;
+    this.createdAt = e.createdAt ?? new Date().getTime();
+    this.races = e.races;
   }
 }

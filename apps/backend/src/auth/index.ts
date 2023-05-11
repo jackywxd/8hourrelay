@@ -8,7 +8,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import Stripe from "stripe";
 import { logger } from "firebase-functions";
-import { IUser } from "@8hourrelay/models";
+import { User } from "@8hourrelay/models";
 import { slackSendText } from "../libs/slack";
 
 const db = admin.firestore();
@@ -25,16 +25,24 @@ const authOnCreate = functions.auth.user().onCreate(async (user, _context) => {
     // below are for VpnUsers data
     if (user.email) {
       logger.info(`New User`, user);
-      const u: IUser = {
+      const u: Omit<User, "displayName"> = {
         uid: user.uid,
         email: user.email,
         emailVerified: user.emailVerified,
         createdAt: now,
         updatedAt: now,
         phone: user.phoneNumber ?? undefined,
-        displayName: user.displayName ?? undefined,
         photoUrl: user.photoURL ?? undefined,
         address: undefined,
+        preferName: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        wechatId: undefined,
+        gender: undefined,
+        birthYear: undefined,
+        personalBest: undefined,
+        emergencyName: undefined,
+        emergencyPhone: undefined,
         customerId: undefined,
       };
       // create a new customer in Stripe

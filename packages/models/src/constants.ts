@@ -1,12 +1,12 @@
 export const adultRace = {
   name: "Adult",
-  description: "Race for Adults",
+  description: "Adult",
   entryFee: 35,
 };
 
 export const kidsRace = {
   name: "Kids",
-  description: "Race for Kids",
+  description: "Kids Run",
   entryFee: 5,
 };
 

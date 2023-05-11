@@ -1,18 +1,14 @@
 "use client";
-import { ActivityIndicator, Surface, TextInput } from "react-native-paper";
 import { loadStripe } from "@stripe/stripe-js";
+import dynamic from "next/dynamic";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Spinner } from "@material-tailwind/react";
 
-import { Button } from "ui";
-import Register from "../../content/register.mdx";
 import { useAuth } from "@/context/AuthContext";
-import { LoginWithEmailScreen } from "@8hourrelay/login";
-import Step1 from "./Step1";
-import Login from "./Login";
-import Email from "./Email";
+import { RaceEntry } from "@8hourrelay/models";
+
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe(
@@ -26,25 +22,41 @@ const styles = {
   errorMsg: "text-red-500 text-sm",
 };
 
+export type REGISTER_STATE =
+  | "INIT"
+  | "NOT_AUTHENTICATED"
+  | "LOGINED"
+  | "FORM_SUBMITTED"
+  | "PAID"
+  | "LOADING"
+  | "CANCELED_PAY";
+
 function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { store } = useAuth();
-  const { authStore, userStore } = store;
 
-  const [state, setState] = useState("init");
-
-  const sessionId = searchParams.get("session_id");
+  const sessionId = searchParams.get("session_id"); // payment succeed
+  const success = searchParams.get("success"); // payment succeed
+  const canceled = searchParams.get("canceled"); // payment canceled
   const apiKey = searchParams.get("apiKey");
-  const success = searchParams.get("success");
-  const canceled = searchParams.get("canceled");
+
+  const { store } = useAuth();
+  const [form, setForm] = useState<RaceEntry | null>(null);
+  const [state, setState] = useState<REGISTER_STATE>(() => {
+    if (!store.authStore.currentUser) return "NOT_AUTHENTICATED";
+    if (store.userStore.user) return "LOGINED";
+    if (store.authStore.currentUser && !store.userStore.user) return "LOADING";
+    if (sessionId && success) return "PAID";
+    if (canceled) return "CANCELED_PAY";
+    return "INIT";
+  });
 
   // use click on login link will trigger below event
   useEffect(() => {
     async function sigininWithEmail() {
       if (typeof window !== "undefined") {
         const fullUrl = window.location.href;
-        await authStore.signinWithEmailLink(fullUrl);
+        await store.authStore.signinWithEmailLink(fullUrl);
       }
     }
     sigininWithEmail();
@@ -52,28 +64,47 @@ function Page() {
 
   // use click on login link will trigger below event
   useEffect(() => {
-    if (authStore.state === "VERFIED") {
-      router.push("/register?continue");
-      authStore.setState("INIT");
+    if (store.authStore.state === "VERFIED") {
+      // store.authStore.setState("LOGINED");
+      router.push("/register");
     }
-  }, [authStore.state]);
+    if (store.userStore.user) setState("LOGINED");
+  }, [store.authStore.state, store.userStore.user]);
 
-  if (canceled) {
+  // form filled, then submit it to backend to get the checkout session Id
+  const onSubmit = async () => {
+    console.log(`Paying...`, { form });
+    const [stripe, sessionId] = await Promise.all([
+      stripePromise,
+      store.userStore.submitRaceForm(form!),
+    ]);
+    // redirect user to Stripe Checkout for payment
+    if (stripe && sessionId) {
+      stripe.redirectToCheckout({ sessionId: sessionId.id });
+    }
+  };
+
+  if (state === "CANCELED_PAY") {
     return <div>Your payment canceled!</div>;
   }
-  if (success && sessionId) {
+
+  // payment succeed, we should continue the team register
+  if (state === "PAID") {
     return (
       <div className="flex h-full">
-        <div>You successfully registered! Now </div>
+        <div>You successfully registered! Now You can </div>
       </div>
     );
   }
 
   // if no logined user yet
-  if (!userStore.user) {
+  if (state === "NOT_AUTHENTICATED") {
+    const Login = dynamic(() => import("./Login"), { ssr: false });
+    const Email = dynamic(() => import("./Email"), { ssr: false });
+
     return (
       <div className="w-full md:max-w-[800px] h-full">
-        {authStore.state === "INIT" && (
+        {store.authStore.state === "INIT" ? (
           <>
             <div className="text-center text-lg pt-10">
               Please login to register to a race. Enter your email and will send
@@ -81,30 +112,50 @@ function Page() {
             </div>
             <Login />
           </>
-        )}
-        {authStore.state === "EMAIL_LINK_SENT" && (
+        ) : store.authStore.state === "EMAIL_LINK_SENT" ? (
           <div>
-            Check your email {authStore.email} and click the link to continue
-            the register
+            Check your email {store.authStore.email} and click the link to
+            continue the register
           </div>
-        )}
-        {authStore.state === "MISSING_EMAIL" && (
+        ) : store.authStore.state === "MISSING_EMAIL" ? (
           <div className="text-center text-lg pt-10">
             <div className="text-center text-lg pt-10">
               Please provide your email for confirmation
             </div>
             <Email />
           </div>
+        ) : (
+          <div className="flex items-end gap-8">
+            <Spinner className="h-12 w-12" />
+          </div>
         )}
       </div>
     );
   }
+
+  if (state === "FORM_SUBMITTED" && form) {
+    const Confirm = dynamic(() => import("./ConfirmPayment"), {
+      ssr: false,
+    });
+    // user logged in and authStore has been fullfilled with user data
+    return (
+      <div className="flex flex-col justify-center pt-10">
+        <Confirm raceEntry={form} onSubmit={onSubmit} />
+      </div>
+    );
+  }
+  const RegisterForm = dynamic(() => import("./RegisterForm"), { ssr: false });
+  // user logged in and authStore has been fullfilled with user data
   return (
     <div className="flex flex-col justify-center pt-10">
-      {/* <div className="prose mx-2"> */}
-      {/* <Register /> */}
-      {/* </div> */}
-      <Step1 />
+      <RegisterForm
+        onSubmit={(values) => {
+          console.log(`Register Form data`, { values });
+          const form = new RaceEntry(values);
+          setForm(form);
+          setState("FORM_SUBMITTED");
+        }}
+      />
     </div>
   );
 }

@@ -16,6 +16,7 @@ function EmailMissing() {
   const {
     store: { authStore },
   } = useAuth();
+
   const onLogin = async (email) => {
     if (typeof window === "object") {
       const fullUrl = window.location.href;

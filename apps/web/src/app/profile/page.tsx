@@ -9,11 +9,9 @@ import { Button } from "ui";
 const ProtectedPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const {
-    store: { authStore, userStore },
-  } = useAuth();
+  const { store } = useAuth();
 
-  const user = userStore.user;
+  const user = store.userStore.user;
   const apiKey = searchParams.get("apiKey");
 
   // use click on login link will trigger below event
@@ -21,8 +19,8 @@ const ProtectedPage: React.FC = () => {
     async function siginin() {
       if (apiKey && typeof window !== "undefined") {
         const fullUrl = window.location.href;
-        if (authStore.email && fullUrl) {
-          await authStore.signinWithEmailLink(fullUrl);
+        if (store.authStore.email && fullUrl) {
+          await store.authStore.signinWithEmailLink(fullUrl);
         }
       }
     }
@@ -30,10 +28,10 @@ const ProtectedPage: React.FC = () => {
   }, [apiKey]);
 
   useEffect(() => {
-    if (!apiKey && !authStore.currentUser) {
+    if (!apiKey && !store.authStore.currentUser) {
       router.push("/login");
     }
-  }, [apiKey, authStore.currentUser]);
+  }, [apiKey, store.authStore.currentUser]);
 
   if (!user) {
     return null;
@@ -67,7 +65,7 @@ const ProtectedPage: React.FC = () => {
           <Button
             onClick={() => {
               console.log(`loging out!`);
-              authStore.logout();
+              store.authStore.logout();
               router.push("/");
             }}
             text="Logout"

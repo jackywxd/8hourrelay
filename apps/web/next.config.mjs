@@ -3,6 +3,7 @@ import remarkGfm from "remark-gfm";
 import rehypePrism from "@mapbox/rehype-prism";
 import path from "path";
 import { fileURLToPath } from "url";
+import nodeExternals from "webpack-node-externals";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -17,7 +18,7 @@ const nextConfig = {
   output: "export",
   experimental: {
     appDir: true,
-    mdxRs: true,
+    mdxRs: false,
   },
   // i18n: {
   //   locales: ["en", "zh", "zh-TW"],
@@ -40,7 +41,13 @@ const nextConfig = {
     "@react-navigation/stack",
   ],
   reactStrictMode: true,
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.externals.push({
+        bufferutil: "commonjs bufferutil",
+        "utf-8-validate": "commonjs utf-8-validate",
+      });
+    }
     // console.log(config);
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
