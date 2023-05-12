@@ -28,11 +28,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [store] = useState<RootStore>(() => {
     const rootStore = new RootStore();
     // register our root store
-    if (auth.currentUser) {
+    if (auth.currentUser && auth.currentUser.uid) {
       console.log(`init authStore with currentUser`, {
         currentUser: auth.currentUser,
       });
+      rootStore.authStore.setAuthenticated(true);
       rootStore.userStore.setUid(auth.currentUser.uid);
+    } else {
+      rootStore.authStore.setAuthenticated(false);
     }
     rootStore.authStore.setAuth(auth);
     return rootStore;
@@ -45,6 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       store.authStore.setAuth(auth);
       if (user && user.uid) {
+        store.authStore.setAuthenticated(true);
         store.userStore.setUid(user.uid);
       }
     });

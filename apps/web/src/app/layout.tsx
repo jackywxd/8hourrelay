@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html data-theme="coffee" lang="en">
+    <html data-theme="mytheme" lang="en">
       <head />
       <body>
         <PaperProvider theme={theme}>

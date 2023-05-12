@@ -14,8 +14,8 @@ const HOST_NAME =
   process.env.ENV === "prod"
     ? "https://8hourrelay.com"
     : process.env.ENV === "staging"
-    ? "https://staging.8hourrelay.com"
-    : "http://localhost:3000";
+    ? "http://localhost:3000"
+    : "https://staging.8hourrelay.com";
 
 export const onGetStripeSession = functions
   .runWith({

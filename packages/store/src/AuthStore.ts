@@ -28,6 +28,7 @@ export type RegisterState =
 
 export class AuthStore {
   root: RootStore;
+  isAuthenticated: boolean = false;
   emailLocalKey = `8hourrelayEmailKey`;
   email?: string;
   state: RegisterState = "INIT";
@@ -44,6 +45,7 @@ export class AuthStore {
     makeAutoObservable(
       this,
       {
+        root: false,
         setEmail: action,
         setState: action,
         signinWithEmailLink: flow,
@@ -56,6 +58,10 @@ export class AuthStore {
 
   setError = (error: string) => {
     this.error = error;
+  };
+
+  setAuthenticated = (status: boolean) => {
+    this.isAuthenticated = status;
   };
 
   setEmail = (email: string) => {
@@ -92,6 +98,9 @@ export class AuthStore {
   }
 
   dispose() {
+    this.setState("INIT");
+    this.setAuthenticated(false);
+    this.email = undefined;
     if (this.disposer) {
       this.disposer();
       this.disposer = null;
@@ -104,6 +113,7 @@ export class AuthStore {
   };
 
   setAuth = (auth: Auth) => {
+    console.log(`setting up auth!!`, { auth });
     this.auth = auth;
   };
 
@@ -120,7 +130,9 @@ export class AuthStore {
     try {
       console.log(`env`, process.env);
       const actionCodeSettings = {
-        url: `${process.env.NEXT_PUBLIC_HOST_NAME}/${path ?? `register`}`,
+        url: `${process.env.NEXT_PUBLIC_HOST_NAME}/login?continue=${
+          path ?? `profile`
+        }`,
         iOS: {
           bundleId: "com.8hourrelay",
         },

@@ -3,73 +3,45 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { Button } from "ui";
-
+import { Button } from "@material-tailwind/react";
 const ProtectedPage: React.FC = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { store } = useAuth();
 
   const user = store.userStore.user;
-  const apiKey = searchParams.get("apiKey");
+  const raceEntry = store.userStore.raceEntry;
 
-  // use click on login link will trigger below event
-  useEffect(() => {
-    async function siginin() {
-      if (apiKey && typeof window !== "undefined") {
-        const fullUrl = window.location.href;
-        if (store.authStore.email && fullUrl) {
-          await store.authStore.signinWithEmailLink(fullUrl);
-        }
-      }
-    }
-    siginin();
-  }, [apiKey]);
-
-  useEffect(() => {
-    if (!apiKey && !store.authStore.currentUser) {
-      router.push("/login");
-    }
-  }, [apiKey, store.authStore.currentUser]);
-
-  if (!user) {
-    return null;
-  }
   return (
     <ProtectedRoute>
       <div className="flex flex-col min-h-fit justify-center items-center">
         <div>Current Login User</div>
-        <div>Email: {user.email}</div>
-        <h1>Click below to Enter 2023 8 Hour Relay Adule</h1>
-        <div className="mt-11 mb-11">
+        <div>Email: {user?.email}</div>
+        <div>
+          {raceEntry && (
+            <div className="flex w-full m-10 justify-between items-center">
+              <div>Registered raced: {raceEntry.raceId}</div>
+              <Button
+                className="!btn-secondary"
+                onClick={() => {
+                  router.push("/register?action=edit");
+                }}
+              >
+                Edit
+              </Button>
+            </div>
+          )}
+        </div>
+        <div className="mt-11 gap-3">
           <Button
+            className="!btn-primary btn-lg"
             onClick={() => {
               console.log(`loging out!`);
-            }}
-            text="Register Adult"
-          />
-        </div>
-        <div className="text-zinc-900">
-          <h1>Click below to Enter 2023 8 Hour Relay Adule</h1>
-        </div>
-        <div className="mt-11">
-          <Button
-            onClick={() => {
-              console.log(`loging out!`);
-            }}
-            text="Register Kids"
-          />
-        </div>
-        <div className="mt-11">
-          <Button
-            onClick={() => {
-              console.log(`loging out!`);
-              store.authStore.logout();
               router.push("/");
+              store.authStore.logout();
             }}
-            text="Logout"
-          />
+          >
+            Logout
+          </Button>
         </div>
       </div>
     </ProtectedRoute>

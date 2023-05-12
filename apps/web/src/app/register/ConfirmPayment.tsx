@@ -1,42 +1,62 @@
-"use client";
-import { useEffect, useState } from "react";
-import { observer } from "mobx-react-lite";
-import { Formik, Field, Form, ErrorMessage, useFormikContext } from "formik";
-import * as Yup from "yup";
-import { Spinner, Button } from "@material-tailwind/react";
-
-import { clone, fromSnapshot, getSnapshot, onSnapshot } from "mobx-keystone";
-import AsyncStorage from "@react-native-community/async-storage";
-import SelectComponent from "@/components/SelecComponent";
-import { loadStripe } from "@stripe/stripe-js";
-import { entryFormSnapshot } from "@8hourrelay/store/src/RootStore";
+import { Button } from "@material-tailwind/react";
 import { RaceEntry } from "@8hourrelay/models";
-import { useAuth } from "@/context/AuthContext";
+
+const data = {
+  firstName: "First Name",
+  lastName: "Last Name",
+  preferName: "Prefer Name",
+  phone: "Phone",
+  gender: "Gender",
+  personalBest: "Personal Best",
+  email: "Email",
+  yearBirth: "Year of Birth",
+  size: "Selected Shirt Size",
+  emergencyName: "Emergency Contact Name",
+  emergencyPhone: "Emergency Contact Phone",
+};
 
 function ConfirmForm({
   raceEntry,
   onSubmit,
+  onCancel,
 }: {
   raceEntry: RaceEntry;
   onSubmit: () => void;
+  onCancel: () => void;
 }) {
-  const { store } = useAuth();
   return (
     <div className="w-full max-w-lg">
-      <div>Email: {raceEntry.email}</div>
+      <div>Registered Race: {raceEntry.race}</div>
+      <div>Entry Fee: {raceEntry.entryFee}</div>
       <div className="divider">Race Entry Info</div>
 
       <div className="flex flex-wrap min-w-full -mx-3 mb-6">
-        Please confirm and Pay {raceEntry.entryFee}
-        <div className="mt-10">
+        {Object.entries(raceEntry).map((entry) => {
+          if (entry[1] && data[entry[0]])
+            return (
+              <div className="flex w-full justify-between">
+                <div className="">{data[entry[0]]} :</div>
+                <div>{entry[1]}</div>
+              </div>
+            );
+        })}
+
+        <div className="flex gap-10 justify-between w-full mt-10">
           <Button
-            variant="gradient"
             fullWidth
             type="submit"
             onClick={onSubmit}
-            className="flex items-center gap-3"
+            className="!btn-primary"
           >
-            {store.isLoading && <Spinner />} Payment
+            {raceEntry.isPaid ? `Update` : `Payment`}
+          </Button>
+          <Button
+            fullWidth
+            type="submit"
+            onClick={onCancel}
+            className="!btn-secondary"
+          >
+            EDIT
           </Button>
         </div>
       </div>
@@ -44,4 +64,4 @@ function ConfirmForm({
   );
 }
 
-export default observer(ConfirmForm);
+export default ConfirmForm;

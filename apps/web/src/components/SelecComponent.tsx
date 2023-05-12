@@ -5,8 +5,17 @@ function SelectComponent(props) {
   const [field, meta, helpers] = useField(props);
   return (
     <div className="w-72 pt-2">
-      <label>{props.label}</label>
-      <Select {...field} onChange={helpers.setValue}>
+      <Select
+        {...field}
+        animate={{
+          mount: { y: 0 },
+          unmount: { y: 25 },
+        }}
+        onChange={helpers.setValue}
+        disabled={props.disabled}
+        label={props.label}
+        error={meta.touched && meta.error ? true : false}
+      >
         {props.options?.map((option) => {
           return (
             <Option key={option.label} value={option.value}>

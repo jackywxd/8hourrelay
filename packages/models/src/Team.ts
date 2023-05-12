@@ -5,7 +5,7 @@ export class Team {
   captainEmail!: string;
   name!: string;
   year!: string;
-  race!: string;
+  race!: string; // adult or Kids
   eventId!: string;
   createdBy!: string;
   createdAt!: number;

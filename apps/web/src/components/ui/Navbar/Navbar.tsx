@@ -77,10 +77,18 @@ const Navbar = () => {
                 <div
                   onClick={() => {
                     setNavbar(false);
-                    router.push("/register");
                   }}
                 >
                   <Link href="/register">Register</Link>
+                </div>
+              </li>
+              <li className="text-white  p-2 hover:bg-slate-500 rounded">
+                <div
+                  onClick={() => {
+                    setNavbar(false);
+                  }}
+                >
+                  <Link href="/team">Team</Link>
                 </div>
               </li>
               <li className="text-white p-2 hover:bg-slate-500 rounded">
@@ -99,6 +107,15 @@ const Navbar = () => {
                   }}
                 >
                   <Link href="/sponsors">Sponsors</Link>
+                </div>
+              </li>
+              <li className="text-white  p-2 hover:bg-slate-500 rounded">
+                <div
+                  onClick={() => {
+                    setNavbar(false);
+                  }}
+                >
+                  <Link href="/volunteers">Volunteers</Link>
                 </div>
               </li>
               <li className="text-white  p-2 hover:bg-slate-500 rounded">

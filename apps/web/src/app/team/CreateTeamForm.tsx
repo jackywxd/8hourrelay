@@ -25,14 +25,8 @@ function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
   }, []);
 
   const SignupSchema = Yup.object().shape({
-    firstName: Yup.string().max(50, "Too Long!").required("Required"),
-    lastName: Yup.string().max(50, "Too Long!").required("Required"),
-    race: Yup.string().required("Required"),
-    phone: Yup.string().required("Required"),
-    gender: Yup.string().required("Required"),
-    birthYear: Yup.string().required("Required"),
-    emergencyName: Yup.string().required("Required"),
-    emergencyPhone: Yup.string().required("Required"),
+    teamName: Yup.string().max(50, "Too Long!").required("Required"),
+    slogon: Yup.string(),
   });
 
   // const fee = store.eventStore.event.races.filter(
@@ -88,12 +82,7 @@ function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
               <FieldItem label="Name*" fieldName="emergencyName" />
               <FieldItem label="Phone*" fieldName="emergencyPhone" />
               <div className="flex w-full justify-between gap-2">
-                <Button
-                  className="!btn-primary"
-                  type="submit"
-                  fullWidth
-                  disabled={props.isValid ? false : true}
-                >
+                <Button type="submit" fullWidth>
                   {raceEntry?.isPaid ? `Update Info` : `Review & Payment`}
                 </Button>
                 <Button fullWidth onClick={onCancel}>

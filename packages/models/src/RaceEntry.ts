@@ -1,5 +1,20 @@
 export type Gender = "Male" | "Femal";
 
+// entries user can update after register payment
+export const editableEntries = [
+  "firstName",
+  "lastName",
+  "preferName",
+  "personalBest",
+  "email", // for other people's entry
+  "phone",
+  "gender",
+  "size",
+  "team",
+  "emergencyName",
+  "emergencyPhone",
+];
+
 export class RaceEntry {
   firstName?: string;
   lastName?: string;
@@ -10,7 +25,7 @@ export class RaceEntry {
   uid!: string;
   email!: string;
   phone?: string;
-  year?: string;
+  year!: string;
   isActive!: boolean;
   size?: string;
   emergencyName?: string;

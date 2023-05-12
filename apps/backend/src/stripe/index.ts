@@ -1,9 +1,6 @@
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
-import { logger } from "firebase-functions";
 import { slackSendMsg } from "../libs/slack";
 import Stripe from "stripe";
-const db = admin.firestore();
+import { logger, db, functions } from "../fcm";
 
 const apiKey = process.env.STRIPE_SECRET;
 // Stripe Signing secret
@@ -141,7 +138,9 @@ export const stripeWebhook = functions.https.onRequest(
             db.collection("StripeEvents").doc(charge.id).create(charge),
             userSnapshot.docs[0].ref.set(
               {
+                receiptNumber: charge.receipt_number, // receipt number
                 receiptUrl: charge.receipt_url,
+                isPaid: true, // set paid to true
               },
               { merge: true }
             ),

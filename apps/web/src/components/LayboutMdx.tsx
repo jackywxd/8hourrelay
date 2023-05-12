@@ -17,12 +17,12 @@ function LayoutMdx({
     }
   }, [store.error]);
   return (
-    <div className="relative flex justify-center">
+    <div className="relative flex justify-center min-h-full grow">
       {/* <!-- loading overlay --> */}
       {store.isLoading && (
         <div className="absolute bg-gray-500 bg-opacity-50 z-10 h-full w-full flex items-center justify-center">
           <div className="flex items-center">
-            <span className="text-3xl mr-4">Loading</span>
+            {/* <span className="text-3xl mr-4">Loading</span> */}
             {/* <!-- loading icon --> */}
             <svg
               className="animate-spin h-5 w-5 text-gray-600"
@@ -58,7 +58,9 @@ function LayoutMdx({
         </div>
       )}
       {/* <!-- end loading overlay --> */}
-      <div className="w-full flex flex-co justify-center">{children}</div>
+      <div className="w-full lg:w-[800px] flex flex-co justify-center mt-10">
+        {children}
+      </div>
     </div>
   );
 }

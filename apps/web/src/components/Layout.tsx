@@ -14,7 +14,7 @@ interface Props extends PropsWithChildren {
 export default function MyLayout({ children, meta: pageMeta }: Props) {
   const router = useRouter();
   const meta = {
-    title: "Next.js Subscription Starter",
+    title: "8 Hour Relay Race",
     description: "Brought to you by Vercel, Stripe, and Supabase.",
     cardImage: "/og.png",
     ...pageMeta,
@@ -38,11 +38,13 @@ export default function MyLayout({ children, meta: pageMeta }: Props) {
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image" content={meta.cardImage} />
       </Head>
-      <Navbar />
-      <div className="min-h-full w-full bg-opacity-10">
-        <main id="skip">{children}</main>
+      <div className="flex flex-col min-h-screen justify-between">
+        <Navbar />
+        <div className="min-h-full w-full bg-opacity-10">
+          <main id="skip">{children}</main>
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </>
   );
 }

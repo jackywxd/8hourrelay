@@ -1,3 +1,4 @@
+"use client";
 import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import { useEffect, ReactNode } from "react";
@@ -13,15 +14,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = observer(
     const router = useRouter();
     console.log(`router and user is `, {
       router,
-      currentUser: store.authStore.currentUser,
+      isAuthenticated: store.authStore.isAuthenticated,
     });
+
+    console.log(`this is protected route!!`);
     useEffect(() => {
-      if (!store.authStore.currentUser) {
+      if (!store.authStore.isAuthenticated) {
         router.push("/login");
       }
-    }, [store.authStore.currentUser]);
+    }, [store.authStore.isAuthenticated]);
 
-    return store.authStore.currentUser ? <>{children}</> : null;
+    return store.authStore.isAuthenticated ? <>{children}</> : null;
   }
 );
 

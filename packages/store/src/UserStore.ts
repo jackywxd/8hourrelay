@@ -11,12 +11,13 @@ import {
   getFirestore,
   doc,
   getDoc,
+  setDoc,
   onSnapshot,
   collection,
   DocumentSnapshot,
 } from "firebase/firestore";
 import { getApp } from "firebase/app";
-import { RaceEntry } from "@8hourrelay/models/src/RaceEntry";
+import { RaceEntry, editableEntries } from "@8hourrelay/models/src/RaceEntry";
 import {
   HttpsCallableResult,
   getFunctions,
@@ -25,6 +26,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStore, entryFormSnapshot } from "./RootStore";
 
+export type RaceEntryState = "FORM_SUBMITTED" | "PAID" | "INVALID_FORM" | "WIP";
 export class UserStore {
   root: RootStore;
   uid: string | null = null;
@@ -54,6 +56,11 @@ export class UserStore {
     makeAutoObservable(
       this,
       {
+        root: false,
+        db: false,
+        disposer: false,
+        userListner: false,
+        raceEntryListner: false,
         setUid: action,
         setUser: action,
         setRaceEntries: action,
@@ -63,6 +70,29 @@ export class UserStore {
     );
   }
 
+  get raceEntryState(): RaceEntryState {
+    if (this.raceEntry?.isPaid) return "PAID";
+    if (this.raceEntry?.sessionId) return "FORM_SUBMITTED";
+    return "WIP";
+  }
+
+  get teamState() {
+    if (this.team) return "JOINED";
+    return "WIP";
+  }
+
+  // whether current user is captain for current team
+  get isCaptain() {
+    if (this.team && this.team.captainEmail === this.user?.email) return true;
+    return false;
+  }
+
+  get db() {
+    const app = getApp();
+    const db = getFirestore(app);
+    return db;
+  }
+
   setError(error: string) {
     this.error = error;
   }
@@ -70,7 +100,7 @@ export class UserStore {
   setUid(uid: string | null) {
     console.log(`setting uid to ${uid}`);
     this.uid = uid;
-    this.addUserListner(uid!);
+    if (uid) this.addUserListner(uid);
   }
 
   setUser(user: User) {
@@ -90,13 +120,10 @@ export class UserStore {
     return this.raceEntries?.filter((f) => f.isActive)?.[0];
   }
 
-  get db() {
-    const app = getApp();
-    const db = getFirestore(app);
-    return db;
-  }
-
   addUserListner(uid: string) {
+    if (!uid) {
+      return;
+    }
     // remove current user listner first
     if (this.userListner) {
       this.userListner();
@@ -105,6 +132,7 @@ export class UserStore {
     if (this.raceEntryListner) {
       this.raceEntryListner();
     }
+
     this.getTeam(); // get team data for this user
     this.userListner = onSnapshot(doc(this.db, "Users", uid), (doc) => {
       const user = doc.data() as User;
@@ -131,6 +159,8 @@ export class UserStore {
     this.userListner && this.userListner();
     this.raceEntryListner && this.raceEntryListner();
     this.user = undefined;
+    this.raceEntries = undefined;
+    this.team = undefined;
     this.userListner = null;
     this.raceEntryListner = null;
   }
@@ -153,7 +183,34 @@ export class UserStore {
       this.isLoading = false;
     }
   }
-
+  *updateRaceEntry(form: RaceEntry) {
+    console.log(`Updating race entry to new data`, { form });
+    this.isLoading = true;
+    try {
+      const data: any = {};
+      Object.entries(form).forEach((e) => {
+        if (e[1] && editableEntries.includes(e[0])) {
+          data[e[0]] = e[1];
+        }
+      });
+      console.log(`update race with data`, { data });
+      if (this.uid && this.raceEntry?.raceId) {
+        yield setDoc(
+          doc(this.db, "Users", this.uid, "RaceEntry", this.raceEntry?.raceId),
+          data,
+          { merge: true }
+        );
+        yield AsyncStorage.removeItem(entryFormSnapshot);
+      } else {
+        throw new Error(`Failed to update race entry! Missing uid and raceId`);
+      }
+      this.isLoading = false;
+    } catch (error) {
+      console.log(`failed to getUser`, error);
+      this.error = (error as Error).message;
+      this.isLoading = false;
+    }
+  }
   *submitRaceForm(raceEntry: RaceEntry) {
     const functions = getFunctions();
     const onCreateCheckout = httpsCallable(functions, "onCreateCheckout");
@@ -173,6 +230,7 @@ export class UserStore {
       this.error = (error as Error).message;
     }
     this.isLoading = false;
+    return null;
   }
 
   *createTeam() {
@@ -190,7 +248,7 @@ export class UserStore {
   *getTeam() {
     this.isLoading = true;
     try {
-      console.log(`user data`);
+      console.log(`getting team data`);
       this.team = [];
       this.isLoading = false;
       // query team data for this uer
@@ -225,55 +283,3 @@ export class UserStore {
     }
   }
 }
-// export const UserStore = types
-//   .model("UserStore", {
-//     identifier: types.optional(types.identifier, "UserStore"),
-//     user: types.maybeNull(User),
-//     isLoading: types.boolean,
-//     error: types.string,
-//   })
-//   .views(() => ({
-//     get db() {
-//       const app = getApp();
-//       const db = getFirestore(app);
-//       return db;
-//     },
-//   }))
-//   .actions((self) => ({
-//     setUser: (user: IUser) => {
-//       self.user = User.create(user);
-//     },
-//     updateUser: flow(function* (update: Omit<IUser, "uid">) {
-//       if (!self.user) {
-//         throw new Error(`No current login user!!`);
-//       }
-//       if (self.user?.emailVerified) {
-//         throw new Error(`User email already verified!`);
-//       }
-//       try {
-//         yield setDoc(doc(self.db, "Users", self.user.uid), {
-//           ...update,
-//           updatedAt: new Date().getTime(),
-//         });
-//       } catch (error) {
-//         console.log(error);
-//         throw error;
-//       }
-//     }),
-//     getUser: flow(function* (uid: string) {
-//       self.isLoading = true;
-//       try {
-//         const result = yield getDoc(doc(self.db, "Users", uid));
-//         if (!result.exists()) {
-//           throw new Error(`No user data!`);
-//         }
-//         const data = result.data();
-//         console.log(`user data`, { user: data });
-//         self.isLoading = false;
-//       } catch (error) {
-//         console.log(`failed to getUser`, error);
-//         self.error = error.message;
-//         self.isLoading = false;
-//       }
-//     }),
-//   }));
