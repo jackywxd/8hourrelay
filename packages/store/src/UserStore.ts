@@ -12,6 +12,7 @@ import {
   doc,
   getDoc,
   setDoc,
+  deleteDoc,
   onSnapshot,
   collection,
   DocumentSnapshot,
@@ -32,7 +33,8 @@ export class UserStore {
   uid: string | null = null;
   user?: User;
   team?: Team;
-  raceEntries?: RaceEntry[] | [];
+  raceEntries: RaceEntry[] | [] = []; // race entriy array
+  editIndex: number | null = null; // current edit race entry index
   isLoading = false;
   error = "";
   userListner: null | (() => void) = null;
@@ -76,6 +78,17 @@ export class UserStore {
     return "WIP";
   }
 
+  // return the current selected race entry
+  get raceEntry() {
+    if (
+      this.raceEntries &&
+      typeof this.editIndex === "number" &&
+      this.raceEntries.length > 0
+    )
+      return this.raceEntries[this.editIndex];
+    return null;
+  }
+
   get teamState() {
     if (this.team) return "JOINED";
     return "WIP";
@@ -85,6 +98,10 @@ export class UserStore {
   get isCaptain() {
     if (this.team && this.team.captainEmail === this.user?.email) return true;
     return false;
+  }
+
+  setEditIndex(index: number | null) {
+    this.editIndex = index;
   }
 
   get db() {
@@ -109,15 +126,6 @@ export class UserStore {
 
   setRaceEntries(races: RaceEntry[]) {
     this.raceEntries = races;
-  }
-
-  get raceEntry() {
-    console.log(
-      `returnning raceEntry ${JSON.stringify(
-        this.raceEntries?.filter((f) => f.isActive)?.[0]
-      )}`
-    );
-    return this.raceEntries?.filter((f) => f.isActive)?.[0];
   }
 
   addUserListner(uid: string) {
@@ -148,6 +156,7 @@ export class UserStore {
           const data = doc.data();
           console.log(`New Race Entry data`, data);
           const entry = new RaceEntry(data as RaceEntry);
+          entry.id = doc.id;
           raceEntries.push(entry);
         });
         this.setRaceEntries(raceEntries);
@@ -159,7 +168,7 @@ export class UserStore {
     this.userListner && this.userListner();
     this.raceEntryListner && this.raceEntryListner();
     this.user = undefined;
-    this.raceEntries = undefined;
+    this.raceEntries = [];
     this.team = undefined;
     this.userListner = null;
     this.raceEntryListner = null;
@@ -183,6 +192,7 @@ export class UserStore {
       this.isLoading = false;
     }
   }
+
   *updateRaceEntry(form: RaceEntry) {
     console.log(`Updating race entry to new data`, { form });
     this.isLoading = true;
@@ -194,9 +204,9 @@ export class UserStore {
         }
       });
       console.log(`update race with data`, { data });
-      if (this.uid && this.raceEntry?.raceId) {
+      if (this.uid && this.raceEntry?.id) {
         yield setDoc(
-          doc(this.db, "Users", this.uid, "RaceEntry", this.raceEntry?.raceId),
+          doc(this.db, "Users", this.uid, "RaceEntry", this.raceEntry?.id),
           data,
           { merge: true }
         );
@@ -206,19 +216,60 @@ export class UserStore {
       }
       this.isLoading = false;
     } catch (error) {
-      console.log(`failed to getUser`, error);
+      console.log(`failed to Update Race Entry`, error);
       this.error = (error as Error).message;
       this.isLoading = false;
     }
   }
-  *submitRaceForm(raceEntry: RaceEntry) {
+
+  *deleteRaceEntry() {
+    console.log(`delete race entry`);
+
+    this.isLoading = true;
+    try {
+      if (this.editIndex === null || !this.raceEntries) {
+        throw new Error(`No selected delete race entry`);
+      }
+      const id = this.raceEntries[this.editIndex].id;
+      // const newEntry = this.raceEntries?.filter(f=>f.id!==id)
+      yield deleteDoc(doc(this.db, "Users", this.uid!, "RaceEntry", id));
+      yield AsyncStorage.removeItem(entryFormSnapshot);
+      this.setEditIndex(null);
+    } catch (error) {
+      console.log(`failed to getUser`, error);
+      this.error = (error as Error).message;
+    }
+    this.isLoading = false;
+  }
+
+  *onGetStripeSession(sessionId: string) {
+    const functions = getFunctions();
+    const onGetStripeSession = httpsCallable(functions, "onGetStripeSession");
+
+    this.isLoading = true;
+    try {
+      const result: HttpsCallableResult<{ id: string }> =
+        yield onGetStripeSession({ session_id: sessionId });
+      console.log(`session result`, result);
+
+      return result.data;
+    } catch (error) {
+      console.log(``, { error });
+      this.error = (error as Error).message;
+    }
+    this.isLoading = false;
+    return null;
+  }
+
+  *submitRaceForm(raceEntry: RaceEntry): unknown {
     const functions = getFunctions();
     const onCreateCheckout = httpsCallable(functions, "onCreateCheckout");
 
     this.isLoading = true;
     try {
-      const result: HttpsCallableResult<{ id: string }> =
-        yield onCreateCheckout(raceEntry);
+      const result: HttpsCallableResult<unknown> = yield onCreateCheckout(
+        raceEntry
+      );
       console.log(`submit result`, result);
 
       if (result) {
@@ -249,7 +300,7 @@ export class UserStore {
     this.isLoading = true;
     try {
       console.log(`getting team data`);
-      this.team = [];
+      // this.team = [];
       this.isLoading = false;
       // query team data for this uer
     } catch (error) {

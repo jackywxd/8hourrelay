@@ -8,6 +8,7 @@ import { Spinner, Button } from "@material-tailwind/react";
 
 import { useAuth } from "@/context/AuthContext";
 import { RaceEntry } from "@8hourrelay/models";
+import DisplayRegistration from "./DisplayRegistration";
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
@@ -15,7 +16,7 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
-export type REGISTER_STATE = "INIT" | "EDIT" | "FORM_SUBMITTED";
+export type REGISTER_STATE = "INIT" | "EDIT" | "FORM_SUBMITTED" | "DELETE";
 
 function Page() {
   const router = useRouter();
@@ -86,66 +87,51 @@ function Page() {
 
     // now user is logged in, race entry is either unpaid or paid
     // User already paid, user can either edit the info or proceed to create team/join team
-    if (store.userStore.raceEntryState === "PAID") {
-      return (
-        <div className="card card-compact w-96 bg-base-100 shadow-xl gap-8">
+    return (
+      <div className="flex flex-col w-full justify-center items-center gap-8">
+        <div>
           {success ? (
             <div>You success fully registered for race</div>
           ) : (
-            <div>Your registered race: {raceEntry?.raceId}</div>
+            <div>Manage your races</div>
           )}
-          <Button
-            onClick={() => {
-              setState("EDIT");
-            }}
-          >
-            Edit
-          </Button>
+        </div>
+        <div className="card card-compact w-full bg-base-100 shadow-xl justify-center gap-8">
+          {store.userStore.raceEntries ? (
+            <DisplayRegistration
+              raceEntries={store.userStore.raceEntries}
+              setIndex={(index) => {
+                store.userStore.setEditIndex(index);
+                setState("EDIT");
+              }}
+              onPay={(index: number) => {
+                store.userStore.setEditIndex(index);
+                setForm(store.userStore.raceEntry);
+                setState("FORM_SUBMITTED");
+              }}
+            />
+          ) : (
+            <div>Add your first Race</div>
+          )}
+        </div>
+        <div className="flex w-full justify-end">
           <Button
             className="!btn-primary"
             onClick={() => {
-              router.push("/team?action=create");
+              store.userStore.setEditIndex(null);
+              setState("EDIT");
             }}
           >
-            Creat Team
-          </Button>
-          <Button
-            className="!btn-secondary"
-            onClick={() => {
-              router.push("/team?action=join");
-            }}
-          >
-            Join Team
+            Add
           </Button>
         </div>
-      );
-    }
-    if (canceled) {
-      return (
-        <div className="flex h-full">
-          <div>Your payment canceled!</div>
-          <Button>Return to Home</Button>
-        </div>
-      );
-    }
-    return (
-      <div className="card card-compact w-96 bg-base-100 shadow-xl gap-8">
-        <div className="text-center">Complete registration form</div>
-        <Button
-          className="!btn-primary"
-          onClick={() => {
-            setState("EDIT");
-          }}
-        >
-          EDIT FORM
-        </Button>
       </div>
     );
   }
 
   // user filled up the register form
   if (state === "FORM_SUBMITTED" && form) {
-    const Confirm = dynamic(() => import("./ConfirmPayment"), {
+    const ConfirmPaymentPage = dynamic(() => import("./ConfirmPayment"), {
       ssr: false,
     });
     // form filled, then submit it to backend to get the checkout session Id
@@ -153,22 +139,24 @@ function Page() {
       console.log(`Paying...`, { form });
       if (raceEntry?.isPaid) {
         store.userStore.updateRaceEntry(form);
+        setForm(null);
         setState("INIT");
         return;
       }
       const [stripe, sessionId] = await Promise.all([
         stripePromise,
-        store.userStore.submitRaceForm(form!),
+        store.userStore.submitRaceForm(form),
       ]);
+      setForm(null);
       // redirect user to Stripe Checkout for payment
       if (stripe && sessionId) {
-        stripe.redirectToCheckout({ sessionId: sessionId.id });
+        stripe.redirectToCheckout({ sessionId: (sessionId as any).id });
       }
     };
     // user logged in and authStore has been fullfilled with user data
     return (
       <div className="flex flex-col justify-center pt-10">
-        <Confirm
+        <ConfirmPaymentPage
           raceEntry={form}
           onSubmit={onSubmit}
           onCancel={() => {
@@ -205,7 +193,7 @@ function Page() {
 
   const onSubmit = (values) => {
     console.log(`Register Form data`, { values });
-    const form = new RaceEntry(values);
+    const form = { ...values };
     setForm(form);
     setState("FORM_SUBMITTED");
   };
@@ -222,8 +210,17 @@ function Page() {
         onCancel={() => {
           setState("INIT");
         }}
+        onDelete={
+          store.userStore.editIndex === null
+            ? undefined
+            : store.userStore.raceEntry?.isPaid
+            ? undefined
+            : () => {
+                console.log(`Deleting index ${store.userStore.editIndex}`);
+                store.userStore.deleteRaceEntry();
+              }
+        }
         raceEntry={raceInitEntry}
-        email={user?.email}
         raceOptions={raceOptions}
       />
     </div>

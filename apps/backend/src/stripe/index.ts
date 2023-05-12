@@ -46,15 +46,11 @@ export const stripeWebhook = functions.https.onRequest(
           const paymentIntent = object as Stripe.PaymentIntent;
           const msg = `🔔  Webhook received! Payment for PaymentIntent ${paymentIntent.id} succeeded.`;
           logger.info(msg);
-          const email = paymentIntent.receipt_email;
           const userSnapshot = await db
             .collectionGroup("RaceEntry")
-            .where("email", "==", email)
+            .where("paymentId", "==", paymentIntent.id)
             .where("isActive", "==", true)
             .get();
-          if (userSnapshot.size === 0) {
-            throw new Error(`Could not find this customer ${email}`);
-          }
           // const data = userSnapshot.docs[0].data();
           // payment intent completed, update user and transaction data
           await Promise.all([
@@ -63,12 +59,13 @@ export const stripeWebhook = functions.https.onRequest(
               .collection("StripeEvents")
               .doc(paymentIntent.id)
               .create(paymentIntent),
-            userSnapshot.docs[0].ref.set(
-              {
-                paymentId: paymentIntent.id,
-              },
-              { merge: true }
-            ),
+            userSnapshot.size > 0 &&
+              userSnapshot.docs[0].ref.set(
+                {
+                  isPaid: true,
+                },
+                { merge: true }
+              ),
           ]);
           break;
         }
@@ -124,36 +121,64 @@ export const stripeWebhook = functions.https.onRequest(
           const charge = object as Stripe.Charge;
           const msg = `🔔  The charge ${charge.id} succeeded.`;
           logger.info(msg);
-          const email = charge.receipt_email;
           const userSnapshot = await db
             .collectionGroup("RaceEntry")
-            .where("email", "==", email)
+            .where("paymentId", "==", charge.payment_intent)
             .where("isActive", "==", true)
             .get();
-          if (userSnapshot.size === 0) {
-            throw new Error(`Could not find this customer ${email}`);
-          }
           await Promise.all([
-            slackSendMsg(msg),
+            // slackSendMsg(msg),
             db.collection("StripeEvents").doc(charge.id).create(charge),
-            userSnapshot.docs[0].ref.set(
-              {
-                receiptNumber: charge.receipt_number, // receipt number
-                receiptUrl: charge.receipt_url,
-                isPaid: true, // set paid to true
-              },
-              { merge: true }
-            ),
+            userSnapshot.size > 0 &&
+              userSnapshot.docs[0].ref.set(
+                {
+                  receiptNumber: charge.receipt_number, // receipt number
+                  receiptUrl: charge.receipt_url,
+                },
+                { merge: true }
+              ),
           ]);
           break;
         }
         case "checkout.session.completed": {
           const session = object as Stripe.Checkout.Session;
-          const msg = `🔔  Session ${session.customer_email} completed!`;
+          const msg = `🔔  Session ${session.id} completed!`;
           logger.info(msg);
+          const sessionId = session.id;
+          if (!session.payment_intent) {
+            throw new Error(`No payment Intent!!`);
+          }
+          const [dbRef, payment] = await Promise.all([
+            db
+              .collectionGroup("RaceEntry")
+              .where("sessionId", "==", sessionId)
+              .where("isActive", "==", true)
+              .get(),
+            stripe.paymentIntents.retrieve(session.payment_intent as string),
+          ]);
+
+          logger.debug(`payment intent`, { payment });
+          if (dbRef.size === 0 || !payment) {
+            throw new Error(
+              `Could not find payment for this session ID ${sessionId}`
+            );
+          }
+          const charge = await stripe.charges.retrieve(
+            payment.latest_charge as string
+          );
+          logger.debug(`charge object`, { charge });
           await Promise.all([
             slackSendMsg(msg),
             db.collection("StripeEvents").doc(session.id).create(session),
+            dbRef.docs[0].ref.set(
+              {
+                paymentId: session.payment_intent,
+                isPaid: payment.status === "succeeded" ? true : false,
+                receiptNumber: charge?.receipt_number ?? null, // receipt number
+                receiptUrl: charge?.receipt_url ?? null,
+              },
+              { merge: true }
+            ),
           ]);
           break;
         }

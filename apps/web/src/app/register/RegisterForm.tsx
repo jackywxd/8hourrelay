@@ -8,7 +8,13 @@ import AsyncStorage from "@react-native-community/async-storage";
 import SelectComponent from "@/components/SelecComponent";
 import { entryFormSnapshot } from "@8hourrelay/store/src/RootStore";
 
-function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
+function RegisterForm({
+  onSubmit,
+  onCancel,
+  onDelete,
+  raceEntry,
+  raceOptions,
+}) {
   const [initialValues, setInitValues] = useState(null);
 
   // load local form data and reset the form init values
@@ -27,6 +33,7 @@ function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
   const SignupSchema = Yup.object().shape({
     firstName: Yup.string().max(50, "Too Long!").required("Required"),
     lastName: Yup.string().max(50, "Too Long!").required("Required"),
+    email: Yup.string().email().required("Required"),
     race: Yup.string().required("Required"),
     phone: Yup.string().required("Required"),
     gender: Yup.string().required("Required"),
@@ -46,7 +53,6 @@ function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
 
   return (
     <div className="w-full max-w-lg">
-      <div>Email: {email}</div>
       <div className="divider">Basic Info</div>
 
       <div className="flex flex-wrap min-w-full -mx-3 mb-6">
@@ -66,6 +72,7 @@ function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
                 name="race"
                 {...props}
               />
+              <FieldItem label="Email*" fieldName="email" />
               <FieldItem label="First Name*" fieldName="firstName" />
               <FieldItem label="Last Name*" fieldName="lastName" />
               <FieldItem label="Prefer Name" fieldName="preferName" />
@@ -99,6 +106,11 @@ function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
                 <Button fullWidth onClick={onCancel}>
                   cancel
                 </Button>
+                {onDelete && (
+                  <Button fullWidth onClick={onDelete}>
+                    delete
+                  </Button>
+                )}
               </div>
               <AutoSubmitToken />
             </Form>
@@ -113,9 +125,9 @@ export default RegisterForm;
 
 const AutoSubmitToken = () => {
   // Grab values and submitForm from context
-  const { values, submitForm, dirty } = useFormikContext();
+  const { values, submitForm, dirty, isValid } = useFormikContext();
   useEffect(() => {
-    if (!dirty) return;
+    if (!dirty || !isValid) return;
     console.log(`updating....`, values);
     const jsonData = JSON.stringify(values);
     AsyncStorage.setItem(entryFormSnapshot, jsonData);

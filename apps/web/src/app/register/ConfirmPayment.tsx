@@ -34,7 +34,7 @@ function ConfirmForm({
         {Object.entries(raceEntry).map((entry) => {
           if (entry[1] && data[entry[0]])
             return (
-              <div className="flex w-full justify-between">
+              <div key={entry[0]} className="flex w-full justify-between">
                 <div className="">{data[entry[0]]} :</div>
                 <div>{entry[1]}</div>
               </div>

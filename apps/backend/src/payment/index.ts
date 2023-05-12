@@ -34,7 +34,21 @@ export const onGetStripeSession = functions
 
     logger.info(`Stripe checkout form`, data);
     const { session_id } = data;
-    const session = await stripe.checkout.sessions.retrieve(session_id);
+    const [session, raceRef] = await Promise.all([
+      stripe.checkout.sessions.retrieve(session_id),
+      db
+        .collectionGroup("RaceEntry")
+        .where("sessionId", "==", session_id)
+        .where("isActive", "==", true)
+        .get(),
+    ]);
+
+    if (session && raceRef.size > 0) {
+      raceRef.docs[0].ref.set({
+        paymentId: session.payment_intent,
+        isPaid: true,
+      });
+    }
     logger.debug(`retried session is `, { session });
     return { email: session.customer_email };
   });
@@ -47,7 +61,7 @@ export const onCreateCheckout = functions
     // context.app will be undefined if the request doesn't include an
     // App Check token. (If the request includes an invalid App Check
     // token, the request will be rejected with HTTP error 401.)
-    if (context.app == undefined) {
+    if (context.app == undefined || !context.auth?.uid) {
       throw new functions.https.HttpsError(
         "failed-precondition",
         "The function must be called from an App Check verified app."
@@ -56,46 +70,25 @@ export const onCreateCheckout = functions
 
     logger.info(`Stripe checkout form`, data);
 
+    const uid = context.auth.uid;
+
     let customer;
-    const {
-      uid,
-      email,
-      race,
-      size,
-      personalBest,
-      firstName,
-      lastName,
-      preferName,
-      phone,
-      gender,
-      birthYear,
-      wechatId,
-    }: RaceEntry = data;
+    const { id, race }: RaceEntry = data;
 
     const raceEntry = new RaceEntry(data);
-    const userRef = await db.collection("Users").doc(uid).get();
     // user must logged in first to be able to submit this form
+
+    const userRef = await db.collection("Users").doc(uid).get();
     const user = userRef.data() as User;
-    if (user.customerId) {
-      customer = user.customerId;
-    } else {
-      const newCustomer = await stripe.customers.create({
-        email,
-      });
-      customer = newCustomer.id;
-      await db.collection("Users").doc(uid).set(
-        {
-          customerId: customer,
-        },
-        { merge: true }
-      );
-    }
+    customer = user.customerId;
+    const email = user.email;
 
     try {
       const priceId =
         race === "Adult"
-          ? "price_1N1DsLG8aoPJB7f30HPrDn7d" // adules
-          : "price_1N46zrG8aoPJB7f378M9cTzb";
+          ? process.env.PRICE_ID_ADULT // adules
+          : process.env.PRICE_ID_KIDS;
+
       const sessionCreateParams: Stripe.Checkout.SessionCreateParams = {
         customer,
         mode: "payment",
@@ -105,55 +98,65 @@ export const onCreateCheckout = functions
             quantity: 1,
           },
         ],
-        success_url: `${HOST_NAME}/register?success=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${HOST_NAME}/register?canceled=true`,
+        success_url: `${HOST_NAME}/payment?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${HOST_NAME}/payment?canceled=true`,
         // consent_collection: {
         //   terms_of_service: "required",
         // },
       };
 
       // Update Stripe customer
-      const userObject: any = {};
-      if (firstName && lastName) userObject.name = `${firstName} ${lastName}`;
-      if (phone) userObject.phone = phone;
-      if (Object.keys(userObject).length > 0)
-        await stripe.customers.update(customer, userObject);
+      // const userObject: any = {};
+      // if (firstName && lastName) userObject.name = `${firstName} ${lastName}`;
+      // if (phone) userObject.phone = phone;
+      // if (Object.keys(userObject).length > 0)
+      //   await stripe.customers.update(customer, userObject);
 
       const session = await stripe.checkout.sessions.create(
         sessionCreateParams
       );
-      if (!session.url) {
-        await slackSendText(
-          `Failed to create checkout session for email ${email}`
-        );
-        throw new Error(`Failed to create check out seeions!`);
-      }
+      logger.debug(`Created stripe session`, { session });
+      // if (!session.url) {
+      //   await slackSendText(
+      //     `Failed to create checkout session for email ${email}`
+      //   );
+      //   throw new Error(`Failed to create check out seeions!`);
+      // }
+
+      // set stripe checkout session ID and payment intent ID
       raceEntry.sessionId = session.id;
+      raceEntry.paymentId = session.payment_intent as string;
 
       await Promise.all([
         slackSendText(
           `Checkout session created successfully for email ${email}`
         ),
-        db.collection("Users").doc(uid).set(
-          {
-            firstName,
-            lastName,
-            preferName,
-            gender,
-            personalBest,
-            phone,
-            size,
-            birthYear,
-            wechatId,
-          },
-          { merge: true }
-        ),
-        db
-          .collection("Users")
-          .doc(uid)
-          .collection("RaceEntry")
-          .doc(raceEntry.raceId)
-          .set(Object.assign({}, raceEntry), { merge: true }),
+        // db.collection("Users").doc(uid).set(
+        //   {
+        //     firstName,
+        //     lastName,
+        //     preferName,
+        //     gender,
+        //     personalBest,
+        //     phone,
+        //     size,
+        //     birthYear,
+        //     wechatId,
+        //   },
+        //   { merge: true }
+        // ),
+        id
+          ? db
+              .collection("Users")
+              .doc(uid)
+              .collection("RaceEntry")
+              .doc(id)
+              .set(Object.assign({}, raceEntry), { merge: true })
+          : db
+              .collection("Users")
+              .doc(uid)
+              .collection("RaceEntry")
+              .add(Object.assign({}, raceEntry)),
       ]);
       logger.debug(`sending session`, { session });
       return { id: session.id };

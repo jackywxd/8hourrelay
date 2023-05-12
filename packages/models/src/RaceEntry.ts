@@ -16,6 +16,7 @@ export const editableEntries = [
 ];
 
 export class RaceEntry {
+  id!: string;
   firstName?: string;
   lastName?: string;
   preferName?: string;
@@ -41,6 +42,9 @@ export class RaceEntry {
   bib?: string;
   constructor(r: RaceEntry) {
     Object.assign(this, r);
+  }
+  get displayName() {
+    return `${this.firstName} ${this.lastName}`;
   }
   get entryFee() {
     if (this.race === "Adult") return 30;
