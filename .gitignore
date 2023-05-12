@@ -7,8 +7,9 @@ node_modules
 
 # testing
 coverage
+.yarn/cache
+.yarn/install-state.gz
 
-.yarn
 # next.js
 .next/
 .swc/
