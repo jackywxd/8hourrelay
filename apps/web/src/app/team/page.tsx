@@ -54,28 +54,29 @@ const TeamPage: React.FC = () => {
       );
     }
 
-    // current user is logged in
-    // already registered and paid
-    if (!raceEntry || !raceEntry.isPaid) {
-      return (
-        <div className="flex flex-col w-full min-h-fit justify-center items-center gap-3">
-          <div>Team Page </div>
-          <div>Please complete current registration</div>
-          <Button
-            fullWidth
-            onClick={() => {
-              router.push("/register");
-            }}
-          >
-            register
-          </Button>
-        </div>
-      );
-    }
-
-    // current user is logged in
-    // already registered and paid
-    if (raceEntry.isPaid) {
+    // user currently already has a team
+    if (store.userStore.team) {
+      if (store.userStore.isCaptain) {
+        return (
+          <div className="flex flex-col w-1/2 min-h-fit justify-center items-center gap-3">
+            <div>Team Page</div>
+            <div>Captain can manage team members</div>
+            <Button
+              fullWidth
+              onClick={() => {
+                router.push("/register");
+              }}
+            >
+              Manage Team
+            </Button>
+          </div>
+        );
+      } else {
+        // user is a team member
+      }
+    } else {
+      // current user is logged in
+      // already registered and paid but no team yet
       return (
         <div className="flex flex-col w-full min-h-fit justify-center items-center gap-3">
           <div>Team Page </div>
@@ -98,27 +99,6 @@ const TeamPage: React.FC = () => {
           </Button>
         </div>
       );
-    }
-    // user currently already has a team
-    if (store.userStore.team) {
-      if (store.userStore.isCaptain) {
-        return (
-          <div className="flex flex-col w-1/2 min-h-fit justify-center items-center gap-3">
-            <div>Team Page</div>
-            <div>Captain can manage team members</div>
-            <Button
-              fullWidth
-              onClick={() => {
-                router.push("/register");
-              }}
-            >
-              Manage Team
-            </Button>
-          </div>
-        );
-      } else {
-        // user is a team member
-      }
     }
   }
 

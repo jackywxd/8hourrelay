@@ -6,22 +6,7 @@ const withMT = require("@material-tailwind/react/utils/withMT");
 module.exports = withMT({
   darkMode: ["class", '[data-theme="coffee"]'],
   daisyui: {
-    themes: [
-      {
-        mytheme: {
-          primary: "#DB924B",
-          secondary: "#263E3F",
-          accent: "#10576D",
-          neutral: "#120C12",
-          "base-100": "#20161F",
-          info: "#8DCAC1",
-          success: "#9DB787",
-          warning: "#FFD25F",
-          error: "#FC9581",
-        },
-      },
-      "coffee",
-    ],
+    themes: ["coffee"],
   },
   content: [
     path.join(__dirname, "./pages/**/*.{js,ts,jsx,tsx}"),
