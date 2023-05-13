@@ -14,10 +14,6 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  experimental: {
-    appDir: true,
-    mdxRs: false,
-  },
   // i18n: {
   //   locales: ["en", "zh", "zh-TW"],
   //   defaultLocale: "en",
