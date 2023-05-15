@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html data-theme="dark" lang="en">
       <head />
-      <body className="bg-gray-700">
+      <body className="text-brown-100">
         <AuthProvider>
           <Layout>{children}</Layout>
         </AuthProvider>

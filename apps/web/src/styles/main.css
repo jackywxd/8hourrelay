@@ -4,10 +4,10 @@
 
 @layer base {
   h1 {
-    @apply text-2xl;
+    @apply text-2xl text-brown-300;
   }
   h2 {
-    @apply text-xl;
+    @apply text-xl text-brown-300;
   }
 }
 *,
