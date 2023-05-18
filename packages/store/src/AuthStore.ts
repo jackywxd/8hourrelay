@@ -19,6 +19,7 @@ import { RootStore } from "./RootStore";
 
 export type RegisterState =
   | "INIT"
+  | "CONFIRM" // confirm email address before sending login link
   | "EMAIL_LINK_SENT"
   | "RECEIVE_LINK"
   | "MISSING_EMAIL"
@@ -113,19 +114,16 @@ export class AuthStore {
   };
 
   setAuth = (auth: Auth) => {
-    console.log(`setting up auth!!`, { auth });
     this.auth = auth;
   };
 
   *sendLoginEmailLink(
-    email: string,
     path?: string // continue link path
   ) {
-    if (!this.auth) {
-      throw new Error(`No auth being set`);
+    if (!this.auth || !this.email) {
+      throw new Error(`No auth being set or no email being set!`);
     }
     console.log(`loging with email now`);
-    this.setEmail(email);
     this.isLoading = true;
     try {
       console.log(`env`, process.env);
@@ -143,8 +141,8 @@ export class AuthStore {
         handleCodeInApp: true,
       };
       yield Promise.all([
-        AsyncStorage.setItem(this.emailLocalKey, email),
-        sendSignInLinkToEmail(this.auth, email, actionCodeSettings),
+        AsyncStorage.setItem(this.emailLocalKey, this.email!),
+        sendSignInLinkToEmail(this.auth, this.email!, actionCodeSettings),
       ]);
       this.state = "EMAIL_LINK_SENT";
     } catch (error) {
@@ -194,9 +192,9 @@ export class AuthStore {
     }
     this.isLoading = true;
     try {
+      // before logout, reset all states from root
       this.root.dispose();
       yield this.auth.signOut();
-      this.state = "INIT";
     } catch (error) {
       this.error = (error as Error).message;
       console.log(`Failed to signinWithEmail`, { error });

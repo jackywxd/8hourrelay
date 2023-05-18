@@ -4,29 +4,23 @@ import { LoginWithEmailScreen } from "@8hourrelay/login";
 import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import dynamic from "next/dynamic";
 import { Spinner } from "@material-tailwind/react";
 import Login from "./Login";
 
-function Page() {
+function LoginPage() {
   const router = useRouter();
   const {
     store: { authStore },
   } = useAuth();
   const searchParams = useSearchParams();
 
-  const nextPath = searchParams.get("continue"); // payment succeed
-  const race = searchParams.get("race"); // payment succeed
-  const apiKey = searchParams.get("apiKey");
+  const nextPath = searchParams.get("continue"); //continue to this route after login successfully
+  const race = searchParams.get("race");
+  const apiKey = searchParams.get("apiKey"); // apiKey from firebase
 
-  console.log(`nextPath & race`, {
-    nextPath,
-    race,
-    isAuthenticated: authStore.isAuthenticated,
-  });
-  const onSendLoginLink = async (email) => {
+  const onSendLoginLink = async () => {
     const next = race ? `${nextPath}&race=${race}` : nextPath;
-    await authStore.sendLoginEmailLink(email, next ?? "profile");
+    await authStore.sendLoginEmailLink(next ?? "profile");
   };
 
   const onLogin = async (email) => {
@@ -66,25 +60,64 @@ function Page() {
       {authStore.state === "INIT" ? (
         <div className="flex flex-col min-h-full">
           <div className="flex text-center my-8 justify-center">
-            <h1>
+            <h1 className="text-left mb-10">
               {race
-                ? `Log in using your email address and proceed to register for the race`
-                : `Login in with your email`}
+                ? `Please enter your email address and proceed to register for the race. As all communication by us will be via email, please ensure to enter a valid and working email address.`
+                : `Please enter your email address. As all communication by us will be via email, please ensure to enter a valid and working email address.`}
             </h1>
           </div>
-          <Login mode="login" onSubmit={onSendLoginLink} />
+          <Login
+            initEmail={authStore.email}
+            mode="login"
+            onSubmit={(email: string) => {
+              authStore.setEmail(email);
+              authStore.setState("CONFIRM");
+            }}
+          />
+        </div>
+      ) : authStore.state === "CONFIRM" ? (
+        <div className="flex flex-col min-h-full">
+          <div className="flex flex-col text-center my-8 justify-center">
+            <h2 className="text-left mb-10">
+              Please confirm your email address and click "Send" if it is
+              correct. We will send you an email with URL to complete your
+              login. This URL is only valid for one hour. Please check your
+              email in time.
+            </h2>
+            <h2>Email address: {authStore.email}</h2>
+          </div>
+
+          <div className="flex flex-row w-full justify-between items-center">
+            <button
+              className="btn btn-secondary w-1/3"
+              onClick={() => {
+                authStore.setState("INIT");
+              }}
+            >
+              back
+            </button>
+            <button className="btn btn-primary w-1/3" onClick={onSendLoginLink}>
+              Send
+            </button>
+          </div>
         </div>
       ) : authStore.state === "EMAIL_LINK_SENT" ? (
         <div className="text-center">
-          Check your email {authStore.email} and click the link to continue the
-          register
+          <h2>
+            Check your email {authStore.email} and click the link in the email
+            to login
+          </h2>
         </div>
       ) : authStore.state === "MISSING_EMAIL" ? (
         <div className="text-center text-lg pt-10">
           <div className="text-center text-lg pt-10">
             Please provide your email for confirmation
           </div>
-          <Login mode="confirm" onSubmit={onLogin} />
+          <Login
+            initEmail={authStore.email}
+            mode="confirm"
+            onSubmit={onLogin}
+          />
         </div>
       ) : (
         <div className="flex items-end gap-8">
@@ -95,4 +128,4 @@ function Page() {
   );
 }
 
-export default observer(Page);
+export default observer(LoginPage);

@@ -29,9 +29,11 @@ export default function RootLayout({
     <html data-theme="dark" lang="en">
       <head />
       <body className="text-brown-100">
-        <AuthProvider>
-          <Layout>{children}</Layout>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Layout>{children}</Layout>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

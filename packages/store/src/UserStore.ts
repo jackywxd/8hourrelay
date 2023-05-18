@@ -1,12 +1,5 @@
 import { Team, User } from "@8hourrelay/models";
-import {
-  computed,
-  makeAutoObservable,
-  reaction,
-  IReactionDisposer,
-  action,
-  flow,
-} from "mobx";
+import { makeAutoObservable, reaction, IReactionDisposer, action } from "mobx";
 import {
   getFirestore,
   doc,
@@ -28,15 +21,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStore, entryFormSnapshot } from "./RootStore";
 
 export type RaceEntryState = "FORM_SUBMITTED" | "PAID" | "INVALID_FORM" | "WIP";
+
 export class UserStore {
   root: RootStore;
   uid: string | null = null;
   user?: User;
-  team?: Team;
   raceEntries: RaceEntry[] | [] = []; // race entriy array
   editIndex: number | null = null; // current edit race entry index
   isLoading = false;
   error = "";
+  state = "";
   userListner: null | (() => void) = null;
   raceEntryListner: null | (() => void) = null;
   disposer: IReactionDisposer | null;
@@ -55,6 +49,7 @@ export class UserStore {
         }
       }
     );
+
     makeAutoObservable(
       this,
       {
@@ -72,6 +67,10 @@ export class UserStore {
     );
   }
 
+  setState(state: string) {
+    this.state = state;
+  }
+
   get raceEntryState(): RaceEntryState {
     if (this.raceEntry?.isPaid) return "PAID";
     if (this.raceEntry?.sessionId) return "FORM_SUBMITTED";
@@ -86,17 +85,20 @@ export class UserStore {
       this.raceEntries.length > 0
     )
       return this.raceEntries[this.editIndex];
+    else {
+      if (this.raceEntries.length > 0) {
+        return this.raceEntries.filter((f) => f.isActive)[0];
+      }
+    }
     return null;
-  }
-
-  get teamState() {
-    if (this.team) return "JOINED";
-    return "WIP";
   }
 
   // whether current user is captain for current team
   get isCaptain() {
-    if (this.team && this.team.captainEmail === this.user?.email) return true;
+    this.raceEntries.forEach((race) => {
+      if (race.isActive && race.email === this.user?.email && race.isCaptain)
+        return true;
+    });
     return false;
   }
 
@@ -156,7 +158,7 @@ export class UserStore {
           const data = doc.data();
           console.log(`New Race Entry data`, data);
           const entry = new RaceEntry(data as RaceEntry);
-          entry.id = doc.id;
+          entry.id = doc.id; // race entry's ID
           raceEntries.push(entry);
         });
         this.setRaceEntries(raceEntries);
@@ -284,13 +286,34 @@ export class UserStore {
     return null;
   }
 
-  *createTeam() {
+  *createTeam({
+    name,
+    race,
+    slogon,
+  }: {
+    name: string;
+    slogon: string;
+    race: string;
+  }) {
+    const functions = getFunctions();
+    const onCreateTeam = httpsCallable(functions, "onCreateTeam");
+
     this.isLoading = true;
     try {
-      console.log(`user data`);
+      console.log(`team data`, { name, race, slogon });
+      const result = yield onCreateTeam({
+        race, //kids run or Adult
+        slogon,
+        name: name.toLowerCase(),
+        email: this.user.email.toLowerCase(),
+      });
+      if (result.error) {
+        this.setError(result.error);
+      }
+
       this.isLoading = false;
     } catch (error) {
-      console.log(`failed to getUser`, error);
+      console.log(`failed to create team!!`, error);
       this.setError((error as Error).message);
       this.isLoading = false;
     }

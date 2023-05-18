@@ -17,8 +17,8 @@ export const editableEntries = [
 
 export class RaceEntry {
   id!: string;
-  firstName?: string;
-  lastName?: string;
+  firstName!: string;
+  lastName!: string;
   preferName?: string;
   birthYear?: string;
   personalBest?: string;
@@ -40,6 +40,10 @@ export class RaceEntry {
   wechatId?: string;
   isPaid?: boolean;
   bib?: string;
+  runDuration?: number; // run period
+  distance?: number; // run distance in meters
+  runStartTime?: string;
+  runEndTime?: string;
   constructor(r: RaceEntry) {
     Object.assign(this, r);
   }

@@ -4,12 +4,18 @@ import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@material-tailwind/react";
+import { profileStore } from "./ProfileStore";
+
 const ProtectedPage: React.FC = () => {
   const router = useRouter();
   const { store } = useAuth();
 
   const user = store.userStore.user;
   const raceEntry = store.userStore.raceEntry;
+
+  console.log(`profileStore PAGE selected`, {
+    selected: profileStore.selectedTab,
+  });
 
   return (
     <ProtectedRoute>
@@ -30,18 +36,6 @@ const ProtectedPage: React.FC = () => {
               </Button>
             </div>
           )}
-        </div>
-        <div className="mt-11 gap-3">
-          <Button
-            className="!btn-primary btn-lg"
-            onClick={() => {
-              console.log(`loging out!`);
-              router.push("/");
-              store.authStore.logout();
-            }}
-          >
-            Logout
-          </Button>
         </div>
       </div>
     </ProtectedRoute>

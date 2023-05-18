@@ -1,6 +1,6 @@
 import { logger } from "firebase-functions";
 import { functions, db } from "../fcm";
-import { RaceEntry, Team, User } from "@8hourrelay/models";
+import { Team } from "@8hourrelay/models";
 
 export const onCreateTeam = functions
   .runWith({
@@ -18,10 +18,23 @@ export const onCreateTeam = functions
     }
 
     logger.info(`Create team for user ${context.auth.uid}`, data);
-    const { teamName, slogan, year, raceId } = data;
+    const {
+      name,
+      slogan,
+      race,
+      email,
+    }: {
+      name: string;
+      slogan: string;
+      race: string;
+      email: string;
+    } = data;
+
+    const year = new Date().getFullYear().toString();
     const now = new Date().getTime();
-    if (!teamName) {
-      throw new Error(`Invalid data!!`);
+
+    if (!name || !race || !email) {
+      return { error: `Invalid data!` };
     }
 
     // verify team name is avaiable first!!
@@ -29,51 +42,11 @@ export const onCreateTeam = functions
       .collection("Race")
       .doc(year)
       .collection("Teams")
-      .doc(teamName)
+      .where("name", "==", name)
       .get();
-    if (teamRef.exists) {
-      throw new Error(`Team name is taken`);
+    if (teamRef.size !== 0) {
+      return { error: "Team name is taken, please select a new name" };
     }
-    // no race ID, current user doens't register any race
-    // we only create team now
-    if (!raceId) {
-      // check current user already has a team or not??
-      const userRef = await db.collection("Users").doc(context.auth.uid).get();
-      const user = userRef.data() as User;
-      await db
-        .collection("Race")
-        .doc(year)
-        .collection("Teams")
-        .doc(teamName)
-        .set(
-          {
-            name: teamName,
-            captainEmail: user.email,
-            createdBy: user.email,
-            slogan: slogan ?? null,
-            createdAt: now,
-            updatedAt: now,
-          },
-          { merge: true }
-        );
-      return;
-    }
-
-    // check current user already has a team or not??
-    const userRef = await db
-      .collection("Users")
-      .doc(context.auth.uid)
-      .collection("RaceEntry")
-      .doc(raceId)
-      .get();
-    // user must logged in first to be able to submit this form
-    const raceEntry = userRef.data() as RaceEntry;
-
-    if (raceEntry.team) {
-      throw new Error(`User already joined a team. Cannot create team`);
-    }
-
-    const { email, race } = raceEntry;
 
     const team: Pick<
       Team,
@@ -82,42 +55,78 @@ export const onCreateTeam = functions
       | "captainEmail"
       | "year"
       | "race"
-      | "teamMembers"
       | "createdAt"
       | "updatedAt"
       | "createdBy"
     > = {
-      slogan,
       year,
       race,
-      name: teamName,
+      slogan: slogan ?? null,
+      name: name,
       captainEmail: email, // set captain emaill to current user's email
-      createdBy: email,
-      teamMembers: [raceEntry], // add current team member
+      createdBy: context.auth.uid,
       createdAt: now,
       updatedAt: now,
     };
 
+    // no race entry, current user doens't register any race
+    // we only create team now
+    // check current user already has a team or not??
+    // const userRef = await db.collection("Users").doc(context.auth.uid).get();
+    // const user = userRef.data() as User;
     await Promise.all([
-      // create Team
+      db
+        .collection("Users")
+        .doc(context.auth.uid)
+        .set(
+          {
+            teamYear: `${year}-created`,
+            updatedAt: now,
+          },
+          { merge: true }
+        ),
       db
         .collection("Race")
         .doc(year)
         .collection("Teams")
-        .doc(teamName)
+        .doc()
         .set(team, { merge: true }),
-      // update current user's race entry's team name
-      db
-        .collection("Users")
-        .doc(context.auth.uid)
-        .collection("RaceEntry")
-        .doc(raceId)
-        .set(
-          {
-            isCaptain: true, // set this user to captain
-            team: teamName, // set the team name
-          },
-          { merge: true }
-        ),
     ]);
+    return {};
+
+    // // check current user already has a team or not??
+    // const raceEntryRef = await db
+    //   .collection("Users")
+    //   .doc(context.auth.uid)
+    //   .collection("RaceEntry")
+    //   .where("team", "==", name)
+    //   .get();
+    // if (raceEntryRef.size !== 0) {
+    //   return { error: `User already joined a team. Cannot create team` };
+    // }
+
+    // await Promise.all([
+    //   slackSendMsg(`New ${race} team ${name} created by ${email}`),
+    //   // create Team
+    //   db
+    //     .collection("Race")
+    //     .doc(year)
+    //     .collection("Teams")
+    //     .doc()
+    //     .set(team, { merge: true }),
+    //   // update current user's race entry's team name
+    //   db
+    //     .collection("Users")
+    //     .doc(context.auth.uid)
+    //     .collection("RaceEntry")
+    //     .doc(raceEntry.id)
+    //     .set(
+    //       {
+    //         isCaptain: true, // set this user to captain
+    //         team: name, // set the team name
+    //       },
+    //       { merge: true }
+    //     ),
+    // ]);
+    // return {};
   });

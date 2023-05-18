@@ -11,7 +11,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@8hourrelay/login": "*",
     "@8hourrelay/store": "*",
     "@heroicons/react": "^2.0.17",
     "@mapbox/rehype-prism": "^0.8.0",
@@ -26,6 +25,7 @@
     "classnames": "^2.3.2",
     "daisyui": "^2.51.6",
     "firebase": "^9.21.0",
+    "firebase-admin": "^11.8.0",
     "formik": "^2.2.9",
     "mobx": "^6.9.0",
     "mobx-react-lite": "^3.4.3",
@@ -43,7 +43,6 @@
     "sharp": "^0.32.0",
     "stripe": "^12.4.0",
     "swr": "^2.1.5",
-    "ui": "*",
     "yup": "^1.1.1"
   },
   "devDependencies": {

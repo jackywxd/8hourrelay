@@ -74,7 +74,7 @@ const Navbar = () => {
                     setNavbar(false);
                   }}
                 >
-                  <Link href="/register">Register</Link>
+                  <Link href="/register">Registration</Link>
                 </div>
               </li>
               <li className="text-white  p-2 hover:bg-slate-500 rounded">

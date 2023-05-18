@@ -18,8 +18,8 @@ export class RootStore {
     isActive: true,
     createdAt: new Date().getTime(),
     races: [
-      new Race("2023-8HourRealy-Adult", "Adult", "Adult Race", 30),
-      new Race("2023-8HourRelya-Kids", "Kids", "Kids Run", 5),
+      new Race("2023", "Adult", "TBD", "Adult Race", 30),
+      new Race("2023", "Kids", "TBD", "Kids Run", 5),
     ],
   });
   constructor() {

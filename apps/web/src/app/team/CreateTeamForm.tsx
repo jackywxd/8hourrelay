@@ -1,95 +1,51 @@
-"use client";
-import { useEffect, useState } from "react";
-import { Formik, Field, Form, ErrorMessage, useFormikContext } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Spinner, Input, Button } from "@material-tailwind/react";
-import AsyncStorage from "@react-native-community/async-storage";
+import { Input, Button } from "@material-tailwind/react";
 
 import SelectComponent from "@/components/SelecComponent";
-import { entryFormSnapshot } from "@8hourrelay/store/src/RootStore";
 
-function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
-  const [initialValues, setInitValues] = useState(null);
-
-  // load local form data and reset the form init values
-  useEffect(() => {
-    const init = async () => {
-      const data = await AsyncStorage.getItem(entryFormSnapshot);
-      if (data) {
-        console.log(`loading new data`, { data });
-        const newValue = JSON.parse(data);
-        setInitValues({ ...newValue });
-      }
-    };
-    init();
-  }, []);
-
+function CreateTeamForm({ onSubmit, onBack }) {
+  const initialValues = {
+    name: "",
+    race: "",
+    slogon: "",
+  };
   const SignupSchema = Yup.object().shape({
-    teamName: Yup.string().max(50, "Too Long!").required("Required"),
+    name: Yup.string().max(50, "Too Long!").required("Required"),
+    race: Yup.string().required("Required"),
     slogon: Yup.string(),
   });
 
-  // const fee = store.eventStore.event.races.filter(
-  //   (f) => f.name === initialValues.race
-  // )?.[0]?.entryFee;
-
-  const genderOptions = ["Male", "Femal"].map((m) => ({ value: m, label: m }));
-  const shirtSizeOptions = ["XS", "Small", "Medium", "Large", "XLarge"].map(
-    (m) => ({ value: m, label: m })
-  );
-
   return (
-    <div className="w-full max-w-lg">
-      <div>Email: {email}</div>
-      <div className="divider">Basic Info</div>
-
+    <div className="w-full items-center mt-8">
+      <div className="divider">Create Team</div>
       <div className="flex flex-wrap min-w-full -mx-3 mb-6">
         <Formik
-          initialValues={initialValues ? initialValues : raceEntry}
+          initialValues={initialValues}
           validationSchema={SignupSchema}
           enableReinitialize
           onSubmit={(values) => onSubmit(values)}
         >
           {(props) => (
-            <Form className="flex flex-col w-72 items-end gap-6">
-              {/* {fee && <div>{`Entery fee: ${props.values.race}`}</div>} */}
+            <Form className="flex w-full flex-col gap-6 justify-center items-center">
               <SelectComponent
-                disabled={raceEntry?.isPaid}
-                options={raceOptions}
+                options={["Adult", "Kids"].map((m) => ({
+                  label: m,
+                  value: m,
+                }))}
                 label="Select Race"
                 name="race"
                 {...props}
               />
-              <FieldItem label="First Name*" fieldName="firstName" />
-              <FieldItem label="Last Name*" fieldName="lastName" />
-              <FieldItem label="Prefer Name" fieldName="preferName" />
-              <SelectComponent
-                options={genderOptions}
-                label="Gender"
-                name="gender"
-                {...props}
-              />
-              <FieldItem label="Phone*" fieldName="phone" />
-              <FieldItem label="Year of birth*" fieldName="birthYear" />
-              <FieldItem label="Personal Best Time" fieldName="personalBest" />
-              <SelectComponent
-                options={shirtSizeOptions}
-                label="Select Shirt Size"
-                name="size"
-                {...props}
-              />
-              <div className="divider">Emergency Contact</div>
-              <FieldItem label="Name*" fieldName="emergencyName" />
-              <FieldItem label="Phone*" fieldName="emergencyPhone" />
-              <div className="flex w-full justify-between gap-2">
-                <Button type="submit" fullWidth>
-                  {raceEntry?.isPaid ? `Update Info` : `Review & Payment`}
-                </Button>
-                <Button fullWidth onClick={onCancel}>
+              <FieldItem label="Team Name*" fieldName="name" />
+              <FieldItem label="Slogan" fieldName="slogon" />
+
+              <div className="flex flex-row w-full justify-between">
+                <button className="btn" onClick={onBack}>
                   cancel
-                </Button>
+                </button>
+                <button className="btn btn-primary">create</button>
               </div>
-              <AutoSubmitToken />
             </Form>
           )}
         </Formik>
@@ -98,21 +54,7 @@ function RegisterForm({ onSubmit, onCancel, email, raceEntry, raceOptions }) {
   );
 }
 
-export default RegisterForm;
-
-const AutoSubmitToken = () => {
-  // Grab values and submitForm from context
-  const { values, submitForm, dirty } = useFormikContext();
-  useEffect(() => {
-    if (!dirty) return;
-    console.log(`updating....`, values);
-    const jsonData = JSON.stringify(values);
-    AsyncStorage.setItem(entryFormSnapshot, jsonData);
-    // Submit the form imperatively as an effect as soon as form values.token are 6 digits long
-    // submitForm();
-  }, [values]);
-  return null;
-};
+export default CreateTeamForm;
 
 export const FieldItem = ({ label, fieldName, ...props }) => {
   return (
@@ -131,9 +73,6 @@ export const FieldItem = ({ label, fieldName, ...props }) => {
 
 const CustomInputComponent = (props) => (
   <div className="flex flex-col w-72 items-end gap-6">
-    {/* <label className="label">
-      <span className="label-text">{props.label}</span>
-    </label> */}
     <Input
       type="text"
       className="input input-primary w-full max-w-xs"

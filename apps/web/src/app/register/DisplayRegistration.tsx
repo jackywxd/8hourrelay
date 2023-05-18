@@ -1,4 +1,5 @@
 import { RaceEntry } from "@8hourrelay/models";
+import { useRouter } from "next/navigation";
 
 const TABLE_HEAD = ["Name", "Race", "Bib", "Team", ""];
 
@@ -11,6 +12,8 @@ function DisplayRegistration({
   setIndex: (index: number) => void;
   onPay: (index: number) => void;
 }) {
+  const router = useRouter();
+
   return (
     <div className="overflow-x-auto w-full">
       <table className="table w-full">
@@ -42,7 +45,14 @@ function DisplayRegistration({
                     ) : isPaid ? (
                       <div className="flex gap-2">
                         TBD
-                        <button className="btn btn-xs">JOIIN Team</button>
+                        <button
+                          className="btn btn-xs"
+                          onClick={() => {
+                            router.push("/team");
+                          }}
+                        >
+                          JOIIN
+                        </button>
                       </div>
                     ) : null}
                   </td>
