@@ -13,11 +13,13 @@ export default function PaymentPage() {
 
   // redirect user to home
   useEffect(() => {
+    let timeoutId;
     if (canceled) {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         router.push("/");
       }, 5000);
     }
+    return () => clearTimeout(timeoutId);
   }, [canceled]);
 
   if (canceled) {
@@ -36,10 +38,10 @@ export default function PaymentPage() {
   if (sessionId && success) {
     return (
       <div className="flex flex-col h-full items-center">
-        <div>Payment successfully! You can manage your registration now</div>
+        <div>Payment successfully! You can join a team now</div>
         <div className="pt-10">
-          <Link className="link link-primary" href="/register">
-            Manage your registration
+          <Link className="link link-primary" href="/team">
+            Join a team
           </Link>
         </div>
       </div>

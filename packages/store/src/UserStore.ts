@@ -95,10 +95,20 @@ export class UserStore {
 
   // whether current user is captain for current team
   get isCaptain() {
-    this.raceEntries.forEach((race) => {
-      if (race.isActive && race.email === this.user?.email && race.isCaptain)
-        return true;
-    });
+    if (this.user && this.user.teamYear) {
+      const y = this.user.teamYear.split("-");
+      const year = new Date().getFullYear().toString();
+      if (y[0] === year && y[1] === "APPROVED") return true;
+    }
+    return false;
+  }
+
+  get pendingTeamRequest() {
+    if (this.user && this.user.teamYear) {
+      const y = this.user.teamYear.split("-");
+      const year = new Date().getFullYear().toString();
+      if (y[0] === year) return true;
+    }
     return false;
   }
 
@@ -171,7 +181,6 @@ export class UserStore {
     this.raceEntryListner && this.raceEntryListner();
     this.user = undefined;
     this.raceEntries = [];
-    this.team = undefined;
     this.userListner = null;
     this.raceEntryListner = null;
   }
@@ -196,7 +205,10 @@ export class UserStore {
   }
 
   *updateRaceEntry(form: RaceEntry) {
-    console.log(`Updating race entry to new data`, { form });
+    console.log(`Updating race entry to new data`, {
+      form,
+      index: this.editIndex,
+    });
     this.isLoading = true;
     try {
       const data: any = {};
@@ -206,13 +218,13 @@ export class UserStore {
         }
       });
       console.log(`update race with data`, { data });
-      if (this.uid && this.raceEntry?.id) {
-        yield setDoc(
-          doc(this.db, "Users", this.uid, "RaceEntry", this.raceEntry?.id),
-          data,
-          { merge: true }
-        );
+      if (this.uid && this.editIndex !== null) {
+        const id = this.raceEntries[this.editIndex].id;
+        yield setDoc(doc(this.db, "Users", this.uid, "RaceEntry", id), data, {
+          merge: true,
+        });
         yield AsyncStorage.removeItem(entryFormSnapshot);
+        this.setEditIndex(null);
       } else {
         throw new Error(`Failed to update race entry! Missing uid and raceId`);
       }
@@ -226,17 +238,18 @@ export class UserStore {
 
   *deleteRaceEntry() {
     console.log(`delete race entry`);
-
     this.isLoading = true;
     try {
       if (this.editIndex === null || !this.raceEntries) {
         throw new Error(`No selected delete race entry`);
       }
       const id = this.raceEntries[this.editIndex].id;
+      const index = this.editIndex;
       // const newEntry = this.raceEntries?.filter(f=>f.id!==id)
+      this.setEditIndex(null);
+      this.raceEntries.splice(index, 1);
       yield deleteDoc(doc(this.db, "Users", this.uid!, "RaceEntry", id));
       yield AsyncStorage.removeItem(entryFormSnapshot);
-      this.setEditIndex(null);
     } catch (error) {
       console.log(`failed to getUser`, error);
       this.error = (error as Error).message;
@@ -268,7 +281,11 @@ export class UserStore {
     const onCreateCheckout = httpsCallable(functions, "onCreateCheckout");
 
     this.isLoading = true;
+
     try {
+      if (this.editIndex !== null) {
+        raceEntry.id = this.raceEntries[this.editIndex].id;
+      }
       const result: HttpsCallableResult<unknown> = yield onCreateCheckout(
         raceEntry
       );
@@ -276,6 +293,7 @@ export class UserStore {
 
       if (result) {
         yield AsyncStorage.removeItem(entryFormSnapshot);
+        this.setEditIndex(null);
         return result.data;
       }
     } catch (error) {
@@ -290,23 +308,27 @@ export class UserStore {
     name,
     race,
     slogon,
+    password,
   }: {
     name: string;
     slogon: string;
     race: string;
+    password: string;
   }) {
     const functions = getFunctions();
     const onCreateTeam = httpsCallable(functions, "onCreateTeam");
 
     this.isLoading = true;
     try {
-      console.log(`team data`, { name, race, slogon });
-      const result = yield onCreateTeam({
+      console.log(`team data`, { name, race, password });
+      const { data: result } = yield onCreateTeam({
         race, //kids run or Adult
         slogon,
+        password,
         name: name.toLowerCase(),
         email: this.user.email.toLowerCase(),
       });
+      console.log(`create team result`, result);
       if (result.error) {
         this.setError(result.error);
       }

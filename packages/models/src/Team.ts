@@ -1,6 +1,7 @@
 export type TeamState = "APPROVED" | "PENDING" | "DENIED";
+
 export class Team {
-  id!: string;
+  id!: string; //team ID
   captainEmail!: string; // current captain email; could be changed later
   name!: string;
   year!: string;
@@ -10,12 +11,22 @@ export class Team {
   updatedAt!: number;
   slogan!: string;
   photoUrl!: string;
-  teamMembers?: string[]; // paymentId of the team members
-  state: TeamState = "PENDING";
+  password?: string;
+  isOpen: boolean = true; // whethere the team is open for team members
+  teamMembers?: string[]; // paymentId of the team members maximum 24 members
+  pendingMembers?: string[]; // pending approval team members paymentId
+  waitingList?: string[]; // waiting list members
+  state: TeamState = "PENDING"; // new team required approval before public access
   constructor(t: Team) {
     Object.assign(this, t);
   }
 
+  get displayName() {
+    return this.name
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
   // the total distance of this team
   // get totalDistance() {
   //   if (this.teamMembers && this.teamMembers.length > 0) {

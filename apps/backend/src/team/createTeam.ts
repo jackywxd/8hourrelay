@@ -22,12 +22,14 @@ export const onCreateTeam = functions
       name,
       slogan,
       race,
+      password,
       email,
     }: {
       name: string;
       slogan: string;
       race: string;
       email: string;
+      password: string;
     } = data;
 
     const year = new Date().getFullYear().toString();
@@ -44,24 +46,17 @@ export const onCreateTeam = functions
       .collection("Teams")
       .where("name", "==", name)
       .get();
+
     if (teamRef.size !== 0) {
       return { error: "Team name is taken, please select a new name" };
     }
 
-    const team: Pick<
-      Team,
-      | "name"
-      | "slogan"
-      | "captainEmail"
-      | "year"
-      | "race"
-      | "createdAt"
-      | "updatedAt"
-      | "createdBy"
-    > = {
+    const team: Partial<Team> = {
       year,
       race,
+      password,
       slogan: slogan ?? null,
+      isOpen: true,
       name: name,
       captainEmail: email, // set captain emaill to current user's email
       createdBy: context.auth.uid,
@@ -71,16 +66,13 @@ export const onCreateTeam = functions
 
     // no race entry, current user doens't register any race
     // we only create team now
-    // check current user already has a team or not??
-    // const userRef = await db.collection("Users").doc(context.auth.uid).get();
-    // const user = userRef.data() as User;
     await Promise.all([
       db
         .collection("Users")
         .doc(context.auth.uid)
         .set(
           {
-            teamYear: `${year}-created`,
+            teamYear: `${year}-INIT`,
             updatedAt: now,
           },
           { merge: true }
@@ -93,40 +85,4 @@ export const onCreateTeam = functions
         .set(team, { merge: true }),
     ]);
     return {};
-
-    // // check current user already has a team or not??
-    // const raceEntryRef = await db
-    //   .collection("Users")
-    //   .doc(context.auth.uid)
-    //   .collection("RaceEntry")
-    //   .where("team", "==", name)
-    //   .get();
-    // if (raceEntryRef.size !== 0) {
-    //   return { error: `User already joined a team. Cannot create team` };
-    // }
-
-    // await Promise.all([
-    //   slackSendMsg(`New ${race} team ${name} created by ${email}`),
-    //   // create Team
-    //   db
-    //     .collection("Race")
-    //     .doc(year)
-    //     .collection("Teams")
-    //     .doc()
-    //     .set(team, { merge: true }),
-    //   // update current user's race entry's team name
-    //   db
-    //     .collection("Users")
-    //     .doc(context.auth.uid)
-    //     .collection("RaceEntry")
-    //     .doc(raceEntry.id)
-    //     .set(
-    //       {
-    //         isCaptain: true, // set this user to captain
-    //         team: name, // set the team name
-    //       },
-    //       { merge: true }
-    //     ),
-    // ]);
-    // return {};
   });

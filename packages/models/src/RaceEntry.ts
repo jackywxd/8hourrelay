@@ -1,3 +1,5 @@
+import { TeamState } from "./Team";
+
 export type Gender = "Male" | "Femal";
 
 // entries user can update after register payment
@@ -32,18 +34,23 @@ export class RaceEntry {
   emergencyName?: string;
   emergencyPhone?: string;
   race!: string;
-  team?: string;
+  team?: string; // team name
+  teamId?: string; // team ID
+  teamState?: TeamState; // join a team requires approval
   isCaptain?: boolean;
-  paymentId?: string;
+  paymentId?: string; // very important, this is ID used for locate the race entry from team
   sessionId?: string;
   receiptNumber?: string;
   wechatId?: string;
   isPaid?: boolean;
   bib?: string;
-  runDuration?: number; // run period
-  distance?: number; // run distance in meters
-  runStartTime?: string;
-  runEndTime?: string;
+  raceOrder?: number; // the sequence in the team
+  raceDuration?: number; // run period in minutes
+  raceActualDistance?: number; // run distance in meters this is the result
+  raceAdjustedDistance?: number; // run distance in meters this is the result
+  raceCoefficient?: number; // coefficient based on the age
+  raceStartTime?: string;
+  raceEndTime?: string;
   constructor(r: RaceEntry) {
     Object.assign(this, r);
   }
@@ -59,23 +66,3 @@ export class RaceEntry {
     return `${this.race}-${this.year}`;
   }
 }
-// @model("8HourRelay/Raceentry")
-// export class RaceEntry extends Model({
-//   uid: tProp(types.string), // the uid for the user
-//   email: tProp(types.string), // the email for the user
-//   phone: tProp(types.string), // the email for the user
-//   year: tProp(types.string), // the email for the user
-//   isActive: tProp(types.boolean), // the uid for the user
-//   size: tProp(types.maybe(types.string)), // size of the T-shirt
-//   emergencyName: tProp(types.maybe(types.string)).withSetter(), // emergency contact name
-//   emergencyPhone: tProp(types.maybe(types.string)).withSetter(), // emergency contact phone
-//   race: tProp(types.maybe(types.string)).withSetter(), // participate race name
-//   team: tProp(types.maybe(types.string)).withSetter(), // team name
-//   isCaptain: tProp(types.maybe(types.boolean)).withSetter(),
-//   paymentId: tProp(types.maybe(types.string)).withSetter(), // payment ID in stripe
-//   sessionId: tProp(types.maybe(types.string)).withSetter(), // session ID in stripe
-//   receiptNumber: tProp(types.maybe(types.string)).withSetter(), // receipt number in stripe
-//   isPaid: tProp(types.boolean), // the uid for the user
-//   bib: tProp(types.maybe(types.string), () => "Pending").withSetter(),
-//   // state: tProp(types.maybe(types.string), () => "Pending").withSetter(),  // state of the race entry:
-// }) {}

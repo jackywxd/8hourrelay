@@ -1,6 +1,7 @@
+import { redirect } from "next/navigation";
+
 import { RaceEntry, Team } from "@8hourrelay/models";
 import { firebaseDb } from "@/firebase/adminConfig";
-import Link from "next/link";
 import TeamMemberList from "./TeamDetails";
 
 async function getTeam(name: string) {
@@ -17,12 +18,17 @@ async function getTeam(name: string) {
 
     if (teamsRef.size > 0) {
       const teams = teamsRef.docs.map((data) => {
-        const team = data.data() as Team;
-        return team;
+        const team = data.data();
+        return { ...team, id: data.id }; // we need the ID for the team
       });
-      team = teams[0];
-      if (teams[0] && teams[0].teamMembers) {
-        const teamMembersPromise = teams[0].teamMembers.map((m) => {
+
+      if (!teams[0]) {
+        return null;
+      }
+
+      team = new Team(teams[0] as Team);
+      if (team && team.teamMembers) {
+        const teamMembersPromise = team.teamMembers.map((m) => {
           return firebaseDb
             .collectionGroup("RaceEntry")
             .where("paymentId", "==", m)
@@ -31,7 +37,7 @@ async function getTeam(name: string) {
         });
         const teamMembersRef = await Promise.all(teamMembersPromise);
         teamMembers = teamMembersRef.map(
-          (ref) => ref.docs[0].data() as RaceEntry
+          (ref) => new RaceEntry(ref.docs[0].data() as RaceEntry)
         );
       }
       return { team, teamMembers } as { team: Team; teamMembers: RaceEntry[] };
@@ -44,7 +50,14 @@ async function getTeam(name: string) {
 }
 
 export default async function TeamPage({ params }: any) {
-  const data = await getTeam(params.name);
+  // not team name, just redirect to teams
+  if (!params.name) {
+    redirect("/teams");
+  }
+
+  const [teamName, operation, target] = params.name;
+  console.log(teamName, operation, target);
+  const data = await getTeam(teamName);
   if (!data) {
     return <div>Team {params.name} doesn't exist</div>;
   }
@@ -52,16 +65,12 @@ export default async function TeamPage({ params }: any) {
 
   return (
     <div className="flex flex-col w-full min-h-fit justify-center items-center">
-      <div className="flex justify-between ">
-        <div>
-          <Link href={"/team"}>Back</Link>
-        </div>
-        <div className="btn btn-primary btn-sm">Join</div>
+      <div className="flex w-full justify-center">
+        <h1>Team: {team.displayName}</h1>
       </div>
       <div className="divider" />
       <div className="flex w-full justify-between">
         <h1>Race: {team.race}</h1>
-        <h1>Team: {team.name}</h1>
         {team.slogan && <h2>{team.slogan}</h2>}
         <h1>Captain: {team.captainEmail}</h1>
       </div>

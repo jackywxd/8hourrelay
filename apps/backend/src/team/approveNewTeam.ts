@@ -72,7 +72,7 @@ export const approveTeam = functions.https.onRequest(async (req, res) => {
         .doc(userId)
         .set(
           {
-            teamYear: `${year}-${state}`,
+            teamYear: `${year}-${state}-${collectionId}`, // we need to pass the team ID back to user
             updatedAt: now,
           },
           { merge: true }

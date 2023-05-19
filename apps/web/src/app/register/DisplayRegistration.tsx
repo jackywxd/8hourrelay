@@ -1,19 +1,19 @@
+import Link from "next/link";
 import { RaceEntry } from "@8hourrelay/models";
-import { useRouter } from "next/navigation";
 
 const TABLE_HEAD = ["Name", "Race", "Bib", "Team", ""];
 
 function DisplayRegistration({
+  uid,
   raceEntries,
   setIndex,
   onPay,
 }: {
+  uid: string;
   raceEntries: RaceEntry[];
   setIndex: (index: number) => void;
   onPay: (index: number) => void;
 }) {
-  const router = useRouter();
-
   return (
     <div className="overflow-x-auto w-full">
       <table className="table w-full">
@@ -28,7 +28,7 @@ function DisplayRegistration({
         <tbody>
           {raceEntries
             .filter((f) => f.isActive)
-            .map(({ displayName, race, bib, team, isPaid }, index) => {
+            .map(({ id, displayName, race, bib, team, isPaid }, index) => {
               if (!displayName) return null;
               return (
                 <tr key={`${displayName}-${index}`}>
@@ -43,28 +43,26 @@ function DisplayRegistration({
                     {team ? (
                       team
                     ) : isPaid ? (
-                      <div className="flex gap-2">
-                        TBD
-                        <button
-                          className="btn btn-xs"
-                          onClick={() => {
-                            router.push("/team");
-                          }}
+                      <div className="flex gap-3">
+                        <div>TBD</div>
+                        <Link
+                          className="link link-primary"
+                          href={`/teams/join/${uid}-${id}`}
                         >
-                          JOIIN
-                        </button>
+                          JOIN
+                        </Link>
                       </div>
                     ) : null}
                   </td>
                   <th className="flex gap-2">
-                    <button
-                      className="btn btn-xs"
-                      onClick={() => setIndex(index)} // set edit index
-                    >
-                      Edit
-                    </button>
                     {!isPaid && (
                       <>
+                        <button
+                          className="btn btn-xs"
+                          onClick={() => setIndex(index)} // set edit index
+                        >
+                          Edit
+                        </button>
                         <button
                           className="btn btn-primary btn-xs"
                           onClick={() => {

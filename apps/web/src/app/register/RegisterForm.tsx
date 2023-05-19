@@ -101,7 +101,7 @@ function RegisterForm({
                   fullWidth
                   disabled={props.isValid ? false : true}
                 >
-                  {raceEntry?.isPaid ? `Update Info` : `Review & Payment`}
+                  {raceEntry?.isPaid ? `Update Info` : `Next`}
                 </Button>
                 <Button fullWidth onClick={onCancel}>
                   cancel

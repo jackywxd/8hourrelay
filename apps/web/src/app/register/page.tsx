@@ -18,15 +18,11 @@ const stripePromise = loadStripe(
 
 export type REGISTER_STATE = "INIT" | "EDIT" | "FORM_SUBMITTED" | "DELETE";
 
-function Page() {
+function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const sessionId = searchParams.get("session_id"); // payment succeed
-  const success = searchParams.get("success"); // payment succeed
-  const canceled = searchParams.get("canceled"); // payment canceled
   const action = searchParams.get("action"); // payment canceled
-  const apiKey = searchParams.get("apiKey");
 
   const { store } = useAuth();
   const { uid, user, raceEntry } = store.userStore;
@@ -41,7 +37,7 @@ function Page() {
   });
 
   console.log(
-    `state is ${state} raceEntryState ${store.userStore.raceEntryState}`
+    `state is ${state} raceEntryState ${store.userStore.raceEntryState} index ${store.userStore.editIndex}`
   );
 
   if (state === "INIT") {
@@ -90,16 +86,13 @@ function Page() {
     return (
       <div className="flex flex-col w-full justify-center items-center gap-8">
         <div>
-          {success ? (
-            <div>You success fully registered for race</div>
-          ) : (
-            <div>Manage your races</div>
-          )}
+          <div>Manage your races</div>
         </div>
         <div className="card card-compact w-full bg-base-100 shadow-xl justify-center gap-8">
           {store.userStore.raceEntries ? (
             <DisplayRegistration
-              raceEntries={store.userStore.raceEntries}
+              uid={store.userStore.uid!}
+              raceEntries={store.userStore.raceEntries.slice()}
               setIndex={(index) => {
                 store.userStore.setEditIndex(index);
                 setState("EDIT");
@@ -197,11 +190,23 @@ function Page() {
     setForm(form);
     setState("FORM_SUBMITTED");
   };
+  const onDelete =
+    store.userStore.editIndex === null
+      ? undefined
+      : store.userStore.raceEntry?.isPaid
+      ? undefined
+      : async () => {
+          console.log(`Deleting index ${store.userStore.editIndex}`);
+          await store.userStore.deleteRaceEntry();
+          router.refresh();
+        };
+
   const raceOptions = store.event.races.map((race) => ({
     value: race.name,
     label: race.description,
     entryFee: race.entryFee,
   }));
+
   // user logged in and authStore has been fullfilled with user data
   return (
     <div className="flex flex-col justify-center pt-10">
@@ -210,16 +215,7 @@ function Page() {
         onCancel={() => {
           setState("INIT");
         }}
-        onDelete={
-          store.userStore.editIndex === null
-            ? undefined
-            : store.userStore.raceEntry?.isPaid
-            ? undefined
-            : () => {
-                console.log(`Deleting index ${store.userStore.editIndex}`);
-                store.userStore.deleteRaceEntry();
-              }
-        }
+        onDelete={onDelete}
         raceEntry={raceInitEntry}
         raceOptions={raceOptions}
       />
@@ -227,4 +223,4 @@ function Page() {
   );
 }
 
-export default observer(Page);
+export default observer(RegisterPage);

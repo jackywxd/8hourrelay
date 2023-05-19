@@ -9,10 +9,12 @@ function CreateTeamForm({ onSubmit, onBack }) {
     name: "",
     race: "",
     slogon: "",
+    password: "",
   };
   const SignupSchema = Yup.object().shape({
     name: Yup.string().max(50, "Too Long!").required("Required"),
     race: Yup.string().required("Required"),
+    password: Yup.string().required("Required"),
     slogon: Yup.string(),
   });
 
@@ -38,6 +40,7 @@ function CreateTeamForm({ onSubmit, onBack }) {
                 {...props}
               />
               <FieldItem label="Team Name*" fieldName="name" />
+              <FieldItem label="Password*" fieldName="password" />
               <FieldItem label="Slogan" fieldName="slogon" />
 
               <div className="flex flex-row w-full justify-between">

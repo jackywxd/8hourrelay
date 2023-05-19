@@ -83,7 +83,7 @@ const Navbar = () => {
                     setNavbar(false);
                   }}
                 >
-                  <Link href="/team">Team</Link>
+                  <Link href="/teams">Teams</Link>
                 </div>
               </li>
               <li className="text-white p-2 hover:bg-slate-500 rounded">

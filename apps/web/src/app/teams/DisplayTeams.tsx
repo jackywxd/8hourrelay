@@ -1,13 +1,17 @@
-"use client";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
 import { Team } from "@8hourrelay/models";
+import { JoinTeamButton } from "./JoinTeamButton";
+import { Suspense } from "react";
 
 const TABLE_HEAD = ["Name", "Race", ""];
 
-function DisplayTeams({ teams }: { teams: Team[] }) {
+function DisplayTeams({ teams }: { teams: Team[] | null }) {
   console.log(`display team`, { teams });
-  const { store } = useAuth();
+
+  if (!teams) {
+    return null;
+  }
+
   return (
     <div className="overflow-x-auto w-full">
       <table className="table w-full">
@@ -20,7 +24,13 @@ function DisplayTeams({ teams }: { teams: Team[] }) {
           </tr>
         </thead>
         <tbody>
-          {teams.map(({ name, race, captainEmail }, index) => {
+          {teams.map((team, index) => {
+            const {
+              displayName: name,
+              isOpen,
+              race,
+              captainEmail,
+            } = new Team(team);
             return (
               <tr key={`${name}-${index}`}>
                 <td>
@@ -32,7 +42,11 @@ function DisplayTeams({ teams }: { teams: Team[] }) {
                 </td>
                 <td>{race}</td>
                 <td className="flex gap-2">
-                  <button className="btn !btn-primary btn-xs">Join</button>
+                  {isOpen && (
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <JoinTeamButton name={name} />
+                    </Suspense>
+                  )}
                 </td>
               </tr>
             );
