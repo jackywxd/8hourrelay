@@ -17,7 +17,7 @@ export const onJoinTeam = functions
       );
     }
 
-    logger.info(`Join team for user ${context.auth.uid}`, data);
+    logger.info(`Join team for user ${context.auth.uid}`, { data });
     const {
       teamId,
       password,
@@ -73,49 +73,15 @@ export const onJoinTeam = functions
       return { error: `Race entry ${raceEntryId} is already APPROVED!` };
     }
 
-    // if the current user is the captain of the target team, he can add team member without approval
-    if (user.email == currentTeam.captainEmail) {
-      if (currentTeam.teamMembers && currentTeam.teamMembers.length >= 24) {
-        throw new Error(
-          `Team ${currentTeam.name} reach maximum allows team members!`
-        );
-      }
-
-      const team: Pick<Team, "teamMembers" | "updatedAt"> = {
-        teamMembers: currentTeam.teamMembers
-          ? [...currentTeam.teamMembers, currentRaceEntry.paymentId] // we need payment ID here
-          : [currentRaceEntry.paymentId],
-        updatedAt: now,
-      };
-
-      await Promise.all([
-        db
-          .collection("Users")
-          .doc(context.auth.uid)
-          .collection("RaceEntry")
-          .doc(raceEntryId)
-          .set(
-            {
-              team: currentTeam.name,
-              teamId: teamRef.id,
-              teamState: "APPROVED",
-              updatedAt: now,
-            },
-            { merge: true }
-          ),
-        db
-          .collection("Race")
-          .doc(year)
-          .collection("Teams")
-          .doc(teamId)
-          .set(team, { merge: true }),
-      ]);
-      return {};
+    if (currentTeam.teamMembers && currentTeam.teamMembers.length >= 24) {
+      throw new Error(
+        `Team ${currentTeam.name} reach maximum allows team members!`
+      );
     }
 
-    const team: Pick<Team, "pendingMembers" | "updatedAt"> = {
-      pendingMembers: currentTeam.pendingMembers
-        ? [...currentTeam.pendingMembers, currentRaceEntry.paymentId] // we need payment ID here
+    const team: Pick<Team, "teamMembers" | "updatedAt"> = {
+      teamMembers: currentTeam.teamMembers
+        ? [...currentTeam.teamMembers, currentRaceEntry.paymentId] // we need payment ID here
         : [currentRaceEntry.paymentId],
       updatedAt: now,
     };
@@ -130,7 +96,7 @@ export const onJoinTeam = functions
           {
             team: currentTeam.name,
             teamId: teamRef.id,
-            teamState: "PENDING",
+            teamState: "APPROVED",
             updatedAt: now,
           },
           { merge: true }

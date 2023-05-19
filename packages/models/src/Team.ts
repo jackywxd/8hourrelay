@@ -14,7 +14,6 @@ export class Team {
   password?: string;
   isOpen: boolean = true; // whethere the team is open for team members
   teamMembers?: string[]; // paymentId of the team members maximum 24 members
-  pendingMembers?: string[]; // pending approval team members paymentId
   waitingList?: string[]; // waiting list members
   state: TeamState = "PENDING"; // new team required approval before public access
   constructor(t: Team) {

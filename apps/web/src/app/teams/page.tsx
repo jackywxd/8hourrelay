@@ -1,7 +1,8 @@
-import DisplayTeams from "./DisplayTeams";
-import { Team } from "@8hourrelay/models";
 import Link from "next/link";
-import { getTeams } from "./getTeams";
+
+import { Team } from "@8hourrelay/models";
+import { getTeams } from "@/firebase/serverApi";
+import DisplayTeams from "./DisplayTeams";
 
 export default async function TeamsPage() {
   const data = await getTeams();

@@ -5,8 +5,14 @@ import { Suspense } from "react";
 
 const TABLE_HEAD = ["Name", "Race", ""];
 
-function DisplayTeams({ teams }: { teams: Team[] | null }) {
-  console.log(`display team`, { teams });
+function DisplayTeams({
+  teams,
+  raceEntryId,
+}: {
+  raceEntryId?: string;
+  teams: Team[] | null;
+}) {
+  console.log(`display team raceEntryId`, { raceEntryId });
 
   if (!teams) {
     return null;
@@ -25,12 +31,7 @@ function DisplayTeams({ teams }: { teams: Team[] | null }) {
         </thead>
         <tbody>
           {teams.map((team, index) => {
-            const {
-              displayName: name,
-              isOpen,
-              race,
-              captainEmail,
-            } = new Team(team);
+            const { displayName: name, isOpen, race } = new Team(team);
             return (
               <tr key={`${name}-${index}`}>
                 <td>
@@ -41,11 +42,18 @@ function DisplayTeams({ teams }: { teams: Team[] | null }) {
                   </div>
                 </td>
                 <td>{race}</td>
-                <td className="flex gap-2">
+                <td className="flex">
                   {isOpen && (
-                    <Suspense fallback={<div>Loading...</div>}>
-                      <JoinTeamButton name={name} />
-                    </Suspense>
+                    <Link
+                      className="link link-primary"
+                      href={
+                        raceEntryId
+                          ? `/team/${team.id}/join/${raceEntryId}`
+                          : `/team/${name}/add`
+                      }
+                    >
+                      Select
+                    </Link>
                   )}
                 </td>
               </tr>

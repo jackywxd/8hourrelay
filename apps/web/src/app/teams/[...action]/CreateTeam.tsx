@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import { Input, Button } from "@material-tailwind/react";
+import { Field, ErrorMessage } from "formik";
+import { Input } from "@material-tailwind/react";
 
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -31,11 +31,11 @@ function CreateTeam() {
 
   // if the current user is already a created a team, return null
   // one user can only create one team
-  if (state === "INIT" && !store.userStore.pendingTeamRequest) {
+  if (state === "INIT" && store.userStore.pendingTeamRequest) {
     return (
-      <div className="w-full max-w-lg">
-        <div className="flex flex-wrap min-w-full -mx-3 mb-6 justify-center">
-          Only one team can be created per race!
+      <div className="flex flex-col w-full max-w-lg">
+        <div className="flex flex-wrap min-w-full -mx-3 m-6 justify-center ">
+          Only one team can be created!
         </div>
         <button
           className="btn-primary btn-md rounded-lg justify-center"
@@ -69,18 +69,9 @@ function CreateTeam() {
   return (
     <div className="flex w-full justify-center items-center mt-10">
       {state === "INIT" ? (
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            setState("CREATE");
-          }}
-        >
-          Create Team
-        </button>
-      ) : state === "CREATE" ? (
         <CreateTeamForm
           onBack={() => {
-            setState("INIT");
+            router.push("/team");
           }}
           onSubmit={(values) => {
             setTeam(values);
@@ -129,10 +120,10 @@ function CreateTeam() {
           <button
             className="btn btn-primary"
             onClick={() => {
-              setState("INIT");
+              router.push("/teams");
             }}
           >
-            OK
+            Return
           </button>
         </div>
       ) : null}

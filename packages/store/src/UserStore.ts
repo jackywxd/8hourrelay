@@ -85,20 +85,18 @@ export class UserStore {
       this.raceEntries.length > 0
     )
       return this.raceEntries[this.editIndex];
-    else {
-      if (this.raceEntries.length > 0) {
-        return this.raceEntries.filter((f) => f.isActive)[0];
-      }
-    }
     return null;
   }
 
   // whether current user is captain for current team
-  get isCaptain() {
+  isCaptain(teamId: string) {
     if (this.user && this.user.teamYear) {
       const y = this.user.teamYear.split("-");
+      if (y.length !== 3) {
+        return false;
+      }
       const year = new Date().getFullYear().toString();
-      if (y[0] === year && y[1] === "APPROVED") return true;
+      if (y[0] === year && y[1] === "APPROVED" && y[2] === teamId) return true;
     }
     return false;
   }
@@ -326,13 +324,37 @@ export class UserStore {
         slogon,
         password,
         name: name.toLowerCase(),
-        email: this.user.email.toLowerCase(),
+        email: this.user?.email.toLowerCase(),
       });
       console.log(`create team result`, result);
       if (result.error) {
         this.setError(result.error);
       }
 
+      this.isLoading = false;
+    } catch (error) {
+      console.log(`failed to create team!!`, error);
+      this.setError((error as Error).message);
+      this.isLoading = false;
+    }
+  }
+
+  *joinTeam(raceEntryId: string, teamId: string, password: string) {
+    const functions = getFunctions();
+    const onJoinTeam = httpsCallable(functions, "onJoinTeam");
+
+    this.isLoading = true;
+    try {
+      console.log(`team `, { raceEntryId, teamId });
+      const { data: result } = yield onJoinTeam({
+        raceEntryId,
+        teamId,
+        password,
+      });
+      console.log(`join team result`, result);
+      if (result.error) {
+        this.setError(result.error);
+      }
       this.isLoading = false;
     } catch (error) {
       console.log(`failed to create team!!`, error);
