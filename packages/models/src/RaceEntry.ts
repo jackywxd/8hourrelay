@@ -35,8 +35,9 @@ export class RaceEntry {
   emergencyPhone?: string;
   race!: string;
   team?: string; // team name
+  teamPassword?: string; // team password, should never be saved
   teamId?: string; // team ID
-  teamState?: TeamState; // join a team requires approval
+  teamState?: TeamState; //
   isCaptain?: boolean;
   paymentId?: string; // very important, this is ID used for locate the race entry from team
   sessionId?: string;
@@ -51,6 +52,7 @@ export class RaceEntry {
   raceCoefficient?: number; // coefficient based on the age
   raceStartTime?: string;
   raceEndTime?: string;
+  accepted?: boolean; // accepted race waver
   constructor(r: RaceEntry) {
     Object.assign(this, r);
   }

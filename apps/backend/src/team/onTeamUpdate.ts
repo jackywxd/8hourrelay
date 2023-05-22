@@ -19,8 +19,9 @@ export const onTeamUpdate = functions.firestore
       if (after.state === "APPROVED" && after.state !== before.state) {
         // we need to send email to user to notify
 
+        const teamLink = encodeURI(`${HOST_NAME}/team/${after.name}`);
         const content = `Congratulations! Your team ${after.name} has been approved. 
-        Now you can share your team by this link: ${HOST_NAME}/team/${after.name}`;
+        Now you can share your team by this link: ${teamLink}`;
 
         const email: Mail.Options = {
           from: process.env.FROM_EMAIL,

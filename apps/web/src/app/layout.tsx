@@ -2,6 +2,8 @@
 import { AuthProvider } from "@/context/AuthContext";
 import React from "react";
 import { ThemeProvider } from "@material-tailwind/react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Layout from "@/components/Layout";
 import "../styles/main.css";
@@ -32,6 +34,7 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <Layout>{children}</Layout>
+            <ToastContainer />
           </AuthProvider>
         </ThemeProvider>
       </body>

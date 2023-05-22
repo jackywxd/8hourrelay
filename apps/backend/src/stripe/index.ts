@@ -1,6 +1,7 @@
 import { slackSendMsg } from "../libs/slack";
 import Stripe from "stripe";
 import { logger, db, functions } from "../fcm";
+import { RaceEntry, Team } from "@8hourrelay/models";
 
 const apiKey = process.env.STRIPE_SECRET;
 // Stripe Signing secret
@@ -41,7 +42,9 @@ export const stripeWebhook = functions.https.onRequest(
         data: { object },
       } = event;
 
+      const now = new Date().getTime();
       switch (type) {
+        // somehow this call always arrives first, when paymentId is not being saved to the DB yet
         case "payment_intent.succeeded": {
           const paymentIntent = object as Stripe.PaymentIntent;
           const msg = `🔔  Webhook received! Payment for PaymentIntent ${paymentIntent.id} succeeded.`;
@@ -51,22 +54,66 @@ export const stripeWebhook = functions.https.onRequest(
             .where("paymentId", "==", paymentIntent.id)
             .where("isActive", "==", true)
             .get();
-          // const data = userSnapshot.docs[0].data();
-          // payment intent completed, update user and transaction data
-          await Promise.all([
-            slackSendMsg(msg),
-            db
-              .collection("StripeEvents")
-              .doc(paymentIntent.id)
-              .create(paymentIntent),
-            userSnapshot.size > 0 &&
-              userSnapshot.docs[0].ref.set(
-                {
-                  isPaid: true,
-                },
+
+          if (userSnapshot.size > 0) {
+            const userRaceEntry = userSnapshot.docs[0].data() as RaceEntry;
+            if (!userRaceEntry || !userRaceEntry.team) {
+              throw new Error(
+                `Failed to find user with paymentId ${paymentIntent.id}`
+              );
+            }
+
+            const year = new Date().getFullYear().toString();
+
+            const teamRef = await db
+              .collection("Race")
+              .doc(year)
+              .collection("Teams")
+              .where("name", "==", userRaceEntry.team)
+              .get();
+
+            if (teamRef.size === 0) {
+              throw new Error(`No team found ${userRaceEntry.team}!`);
+            }
+
+            const team = teamRef.docs[0].data() as Team;
+            const teamMembers = team.teamMembers
+              ? [...team.teamMembers, paymentIntent.id]
+              : [paymentIntent.id];
+
+            // const data = userSnapshot.docs[0].data();
+            // payment intent completed, update user and transaction data
+            await Promise.all([
+              slackSendMsg(
+                `Race entry ${userRaceEntry.email} paid for ${userRaceEntry.race} and joined team ${userRaceEntry.team}. Total members is ${teamMembers.length}}`
+              ),
+              db
+                .collection("StripeEvents")
+                .doc(paymentIntent.id)
+                .create(paymentIntent),
+              userSnapshot.size > 0 &&
+                userSnapshot.docs[0].ref.set(
+                  {
+                    teamState: "APPROVED",
+                    isPaid: true,
+                    updatedAt: now,
+                  },
+                  { merge: true }
+                ),
+              teamRef.docs[0].ref.set(
+                { teamMembers, updatedAt: now },
                 { merge: true }
               ),
-          ]);
+            ]);
+          } else {
+            await Promise.all([
+              slackSendMsg(msg),
+              db
+                .collection("StripeEvents")
+                .doc(paymentIntent.id)
+                .create(paymentIntent),
+            ]);
+          }
           break;
         }
         case "payment_intent.payment_failed": {
@@ -134,6 +181,7 @@ export const stripeWebhook = functions.https.onRequest(
                 {
                   receiptNumber: charge.receipt_number, // receipt number
                   receiptUrl: charge.receipt_url,
+                  updatedAt: now,
                 },
                 { merge: true }
               ),
@@ -163,22 +211,50 @@ export const stripeWebhook = functions.https.onRequest(
               `Could not find payment for this session ID ${sessionId}`
             );
           }
+
+          const userRaceEntry = dbRef.docs[0].data() as RaceEntry;
+          const year = new Date().getFullYear().toString();
+
+          const teamRef = await db
+            .collection("Race")
+            .doc(year)
+            .collection("Teams")
+            .where("name", "==", userRaceEntry.team?.toLowerCase())
+            .get();
+
+          if (teamRef.size === 0) {
+            throw new Error(`No team found ${userRaceEntry.team}!`);
+          }
+
+          const team = teamRef.docs[0].data() as Team;
+          const teamMembers = team.teamMembers
+            ? [...team.teamMembers, session.payment_intent]
+            : [session.payment_intent];
+
           const charge = await stripe.charges.retrieve(
             payment.latest_charge as string
           );
           logger.debug(`charge object`, { charge });
           await Promise.all([
-            slackSendMsg(msg),
+            // slackSendMsg(msg),
             db.collection("StripeEvents").doc(session.id).create(session),
-            dbRef.docs[0].ref.set(
-              {
-                paymentId: session.payment_intent,
-                isPaid: payment.status === "succeeded" ? true : false,
-                receiptNumber: charge?.receipt_number ?? null, // receipt number
-                receiptUrl: charge?.receipt_url ?? null,
-              },
-              { merge: true }
-            ),
+            dbRef.size > 0 &&
+              dbRef.docs[0].ref.set(
+                {
+                  paymentId: session.payment_intent,
+                  isPaid: payment.status === "succeeded" ? true : false,
+                  receiptNumber: charge?.receipt_number ?? null, // receipt number
+                  receiptUrl: charge?.receipt_url ?? null,
+                  teamState: "APPROVED",
+                  updatedAt: now,
+                },
+                { merge: true }
+              ),
+            teamRef.size > 0 &&
+              teamRef.docs[0].ref.set(
+                { teamMembers, updatedAt: now },
+                { merge: true }
+              ),
           ]);
           break;
         }
@@ -187,7 +263,9 @@ export const stripeWebhook = functions.https.onRequest(
       response.status(200).end();
     } catch (error) {
       logger.error(error);
+      await slackSendMsg(
+        `Failed to process Stripe event! ${JSON.stringify(error)}`
+      );
     }
-    return;
   }
 );

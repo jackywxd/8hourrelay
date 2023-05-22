@@ -46,13 +46,9 @@ function DisplayTeams({
                   {isOpen && (
                     <Link
                       className="link link-primary"
-                      href={
-                        raceEntryId
-                          ? `/team/${team.id}/join/${raceEntryId}`
-                          : `/team/${name}/add`
-                      }
+                      href={`/register/${name}`}
                     >
-                      Select
+                      Join this team
                     </Link>
                   )}
                 </td>

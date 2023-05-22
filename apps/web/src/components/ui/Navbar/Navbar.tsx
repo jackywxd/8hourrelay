@@ -128,7 +128,7 @@ const Navbar = () => {
                     setNavbar(false);
                   }}
                 >
-                  <Link href="/profile">Profile</Link>
+                  <Link href="/account">Account</Link>
                 </div>
               </li>
             </ul>

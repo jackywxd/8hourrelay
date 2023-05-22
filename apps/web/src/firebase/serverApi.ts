@@ -81,11 +81,8 @@ export async function getTeams(race?: string) {
       .filter((f) => f)
       .map((data) => {
         const d = data.data();
-        if (d?.state === "APPROVED") {
-          const team = { ...d, id: data.id };
-          return team as Team;
-        }
-        return null;
+        const team = { ...d, id: data.id };
+        return team as Team;
       });
     if (race) return teams.filter((f) => f?.race === race);
     return teams;

@@ -1,5 +1,5 @@
 import { Select, Option } from "@material-tailwind/react";
-import { useField, Form, FormikProps, Formik } from "formik";
+import { useField } from "formik";
 
 function SelectComponent(props) {
   const [field, meta, helpers] = useField(props);

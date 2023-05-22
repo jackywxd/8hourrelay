@@ -6,6 +6,7 @@ import JoinTeamButton from "./JoinTeamButton";
 import ListUserRaceEntries from "./ListUserRaceEntries";
 import { Suspense } from "react";
 import Loader from "@/components/Loader";
+import Link from "next/link";
 
 export default async function TeamPage({ params }: any) {
   // not team name, just redirect to teams
@@ -36,6 +37,7 @@ export default async function TeamPage({ params }: any) {
       </div>
     );
   }
+
   if (operation === "add") {
     const data = await getTeam(teamName);
     if (!data) {
@@ -45,18 +47,13 @@ export default async function TeamPage({ params }: any) {
 
     return (
       <div className="flex flex-col w-full min-h-fit justify-center items-center">
-        <div className="flex w-full justify-center">
-          <h1>
-            {team.race} Team: {team.displayName}
-          </h1>
-        </div>
-        <div className="divider" />
-        <div className="flex w-full justify-between"></div>
-        <div>
-          <Suspense fallback={<Loader />}>
-            <ListUserRaceEntries race={team.race} id={team.id} />
-          </Suspense>
-        </div>
+        <Suspense fallback={<Loader />}>
+          <ListUserRaceEntries
+            displayName={team.displayName}
+            race={team.race}
+            id={team.id}
+          />
+        </Suspense>
       </div>
     );
   }
@@ -67,11 +64,15 @@ export default async function TeamPage({ params }: any) {
   const { team, teamMembers } = data;
 
   return (
-    <div className="flex flex-col w-full min-h-fit justify-center items-center">
-      <div className="flex w-full justify-center">
+    <div className="flex flex-col w-full items-center">
+      <div>
         <h1>Team: {team.displayName}</h1>
       </div>
-      <div className="self-end">JOIN</div>
+      <div className="self-end">
+        <Link className="link link-primary" href={`/register/${team.name}`}>
+          JOIN
+        </Link>
+      </div>
       <div className="divider" />
       <div className="flex w-full justify-between">
         <h1>Race: {team.race}</h1>

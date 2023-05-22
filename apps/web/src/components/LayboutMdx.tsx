@@ -14,7 +14,7 @@ function LayoutMdx({
     if (store.error) {
       setTimeout(() => {
         store.resetError();
-      }, 2000);
+      }, 5000);
     }
   }, [store.error]);
   return (
@@ -35,9 +35,7 @@ function LayoutMdx({
         </div>
       )}
       {/* <!-- end loading overlay --> */}
-      <div className="w-full lg:w-[800px] flex flex-co justify-center mt-10">
-        {children}
-      </div>
+      <div className="w-full">{children}</div>
     </div>
   );
 }

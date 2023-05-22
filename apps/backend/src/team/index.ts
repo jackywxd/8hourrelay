@@ -4,5 +4,5 @@ export * from "./approveNewTeam";
 export * from "./onCreateTeam";
 export * from "./onTeamUpdate";
 export * from "./joinTeam";
-export * from "./approveTeamMember";
 export * from "./removeApprovedTeamMember";
+export * from "./onValidateTeamPassword";

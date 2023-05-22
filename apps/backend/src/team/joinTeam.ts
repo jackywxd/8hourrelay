@@ -21,37 +21,38 @@ export const onJoinTeam = functions
     const {
       teamId,
       password,
-      raceEntryId,
+      raceEntryIds,
     }: {
       teamId: string;
       password: string; // team password
-      raceEntryId: string;
+      raceEntryIds: string[]; //raceEntryId 's
     } = data;
 
+    const uid = context.auth.uid;
     const year = new Date().getFullYear().toString();
     const now = new Date().getTime();
 
-    if (!teamId || !raceEntryId) {
+    if (!teamId || !password || !raceEntryIds || raceEntryIds.length === 0) {
       return { error: `Invalid data!` };
     }
 
     // verify team name is avaiable first!!
-    const [userRef, racenEntryRef, teamRef] = await Promise.all([
-      db.collection("Users").doc(context.auth.uid).get(),
-      db
-        .collection("Users")
-        .doc(context.auth.uid)
-        .collection("RaceEntry")
-        .doc(raceEntryId)
-        .get(),
+    const [teamRef, ...racenEntryRefs] = await Promise.all([
       db.collection("Race").doc(year).collection("Teams").doc(teamId).get(),
+      ...raceEntryIds.map((raceEntryId) =>
+        db
+          .collection("Users")
+          .doc(uid)
+          .collection("RaceEntry")
+          .doc(raceEntryId)
+          .get()
+      ),
     ]);
-    if (!userRef.exists || !racenEntryRef.exists || !teamRef.exists) {
+    if (racenEntryRefs.every((r) => !r.exists) || !teamRef.exists) {
       return { error: `User or race entry not exists or team not exists` };
     }
 
-    const currentRaceEntry = racenEntryRef.data() as RaceEntry;
-    const user = userRef.data() as RaceEntry;
+    const raceEntries = racenEntryRefs.map((f) => f.data()) as RaceEntry[];
     const currentTeam = teamRef.data() as Team;
 
     if (!currentTeam.isOpen) {
@@ -62,15 +63,19 @@ export const onJoinTeam = functions
       return { error: `Incorrect password!` };
     }
 
-    if (!currentRaceEntry.paymentId) {
-      return { error: `Race entry ${raceEntryId} is not paid yet!` };
+    if (raceEntries.every((currentRaceEntry) => !currentRaceEntry.paymentId)) {
+      return { error: `Race entry is not paid yet!` };
     }
+
     if (
-      currentRaceEntry.team &&
-      currentRaceEntry.teamId &&
-      currentRaceEntry.teamState === "APPROVED"
+      raceEntries.every(
+        (currentRaceEntry) =>
+          currentRaceEntry.team &&
+          currentRaceEntry.teamId &&
+          currentRaceEntry.teamState === "APPROVED"
+      )
     ) {
-      return { error: `Race entry ${raceEntryId} is already APPROVED!` };
+      return { error: `Race entry is already joined a team!` };
     }
 
     if (currentTeam.teamMembers && currentTeam.teamMembers.length >= 24) {
@@ -78,29 +83,32 @@ export const onJoinTeam = functions
         `Team ${currentTeam.name} reach maximum allows team members!`
       );
     }
+    const paymentIds = raceEntries.map((f) => f.paymentId!);
 
     const team: Pick<Team, "teamMembers" | "updatedAt"> = {
       teamMembers: currentTeam.teamMembers
-        ? [...currentTeam.teamMembers, currentRaceEntry.paymentId] // we need payment ID here
-        : [currentRaceEntry.paymentId],
+        ? [...currentTeam.teamMembers, ...paymentIds] // we need payment ID here
+        : [...paymentIds],
       updatedAt: now,
     };
 
     await Promise.all([
-      db
-        .collection("Users")
-        .doc(context.auth.uid)
-        .collection("RaceEntry")
-        .doc(raceEntryId)
-        .set(
-          {
-            team: currentTeam.name,
-            teamId: teamRef.id,
-            teamState: "APPROVED",
-            updatedAt: now,
-          },
-          { merge: true }
-        ),
+      ...raceEntryIds.map((raceEntryId) =>
+        db
+          .collection("Users")
+          .doc(uid)
+          .collection("RaceEntry")
+          .doc(raceEntryId)
+          .set(
+            {
+              teamId,
+              team: currentTeam.name,
+              teamState: "APPROVED",
+              updatedAt: now,
+            },
+            { merge: true }
+          )
+      ),
       db
         .collection("Race")
         .doc(year)

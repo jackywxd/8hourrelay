@@ -4,14 +4,20 @@ import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
 import Loader from "@/components/Loader";
 
-const JoinTeamButton = ({ id, raceEntryId }) => {
+const JoinTeamButton = ({
+  id,
+  raceEntryId,
+}: {
+  id: string;
+  raceEntryId: string;
+}) => {
   const { store } = useAuth();
   const [state, setState] = useState("INIT");
   const [password, setPassword] = useState("");
 
   const onJoinTeam = async () => {
     if (raceEntryId && password) {
-      await store.userStore.joinTeam(raceEntryId, id, password);
+      await store.userStore.joinTeam([raceEntryId], id, password);
     }
   };
 

@@ -15,7 +15,7 @@ export const JoinTeamButton = ({ name, id, raceEntryId }) => {
       setError("Please input password");
     }
     if (raceEntryId && password) {
-      await store.userStore.joinTeam(raceEntryId, id, password);
+      await store.userStore.joinTeam([raceEntryId], id, password);
       return;
     }
   };

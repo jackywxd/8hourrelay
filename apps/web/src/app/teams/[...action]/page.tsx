@@ -48,7 +48,6 @@ export default async function TeamPage({ params }: any) {
         redirect("/teams");
       }
 
-      console.log(`incomign raceEntry is`, { raceEntry, teams });
       return (
         <div className="flex flex-col w-full min-h-fit justify-center items-center">
           <div className="flex w-full justify-center">

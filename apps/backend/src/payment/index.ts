@@ -1,7 +1,7 @@
 import { logger } from "firebase-functions";
 import { slackSendText } from "../libs/slack";
 import Stripe from "stripe";
-import { RaceEntry, User } from "@8hourrelay/models";
+import { RaceEntry, Team, User } from "@8hourrelay/models";
 import { db, functions } from "../fcm";
 
 const apiKey = process.env.STRIPE_SECRET;
@@ -73,19 +73,43 @@ export const onCreateCheckout = functions
     const uid = context.auth.uid;
 
     let customer;
-    const { id, race }: RaceEntry = data;
 
-    const raceEntry = new RaceEntry(data);
-    // user must logged in first to be able to submit this form
+    // remove teamPassword from raceEntry data
+    const { teamPassword, ...raceData }: RaceEntry = data;
 
-    const userRef = await db.collection("Users").doc(uid).get();
+    if (!raceData.team || !teamPassword) {
+      return { error: `Invalid data!` };
+    }
+
+    const year = new Date().getFullYear().toString();
+    const [userRef, teamRef] = await Promise.all([
+      db.collection("Users").doc(uid).get(),
+      await db
+        .collection("Race")
+        .doc(year)
+        .collection("Teams")
+        .where("name", "==", raceData.team.toLowerCase())
+        .get(),
+    ]);
+    if (!userRef.exists || teamRef.size === 0) {
+      return { error: `User or team not exists!` };
+    }
+
+    const team = teamRef.docs[0].data() as Team;
+
+    if (teamPassword !== team?.password) {
+      return { error: `Invalid team password!` };
+    }
+
+    const raceEntry = new RaceEntry(raceData as RaceEntry);
+
     const user = userRef.data() as User;
     customer = user.customerId;
     const email = user.email;
 
     try {
       const priceId =
-        race === "Adult"
+        raceEntry.race === "Adult"
           ? process.env.PRICE_ID_ADULT // adules
           : process.env.PRICE_ID_KIDS;
 
@@ -100,17 +124,7 @@ export const onCreateCheckout = functions
         ],
         success_url: `${HOST_NAME}/payment?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${HOST_NAME}/payment?canceled=true`,
-        // consent_collection: {
-        //   terms_of_service: "required",
-        // },
       };
-
-      // Update Stripe customer
-      // const userObject: any = {};
-      // if (firstName && lastName) userObject.name = `${firstName} ${lastName}`;
-      // if (phone) userObject.phone = phone;
-      // if (Object.keys(userObject).length > 0)
-      //   await stripe.customers.update(customer, userObject);
 
       const session = await stripe.checkout.sessions.create(
         sessionCreateParams
@@ -127,37 +141,57 @@ export const onCreateCheckout = functions
       raceEntry.sessionId = session.id;
       raceEntry.paymentId = session.payment_intent as string;
 
-      await Promise.all([
+      // race entry is for this current user
+      const updatePromises = [
         slackSendText(
           `Checkout session created successfully for email ${email}`
         ),
-        // db.collection("Users").doc(uid).set(
-        //   {
-        //     firstName,
-        //     lastName,
-        //     preferName,
-        //     gender,
-        //     personalBest,
-        //     phone,
-        //     size,
-        //     birthYear,
-        //     wechatId,
-        //   },
-        //   { merge: true }
-        // ),
-        id
+        raceEntry.id
           ? db
               .collection("Users")
               .doc(uid)
               .collection("RaceEntry")
-              .doc(id)
+              .doc(raceEntry.id)
               .set(Object.assign({}, raceEntry), { merge: true })
           : db
               .collection("Users")
               .doc(uid)
               .collection("RaceEntry")
               .add(Object.assign({}, raceEntry)),
-      ]);
+      ];
+
+      // if the current user and race entry is the same personal, we can update current login user's preference
+      if (raceEntry.email === user.email) {
+        const {
+          firstName,
+          lastName,
+          preferName,
+          gender,
+          personalBest,
+          phone,
+          size,
+          birthYear,
+          wechatId,
+        } = raceEntry;
+        updatePromises.push(
+          db.collection("Users").doc(uid).set(
+            {
+              firstName,
+              lastName,
+              preferName,
+              gender,
+              personalBest,
+              phone,
+              size,
+              birthYear,
+              wechatId,
+            },
+            { merge: true }
+          )
+        );
+      }
+
+      await Promise.all(updatePromises);
       logger.debug(`sending session`, { session });
       return { id: session.id };
     } catch (error) {

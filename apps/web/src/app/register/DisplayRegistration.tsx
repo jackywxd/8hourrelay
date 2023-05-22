@@ -1,35 +1,55 @@
-import Link from "next/link";
 import { RaceEntry } from "@8hourrelay/models";
+import { registerStore } from "@8hourrelay/store";
+import { Button } from "@material-tailwind/react";
+import { observer } from "mobx-react-lite";
 
 const TABLE_HEAD = ["Name", "Race", "Bib", "Team", ""];
 
-function DisplayRegistration({
-  uid,
-  raceEntries,
-  setIndex,
-  onPay,
-}: {
-  uid: string;
-  raceEntries: RaceEntry[];
-  setIndex: (index: number) => void;
-  onPay: (index: number) => void;
-}) {
+function DisplayRegistration() {
+  return (
+    <div className="flex flex-col w-full justify-center items-center gap-8">
+      <div>
+        <div>Manage your races</div>
+      </div>
+      <div className="card card-compact w-full bg-base-100 shadow-xl justify-center gap-8">
+        <RegistrationTable />
+      </div>
+      <div className="flex w-full justify-end">
+        <Button
+          className="!btn-primary"
+          onClick={() => {
+            registerStore.setEditIndex(null);
+            registerStore.setState("EDIT");
+          }}
+        >
+          Add
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+const RegistrationTable = () => {
+  const raceEntries = registerStore.userStore?.raceEntries;
+
+  if (!raceEntries) {
+    return <div>Add your first Race</div>;
+  }
   return (
     <div className="overflow-x-auto w-full">
       <table className="table w-full">
         {/* head */}
         <thead>
           <tr>
-            {TABLE_HEAD.map((head) => (
-              <th key={head}>{head}</th>
+            {TABLE_HEAD.map((head, index) => (
+              <th key={`${head}-${index}`}>{head}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {raceEntries
-            .filter((f) => f.isActive)
-            .map(({ id, displayName, race, bib, team, isPaid }, index) => {
-              if (!displayName) return null;
+            .filter((f: RaceEntry) => f && f.isActive)
+            .map(({ displayName, race, bib, team, isPaid }, index) => {
               return (
                 <tr key={`${displayName}-${index}`}>
                   <td>
@@ -39,39 +59,30 @@ function DisplayRegistration({
                   </td>
                   <td>{race}</td>
                   <td>{bib ? bib : `TBD`}</td>
-                  <td>
-                    {team ? (
-                      team
-                    ) : isPaid ? (
-                      <div className="flex gap-3">
-                        <div>TBD</div>
-                        <Link
-                          className="link link-primary"
-                          href={`/teams/join/${uid}-${id}`}
-                        >
-                          JOIN
-                        </Link>
-                      </div>
-                    ) : null}
-                  </td>
+                  <td>{team}</td>
                   <th className="flex gap-2">
-                    {!isPaid && (
+                    {!isPaid ? (
                       <>
                         <button
                           className="btn btn-xs"
-                          onClick={() => setIndex(index)} // set edit index
+                          onClick={() => {
+                            registerStore.setEditIndex(index);
+                            registerStore.setState("EDIT");
+                          }} // set edit index
                         >
                           Edit
                         </button>
-                        <button
-                          className="btn btn-primary btn-xs"
-                          onClick={() => {
-                            onPay(index);
-                          }}
-                        >
-                          Pay
-                        </button>
                       </>
+                    ) : (
+                      <button
+                        className="btn btn-xs"
+                        onClick={() => {
+                          registerStore.setEditIndex(index);
+                          registerStore.setState("SHOW");
+                        }} // set edit index
+                      >
+                        details
+                      </button>
                     )}
                   </th>
                 </tr>
@@ -81,6 +92,5 @@ function DisplayRegistration({
       </table>
     </div>
   );
-}
-
-export default DisplayRegistration;
+};
+export default observer(DisplayRegistration);

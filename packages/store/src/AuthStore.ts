@@ -6,9 +6,10 @@ import {
 } from "firebase/auth";
 import {
   runInAction,
-  makeAutoObservable,
+  makeObservable,
   reaction,
   action,
+  observable,
   flow,
   IReactionDisposer,
   computed,
@@ -16,6 +17,7 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStore } from "./RootStore";
+import { BaseStore } from "./UIBaseStore";
 
 export type RegisterState =
   | "INIT"
@@ -27,39 +29,33 @@ export type RegisterState =
   | "VERFIED"
   | "LOGINED";
 
-export class AuthStore {
+export class AuthStore extends BaseStore {
   root: RootStore;
   isAuthenticated: boolean = false;
   emailLocalKey = `8hourrelayEmailKey`;
   email?: string;
   state: RegisterState = "INIT";
-  isLoading = false;
-  error = "";
   disposer: IReactionDisposer | null = null;
   // Firebase Auth object
   auth: Auth | null = null;
 
   constructor(root: RootStore) {
+    super();
     this.root = root;
     this.state = "INIT";
     this.onInit();
-    makeAutoObservable(
-      this,
-      {
-        root: false,
-        setEmail: action,
-        setState: action,
-        signinWithEmailLink: flow,
-        sendLoginEmailLink: flow,
-        currentUser: computed,
-      },
-      { autoBind: true }
-    );
+    makeObservable(this, {
+      root: false,
+      isAuthenticated: observable,
+      email: observable,
+      state: observable,
+      setEmail: action,
+      setState: action,
+      signinWithEmailLink: flow,
+      sendLoginEmailLink: flow,
+      currentUser: computed,
+    });
   }
-
-  setError = (error: string) => {
-    this.error = error;
-  };
 
   setAuthenticated = (status: boolean) => {
     this.isAuthenticated = status;
@@ -99,6 +95,7 @@ export class AuthStore {
   }
 
   dispose() {
+    super.reset();
     this.setState("INIT");
     this.setAuthenticated(false);
     this.email = undefined;
@@ -126,10 +123,9 @@ export class AuthStore {
     console.log(`loging with email now`);
     this.isLoading = true;
     try {
-      console.log(`env`, process.env);
       const actionCodeSettings = {
         url: `${process.env.NEXT_PUBLIC_HOST_NAME}/login?continue=${
-          path ?? `profile`
+          path ?? `account`
         }`,
         iOS: {
           bundleId: "com.8hourrelay",

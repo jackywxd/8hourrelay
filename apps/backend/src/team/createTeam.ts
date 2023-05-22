@@ -44,7 +44,7 @@ export const onCreateTeam = functions
       .collection("Race")
       .doc(year)
       .collection("Teams")
-      .where("name", "==", name)
+      .where("name", "==", name.toLowerCase())
       .get();
 
     if (teamRef.size !== 0) {
@@ -57,7 +57,7 @@ export const onCreateTeam = functions
       password,
       slogan: slogan ?? null,
       isOpen: true,
-      name: name,
+      name: name.toLowerCase(),
       captainEmail: email, // set captain emaill to current user's email
       createdBy: context.auth.uid,
       createdAt: now,

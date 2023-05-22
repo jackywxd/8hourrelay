@@ -20,7 +20,7 @@ function LoginPage() {
 
   const onSendLoginLink = async () => {
     const next = race ? `${nextPath}&race=${race}` : nextPath;
-    await authStore.sendLoginEmailLink(next ?? "profile");
+    await authStore.sendLoginEmailLink(next ?? "account");
   };
 
   const onLogin = async (email) => {
@@ -35,9 +35,7 @@ function LoginPage() {
     async function siginin() {
       if (apiKey && typeof window !== "undefined") {
         const fullUrl = window.location.href;
-        if (authStore.email && fullUrl) {
-          await authStore.signinWithEmailLink(fullUrl);
-        }
+        await authStore.signinWithEmailLink(fullUrl);
       }
     }
     siginin();
@@ -50,7 +48,7 @@ function LoginPage() {
       } else if (nextPath) {
         router.push(`/${nextPath}`);
       } else {
-        router.push("/profile");
+        router.push("/account");
       }
     }
   }, [authStore.isAuthenticated, nextPath, race]);
@@ -111,7 +109,7 @@ function LoginPage() {
       ) : authStore.state === "MISSING_EMAIL" ? (
         <div className="text-center text-lg pt-10">
           <div className="text-center text-lg pt-10">
-            Please provide your email for confirmation
+            Please confirm your email to login
           </div>
           <Login
             initEmail={authStore.email}

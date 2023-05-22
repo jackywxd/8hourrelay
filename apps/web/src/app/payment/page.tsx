@@ -37,11 +37,14 @@ export default function PaymentPage() {
 
   if (sessionId && success) {
     return (
-      <div className="flex flex-col h-full items-center">
-        <div>Payment successfully! You can join a team now</div>
-        <div className="pt-10">
-          <Link className="link link-primary" href="/team">
-            Join a team
+      <div className="flex flex-col w-full h-full items-center">
+        <div>Payment successfully! Thank you!</div>
+        <div className="flex w-full justify-between pt-10">
+          <Link className="link link-primary" href="/register">
+            Manage my race
+          </Link>
+          <Link className="link link-primary" href="/teams">
+            Teams
           </Link>
         </div>
       </div>
