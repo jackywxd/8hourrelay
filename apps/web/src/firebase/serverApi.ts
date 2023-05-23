@@ -34,7 +34,7 @@ export async function getTeam(name: string) {
         });
         const teamMembersRef = await Promise.all(teamMembersPromise);
         teamMembers = teamMembersRef.map(
-          (ref) => new RaceEntry(ref.docs[0].data() as RaceEntry)
+          (ref) => ref.docs[0].data() as RaceEntry
         );
       }
       return { team, teamMembers } as { team: Team; teamMembers: RaceEntry[] };

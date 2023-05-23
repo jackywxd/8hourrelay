@@ -26,12 +26,12 @@ function CreateTeam() {
   }, [store.userStore.error]);
 
   const onSubmit = async () => {
-    await store.userStore.createTeam(team);
+    // await store.userStore.createTeam(team);
   };
 
   // if the current user is already a created a team, return null
   // one user can only create one team
-  if (state === "INIT" && store.userStore.pendingTeamRequest) {
+  if (state === "INIT" && !store.userStore.pendingTeamRequest) {
     return (
       <div className="flex flex-col w-full max-w-lg">
         <div className="flex flex-wrap min-w-full -mx-3 m-6 justify-center ">

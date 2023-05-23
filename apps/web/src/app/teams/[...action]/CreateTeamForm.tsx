@@ -40,7 +40,7 @@ function CreateTeamForm({ onSubmit, onBack }) {
                 {...props}
               />
               <FieldItem label="Team Name*" fieldName="name" />
-              <FieldItem label="Password*" fieldName="password" />
+              <FieldItem label="Team Password*" fieldName="password" />
               <FieldItem label="Slogan" fieldName="slogon" />
 
               <div className="flex flex-row w-full justify-between">

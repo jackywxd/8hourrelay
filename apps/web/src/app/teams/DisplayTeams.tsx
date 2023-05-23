@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { Team } from "@8hourrelay/models";
-import { JoinTeamButton } from "./JoinTeamButton";
-import { Suspense } from "react";
 
 const TABLE_HEAD = ["Name", "Race", ""];
 

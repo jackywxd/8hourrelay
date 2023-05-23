@@ -1,11 +1,6 @@
 import { redirect } from "next/navigation";
 import TeamMemberList from "./TeamDetails";
 import { getTeam, getTeamById } from "@/firebase/serverApi";
-import { Team } from "@8hourrelay/models";
-import JoinTeamButton from "./JoinTeamButton";
-import ListUserRaceEntries from "./ListUserRaceEntries";
-import { Suspense } from "react";
-import Loader from "@/components/Loader";
 import Link from "next/link";
 
 export default async function TeamPage({ params }: any) {
@@ -17,46 +12,6 @@ export default async function TeamPage({ params }: any) {
   const [teamName, operation, target] = params.name;
   console.log(teamName, operation, target);
 
-  if (operation && target) {
-    const data = await getTeamById(teamName);
-    if (!data) {
-      return <div>Team {params.name} doesn't exist</div>;
-    }
-    const team = new Team(data);
-
-    return (
-      <div className="flex flex-col w-full min-h-fit justify-center items-center">
-        <div className="flex w-full justify-center">
-          <h1>
-            Join {team.race} Team: {team.displayName}
-          </h1>
-        </div>
-        <div className="divider" />
-
-        <JoinTeamButton id={teamName} raceEntryId={target} />
-      </div>
-    );
-  }
-
-  if (operation === "add") {
-    const data = await getTeam(teamName);
-    if (!data) {
-      return <div>Team {params.name} doesn't exist</div>;
-    }
-    const { team } = data;
-
-    return (
-      <div className="flex flex-col w-full min-h-fit justify-center items-center">
-        <Suspense fallback={<Loader />}>
-          <ListUserRaceEntries
-            displayName={team.displayName}
-            race={team.race}
-            id={team.id}
-          />
-        </Suspense>
-      </div>
-    );
-  }
   const data = await getTeam(teamName);
   if (!data) {
     return <div>Team {params.name} doesn't exist</div>;

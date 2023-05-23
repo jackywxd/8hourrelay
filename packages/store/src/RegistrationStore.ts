@@ -66,8 +66,6 @@ export class RegistrationStore extends BaseStore {
       state: observable,
       teamValidated: observable,
       form: observable,
-      db: false,
-      event: false,
       setForm: action,
       setState: action,
       setEditIndex: action,
@@ -195,7 +193,8 @@ export class RegistrationStore extends BaseStore {
   }
 
   *deleteRaceEntry() {
-    console.log(`delete race entry`);
+    if (this.isLoading) return;
+    const idd = toast.loading(`Deleting race entry...`);
     this.isLoading = true;
     try {
       if (!this.raceEntry || !this.editIndex) {
@@ -205,21 +204,31 @@ export class RegistrationStore extends BaseStore {
       const index = this.editIndex;
       // const newEntry = this.raceEntries?.filter(f=>f.id!==id)
       this.setEditIndex(null);
-      this.userStore?.spliceRaceEntry(this.editIndex);
+      this.userStore?.spliceRaceEntry(index);
       yield deleteDoc(
         doc(this.db, "Users", this.userStore?.uid!, "RaceEntry", id)
       );
-      yield AsyncStorage.removeItem(entryFormSnapshot);
-      this.setState("SUCCESS");
+      toast.update(idd, {
+        render: `Race entry deleted successfully`,
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
     } catch (error) {
       console.log(`failed to getUser`, error);
       this.error = (error as Error).message;
-      this.setState("ERROR");
+      toast.update(idd, {
+        render: `Failed to delete race entry`,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
     }
     this.isLoading = false;
   }
 
   *onGetStripeSession(sessionId: string) {
+    if (this.isLoading) return;
     const functions = getFunctions();
     const onGetStripeSession = httpsCallable(functions, "onGetStripeSession");
 
@@ -239,6 +248,7 @@ export class RegistrationStore extends BaseStore {
   }
 
   *submitRaceForm(): unknown {
+    if (this.isLoading) return;
     const functions = getFunctions();
     const onCreateCheckout = httpsCallable(functions, "onCreateCheckout");
     if (!this.form) {
@@ -252,7 +262,7 @@ export class RegistrationStore extends BaseStore {
       return;
     }
 
-    const id = toast.loading(`Submiting race entry`);
+    const id = toast.loading(`Submiting race entry...`);
     this.isLoading = true;
 
     try {
@@ -298,6 +308,7 @@ export class RegistrationStore extends BaseStore {
   }
 
   *validateTeamPassword(team: string, teamPassword: string) {
+    if (this.isLoading) return;
     const functions = getFunctions();
     const onValidateTeamPassword = httpsCallable(
       functions,

@@ -134,7 +134,6 @@ export class UserStore extends BaseStore {
       this.raceEntryListner();
     }
 
-    this.getTeam(); // get team data for this user
     this.userListner = onSnapshot(doc(this.db, "Users", uid), (doc) => {
       const user = doc.data() as User;
       console.log(`New User data`, user);
@@ -159,6 +158,7 @@ export class UserStore extends BaseStore {
 
   dispose() {
     super.reset();
+    this.setUid(null);
     this.userListner && this.userListner();
     this.raceEntryListner && this.raceEntryListner();
     this.user = undefined;
@@ -182,104 +182,6 @@ export class UserStore extends BaseStore {
     } catch (error) {
       console.log(`failed to getUser`, error);
       this.error = (error as Error).message;
-      this.isLoading = false;
-    }
-  }
-  *createTeam({
-    name,
-    race,
-    slogon,
-    password,
-  }: {
-    name: string;
-    slogon: string;
-    race: string;
-    password: string;
-  }) {
-    const functions = getFunctions();
-    const onCreateTeam = httpsCallable(functions, "onCreateTeam");
-
-    this.isLoading = true;
-    try {
-      console.log(`team data`, { name, race, password });
-      const { data: result } = yield onCreateTeam({
-        race, //kids run or Adult
-        slogon,
-        password,
-        name: name.toLowerCase(),
-        email: this.user?.email.toLowerCase(),
-      });
-      console.log(`create team result`, result);
-      if (result.error) {
-        this.setError(result.error);
-      }
-
-      this.isLoading = false;
-    } catch (error) {
-      console.log(`failed to create team!!`, error);
-      this.setError((error as Error).message);
-      this.isLoading = false;
-    }
-  }
-
-  *joinTeam(raceEntryIds: string[], teamId: string, password: string) {
-    const functions = getFunctions();
-    const onJoinTeam = httpsCallable(functions, "onJoinTeam");
-
-    this.isLoading = true;
-    try {
-      console.log(`team `, { raceEntryIds, teamId });
-      const { data: result } = yield onJoinTeam({
-        raceEntryIds,
-        teamId,
-        password,
-      });
-      console.log(`join team result`, result);
-      if (result.error) {
-        this.setError(result.error);
-      }
-      this.isLoading = false;
-    } catch (error) {
-      console.log(`failed to create team!!`, error);
-      this.setError((error as Error).message);
-      this.isLoading = false;
-    }
-  }
-
-  *getTeam() {
-    this.isLoading = true;
-    try {
-      console.log(`getting team data`);
-      // this.team = [];
-      this.isLoading = false;
-      // query team data for this uer
-    } catch (error) {
-      console.log(`failed to getUser`, error);
-      this.setError((error as Error).message);
-      this.isLoading = false;
-    }
-  }
-
-  *updateTeam() {
-    this.isLoading = true;
-    try {
-      console.log(`user data`, { user: this });
-      this.isLoading = false;
-    } catch (error) {
-      console.log(`failed to getUser`, error);
-      this.setError((error as Error).message);
-      this.isLoading = false;
-    }
-  }
-
-  *listAllTeam() {
-    this.isLoading = true;
-    try {
-      console.log(`user data`);
-      this.isLoading = false;
-    } catch (error) {
-      console.log(`failed to getUser`, error);
-      this.setError((error as Error).message);
       this.isLoading = false;
     }
   }

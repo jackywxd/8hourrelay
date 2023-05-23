@@ -1,4 +1,3 @@
-"use client";
 import Volunteer from "../../content/volunteer.mdx";
 
 export default function Page() {

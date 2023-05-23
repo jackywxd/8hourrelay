@@ -43,31 +43,34 @@ function RegisterForm({ team }: { team?: string }) {
     console.log(`Register Form data`, { values });
     const form = { ...values };
     if (!registerStore.teamValidated) {
-      await registerStore.validateTeamPassword(
-        values.team,
-        values.teamPassword
-      );
+      if (
+        !(await registerStore.validateTeamPassword(
+          values.team,
+          values.teamPassword
+        ))
+      ) {
+        return;
+      }
     }
-    if (registerStore.teamValidated) {
-      registerStore.setForm(form);
-      registerStore.setState("FORM_SUBMITTED");
-    }
+    registerStore.setForm(form);
+    registerStore.setState("FORM_SUBMITTED");
   };
 
   const onDelete = async () => {
     await registerStore.deleteRaceEntry();
-    router.refresh();
+    registerStore.setState("INIT");
   };
 
   const onCancel = () => {
+    registerStore.setForm(null);
     if (team) router.push("/register");
     else registerStore.setState("INIT");
   };
 
-  const onValidate = async (team: string, teamPassword: string) => {
-    console.log(`Validate team password`, { team, teamPassword });
-    await registerStore.validateTeamPassword(team, teamPassword);
-  };
+  // const onValidate = async (team: string, teamPassword: string) => {
+  //   console.log(`Validate team password`, { team, teamPassword });
+  //   await registerStore.validateTeamPassword(team, teamPassword);
+  // };
 
   const genderOptions = ["Male", "Femal"].map((m) => ({ value: m, label: m }));
   const shirtSizeOptions = ["XS", "Small", "Medium", "Large", "XLarge"].map(
@@ -91,8 +94,7 @@ function RegisterForm({ team }: { team?: string }) {
         <Formik
           initialValues={initialValues}
           validationSchema={SignupSchema}
-          enableReinitialize
-          onSubmit={(values) => onSubmit(values)}
+          onSubmit={async (values) => await onSubmit(values)}
         >
           {(props) => (
             <Form className="flex flex-col w-72 items-end gap-6">
@@ -132,26 +134,32 @@ function RegisterForm({ team }: { team?: string }) {
               <div className="divider"></div>
               <FieldCheckBox label="Accepte race wavier" fieldName="accepted" />
               <div className="flex w-full justify-between gap-2">
-                {!registerStore.raceEntry?.isPaid && (
-                  <Button
-                    className="!btn-primary"
-                    type="submit"
-                    fullWidth
-                    disabled={
-                      !props.isValid ||
-                      props.values.accepted === false ||
-                      registerStore.isLoading
-                    }
-                  >
-                    Next
-                  </Button>
-                )}
-                <Button fullWidth onClick={onCancel}>
+                <Button
+                  className="!btn-primary"
+                  type="submit"
+                  fullWidth
+                  disabled={
+                    !props.isValid ||
+                    props.values.accepted === false ||
+                    registerStore.isLoading
+                  }
+                >
+                  Next
+                </Button>
+                <Button
+                  fullWidth
+                  onClick={onCancel}
+                  disabled={registerStore.isLoading}
+                >
                   return
                 </Button>
                 {registerStore.editIndex !== null && // edit current race entry is not paid yet, user can delete it
                   !registerStore.raceEntry?.isPaid && (
-                    <Button fullWidth onClick={onDelete}>
+                    <Button
+                      fullWidth
+                      onClick={onDelete}
+                      disabled={registerStore.isLoading}
+                    >
                       delete
                     </Button>
                   )}
@@ -167,22 +175,6 @@ function RegisterForm({ team }: { team?: string }) {
 }
 
 export default observer(RegisterForm);
-
-// const AutoSubmitToken = () => {
-//   // Grab values and submitForm from context
-//   const { values, submitForm, dirty, isValid } = useFormikContext();
-//   useEffect(() => {
-//     if (!dirty || !isValid) return;
-//     console.log(`updating....`, values);
-//     if (values.teamPassword) delete values.teamPassword;
-//     if (values.accepted) delete values.accepted;
-//     const jsonData = JSON.stringify(values);
-//     AsyncStorage.setItem(entryFormSnapshot, jsonData);
-//     // Submit the form imperatively as an effect as soon as form values.token are 6 digits long
-//     // submitForm();
-//   }, [values]);
-//   return null;
-// };
 
 export const FieldItem = ({ label, fieldName, ...props }) => {
   return (

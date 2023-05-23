@@ -65,10 +65,10 @@ function Sidebar({
             Settings
           </ListItem>
           <ListItem
-            onClick={() => {
+            onClick={async () => {
               console.log(`loging out!`);
+              await store.authStore.logout();
               router.push("/");
-              store.authStore.logout();
             }}
           >
             <ListItemPrefix>

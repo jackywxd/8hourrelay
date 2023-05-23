@@ -59,7 +59,7 @@ const RegistrationTable = () => {
                   </td>
                   <td>{race}</td>
                   <td>{bib ? bib : `TBD`}</td>
-                  <td>{team}</td>
+                  <td>{isPaid ? team : ``}</td>
                   <th className="flex gap-2">
                     {!isPaid ? (
                       <>

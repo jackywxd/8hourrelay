@@ -33,9 +33,7 @@ function TeamMemberList({
               <tr key={`${name}-${index}`}>
                 <td>
                   <div>
-                    <Link href={`/team/${name}`}>
-                      <div className="font-bold">{name}</div>
-                    </Link>
+                    <div className="font-bold">{name}</div>
                   </div>
                 </td>
                 <td>{email}</td>

@@ -18,6 +18,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStore } from "./RootStore";
 import { BaseStore } from "./UIBaseStore";
+import { toast } from "react-toastify";
 
 export type RegisterState =
   | "INIT"
@@ -45,15 +46,17 @@ export class AuthStore extends BaseStore {
     this.state = "INIT";
     this.onInit();
     makeObservable(this, {
-      root: false,
       isAuthenticated: observable,
       email: observable,
       state: observable,
       setEmail: action,
       setState: action,
+      onInit: action,
+      dispose: action,
+      currentUser: computed,
       signinWithEmailLink: flow,
       sendLoginEmailLink: flow,
-      currentUser: computed,
+      logout: flow,
     });
   }
 
@@ -121,6 +124,7 @@ export class AuthStore extends BaseStore {
       throw new Error(`No auth being set or no email being set!`);
     }
     console.log(`loging with email now`);
+    const id = toast.loading(`Sending login email...`);
     this.isLoading = true;
     try {
       const actionCodeSettings = {
@@ -140,9 +144,19 @@ export class AuthStore extends BaseStore {
         AsyncStorage.setItem(this.emailLocalKey, this.email!),
         sendSignInLinkToEmail(this.auth, this.email!, actionCodeSettings),
       ]);
+      toast.update(id, {
+        render: "Email link sent successfully",
+        type: "success",
+        autoClose: 1000,
+      });
       this.state = "EMAIL_LINK_SENT";
     } catch (error) {
       this.error = (error as Error).message;
+      toast.update(id, {
+        render: "Failed to send email link. Please try again later",
+        type: "error",
+        autoClose: 1000,
+      });
     }
     this.isLoading = false;
   }
@@ -167,12 +181,14 @@ export class AuthStore extends BaseStore {
         console.log(`already verified with this url`, { url });
         return;
       }
+      toast.info(`Sign in with email...`);
       this.isLoading = true;
       try {
         yield signInWithEmailLink(this.auth, loginEmail, url);
         if (typeof window === "object")
           yield AsyncStorage.removeItem(this.emailLocalKey);
         this.state = "VERFIED";
+        toast.success("Sign in successfully");
       } catch (error) {
         console.log(`Failed to signinWithEmail`, { error });
         this.error = (error as Error).message;

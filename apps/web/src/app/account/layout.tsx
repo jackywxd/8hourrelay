@@ -34,7 +34,6 @@ function ProfileLayout({
   const { store } = useAuth();
 
   const user = store.userStore.user;
-  const raceEntry = store.userStore.raceEntry;
 
   console.log(`profileStore selected`, { selected: profileStore.selectedTab });
   return (
