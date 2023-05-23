@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import TeamMemberList from "./TeamDetails";
 import { getTeam, getTeamById } from "@/firebase/serverApi";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default async function TeamPage({ params }: any) {
   // not team name, just redirect to teams
@@ -17,31 +18,38 @@ export default async function TeamPage({ params }: any) {
     return <div>Team {params.name} doesn't exist</div>;
   }
   const { team, teamMembers } = data;
+  console.log(`team data`, { team, teamMembers });
+
+  if (!team) {
+    return (
+      <div className="flex flex-col w-full items-center">
+        <div className="flex w-full justify-center items-center">
+          <h1>Team does not exists</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (!teamMembers || teamMembers.length === 0) {
+    return (
+      <div className="flex flex-col w-full items-center">
+        <div className="flex w-full justify-center items-center">
+          <h1>Team {team.name} has no team members yet</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (team.password) {
+    delete team.password;
+  }
 
   return (
     <div className="flex flex-col w-full items-center">
-      <div>
-        <h1>Team: {team.displayName}</h1>
-      </div>
-      <div className="self-end">
-        <Link className="link link-primary" href={`/register/${team.name}`}>
-          JOIN
-        </Link>
-      </div>
-      <div className="divider" />
-      <div className="flex w-full justify-between">
-        <h1>Race: {team.race}</h1>
-        {team.slogan && <h2>{team.slogan}</h2>}
-        <h1>Captain: {team.captainEmail}</h1>
-      </div>
-      <div className="divider">Team Members</div>
       <div className="flex w-full justify-center items-center">
-        {teamMembers ? (
-          <TeamMemberList
-            captainEmail={team.captainEmail}
-            members={teamMembers}
-          />
-        ) : null}
+        <Suspense fallback={<div>Loading...</div>}>
+          <TeamMemberList teamData={team} membersData={teamMembers} />
+        </Suspense>
       </div>
     </div>
   );

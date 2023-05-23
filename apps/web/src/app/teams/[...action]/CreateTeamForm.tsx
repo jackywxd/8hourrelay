@@ -4,13 +4,7 @@ import { Input, Button } from "@material-tailwind/react";
 
 import SelectComponent from "@/components/SelecComponent";
 
-function CreateTeamForm({ onSubmit, onBack }) {
-  const initialValues = {
-    name: "",
-    race: "",
-    slogon: "",
-    password: "",
-  };
+function CreateTeamForm({ onSubmit, onBack, initialValues }) {
   const SignupSchema = Yup.object().shape({
     name: Yup.string().max(50, "Too Long!").required("Required"),
     race: Yup.string().required("Required"),
@@ -41,6 +35,7 @@ function CreateTeamForm({ onSubmit, onBack }) {
               />
               <FieldItem label="Team Name*" fieldName="name" />
               <FieldItem label="Team Password*" fieldName="password" />
+              <FieldItem label="Captain Name*" fieldName="captainName" />
               <FieldItem label="Slogan" fieldName="slogon" />
 
               <div className="flex flex-row w-full justify-between">

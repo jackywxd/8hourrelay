@@ -20,12 +20,14 @@ export const onCreateTeam = functions
     logger.info(`Create team for user ${context.auth.uid}`, data);
     const {
       name,
+      captainName,
       slogan,
       race,
       password,
       email,
     }: {
-      name: string;
+      name: string; // team name
+      captainName: string; //team captain name
       slogan: string;
       race: string;
       email: string;
@@ -57,6 +59,7 @@ export const onCreateTeam = functions
       password,
       slogan: slogan ?? null,
       isOpen: true,
+      captainName, // set captain name
       name: name.toLowerCase(),
       captainEmail: email, // set captain emaill to current user's email
       createdBy: context.auth.uid,

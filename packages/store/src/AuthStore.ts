@@ -147,7 +147,8 @@ export class AuthStore extends BaseStore {
       toast.update(id, {
         render: "Email link sent successfully",
         type: "success",
-        autoClose: 1000,
+        isLoading: false,
+        autoClose: 2000,
       });
       this.state = "EMAIL_LINK_SENT";
     } catch (error) {
@@ -155,7 +156,8 @@ export class AuthStore extends BaseStore {
       toast.update(id, {
         render: "Failed to send email link. Please try again later",
         type: "error",
-        autoClose: 1000,
+        isLoading: false,
+        autoClose: 2000,
       });
     }
     this.isLoading = false;
@@ -181,14 +183,19 @@ export class AuthStore extends BaseStore {
         console.log(`already verified with this url`, { url });
         return;
       }
-      toast.info(`Sign in with email...`);
+      const id = toast.loading(`Sign in with email...`);
       this.isLoading = true;
       try {
         yield signInWithEmailLink(this.auth, loginEmail, url);
         if (typeof window === "object")
           yield AsyncStorage.removeItem(this.emailLocalKey);
         this.state = "VERFIED";
-        toast.success("Sign in successfully");
+        toast.update(id, {
+          render: "Sign in successfully",
+          type: "success",
+          isLoading: false,
+          autoClose: 2000,
+        });
       } catch (error) {
         console.log(`Failed to signinWithEmail`, { error });
         this.error = (error as Error).message;

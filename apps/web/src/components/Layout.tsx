@@ -40,7 +40,7 @@ export default function MyLayout({ children, meta: pageMeta }: Props) {
       </Head>
       <div className="flex flex-col min-h-screen justify-between">
         <Navbar />
-        <div className="flex min-h-full w-full bg-opacity-10 justify-center items-center">
+        <div className="flex p-2 h-full w-full bg-opacity-10 justify-center items-center ">
           <main id="skip">{children}</main>
         </div>
         <Footer />

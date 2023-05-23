@@ -23,7 +23,8 @@ export async function getTeam(name: string) {
         return null;
       }
 
-      team = new Team(teams[0] as Team);
+      team = teams[0];
+
       if (team && team.teamMembers) {
         const teamMembersPromise = team.teamMembers.map((m) => {
           return firebaseDb

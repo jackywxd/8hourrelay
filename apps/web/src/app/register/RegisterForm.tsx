@@ -12,18 +12,6 @@ function RegisterForm({ team }: { team?: string }) {
   const router = useRouter();
   const initialValues = registerStore.initRaceEntryForm(team);
 
-  // load local form data and reset the form init values
-  // useEffect(() => {
-  //   const init = async () => {
-  //     const data = await AsyncStorage.getItem(entryFormSnapshot);
-  //     if (data) {
-  //       console.log(`loading new data`, { data });
-  //       const newValue = JSON.parse(data);
-  //       setInitValues({ ...initialValues, ...newValue });
-  //     }
-  //   };
-  //   init();
-  // }, []);
   const SignupSchema = Yup.object().shape({
     firstName: Yup.string().max(50, "Too Long!").required("Required"),
     lastName: Yup.string().max(50, "Too Long!").required("Required"),
@@ -66,11 +54,6 @@ function RegisterForm({ team }: { team?: string }) {
     if (team) router.push("/register");
     else registerStore.setState("INIT");
   };
-
-  // const onValidate = async (team: string, teamPassword: string) => {
-  //   console.log(`Validate team password`, { team, teamPassword });
-  //   await registerStore.validateTeamPassword(team, teamPassword);
-  // };
 
   const genderOptions = ["Male", "Femal"].map((m) => ({ value: m, label: m }));
   const shirtSizeOptions = ["XS", "Small", "Medium", "Large", "XLarge"].map(
@@ -126,7 +109,11 @@ function RegisterForm({ team }: { team?: string }) {
                 {...props}
               />
               <div className="divider">Team Info</div>
-              <FieldItem label="Team Name*" fieldName="team" />
+              <FieldItem
+                label="Team Name*"
+                fieldName="team"
+                disabled={team ? true : false}
+              />
               <FieldItem label="Team Password*" fieldName="teamPassword" />
               <div className="divider">Emergency Contact</div>
               <FieldItem label="Name*" fieldName="emergencyName" />
@@ -142,14 +129,17 @@ function RegisterForm({ team }: { team?: string }) {
                     !props.isValid ||
                     props.values.accepted === false ||
                     registerStore.isLoading
+                      ? true
+                      : false
                   }
                 >
                   Next
                 </Button>
+
                 <Button
                   fullWidth
                   onClick={onCancel}
-                  disabled={registerStore.isLoading}
+                  disabled={registerStore.isLoading ? true : false}
                 >
                   return
                 </Button>
@@ -158,7 +148,7 @@ function RegisterForm({ team }: { team?: string }) {
                     <Button
                       fullWidth
                       onClick={onDelete}
-                      disabled={registerStore.isLoading}
+                      disabled={registerStore.isLoading ? true : false}
                     >
                       delete
                     </Button>

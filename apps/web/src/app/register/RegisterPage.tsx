@@ -1,6 +1,6 @@
 "use client";
 import { observer } from "mobx-react-lite";
-import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 import { useAuth } from "@/context/AuthContext";
 import { registerStore } from "@8hourrelay/store";
@@ -10,14 +10,17 @@ import ShowRaceEntry from "./ShowRaceEntry";
 import ConfirmForm from "./ConfirmPayment";
 import LoginFirst from "@/components/LoginFirst";
 
-export type REGISTER_STATE = "INIT" | "EDIT" | "FORM_SUBMITTED" | "DELETE";
-
-function RegisterPage() {
-  const searchParams = useSearchParams();
-
-  const action = searchParams.get("action"); // payment canceled
-
+function RegisterPage({ team }: { team?: string }) {
   const { store } = useAuth();
+
+  useEffect(() => {
+    if (team) {
+      registerStore.setState("EDIT");
+    } else {
+      registerStore.setState("INIT");
+    }
+    registerStore.setTeamValidated(false);
+  }, [team]);
 
   // if no logined user yet, redirect user to login
   if (!store.authStore.isAuthenticated) {
@@ -42,7 +45,7 @@ function RegisterPage() {
   }
 
   if (registerStore.state === "EDIT") {
-    return <RegisterForm />;
+    return <RegisterForm team={team} />;
   }
   if (registerStore.state === "FORM_SUBMITTED") {
     return <ConfirmForm />;

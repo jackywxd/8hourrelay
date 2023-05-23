@@ -13,6 +13,7 @@ function CreateTeam() {
   const router = useRouter();
   const [state, setState] = useState("INIT");
   const [team, setTeam] = useState({
+    captainName: store.userStore.user?.displayName ?? "",
     name: "",
     slogon: "",
     race: "",
@@ -28,6 +29,24 @@ function CreateTeam() {
   const onSubmit = async () => {
     // await store.userStore.createTeam(team);
   };
+
+  if (!store.authStore.isAuthenticated) {
+    return (
+      <div className="w-full max-w-lg">
+        <div className="flex flex-wrap min-w-full -mx-3 mb-6 justify-center">
+          Please login before create a team
+        </div>
+        <button
+          className="btn-primary btn-md rounded-lg justify-center"
+          onClick={() => {
+            router.push("/login?continue=team");
+          }}
+        >
+          Login
+        </button>
+      </div>
+    );
+  }
 
   // if the current user is already a created a team, return null
   // one user can only create one team
@@ -49,27 +68,11 @@ function CreateTeam() {
     );
   }
 
-  if (!store.authStore.isAuthenticated) {
-    return (
-      <div className="w-full max-w-lg">
-        <div className="flex flex-wrap min-w-full -mx-3 mb-6 justify-center">
-          Please login before create a team
-        </div>
-        <button
-          className="btn-primary btn-md rounded-lg justify-center"
-          onClick={() => {
-            router.push("/login?continue=team");
-          }}
-        >
-          Login
-        </button>
-      </div>
-    );
-  }
   return (
     <div className="flex w-full justify-center items-center mt-10">
       {state === "INIT" ? (
         <CreateTeamForm
+          initialValues={team}
           onBack={() => {
             router.push("/team");
           }}
@@ -86,6 +89,7 @@ function CreateTeam() {
           </div>
           <div>Race: {team.race}</div>
           <div>Name: {team.name}</div>
+          <div>Captain Name: {team.captainName}</div>
           <div>Password: {team.password}</div>
           {team.slogon && <div>Slogon: {team.slogon}</div>}
           <button

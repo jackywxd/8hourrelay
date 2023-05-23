@@ -3,6 +3,7 @@ export type TeamState = "APPROVED" | "PENDING" | "DENIED";
 export class Team {
   id!: string; //team ID
   captainEmail!: string; // current captain email; could be changed later
+  captainName!: string; // current captain Name
   name!: string;
   year!: string;
   race!: string; // adult or Kids

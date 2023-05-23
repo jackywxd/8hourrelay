@@ -5,19 +5,47 @@ import { RaceEntry, Team } from "@8hourrelay/models";
 
 const TABLE_HEAD = ["Name", "Email", ""];
 
+// data passed from server side is plain object
 function TeamMemberList({
-  captainEmail,
-  members,
+  teamData,
+  membersData,
 }: {
-  captainEmail: string;
-  members: RaceEntry[] | undefined;
+  teamData: Team;
+  membersData: RaceEntry[];
 }) {
   const { store } = useAuth();
-  if (!members) {
-    return null;
+
+  if (!store.authStore.isAuthenticated) {
+    return <div>Login in to view the data</div>;
   }
+
+  if (
+    store.userStore.user?.email &&
+    !membersData.some((f) => f.email === store.userStore?.user?.email)
+  ) {
+    return <div>You are not the member of this team</div>;
+  }
+  const team = new Team(teamData);
+  const members = membersData?.map((m) => new RaceEntry(m));
+
   return (
     <div className="overflow-x-auto w-full">
+      <div>
+        <h1>Team: {team.displayName}</h1>
+      </div>
+      <div className="self-end">
+        <Link className="link link-primary" href={`/register/${team.name}`}>
+          JOIN
+        </Link>
+      </div>
+      <div className="divider" />
+      <div className="flex w-full justify-between">
+        <h1>Race: {team.race}</h1>
+        {team.slogan && <h2>{team.slogan}</h2>}
+        <h1>Captain: {team.captainEmail}</h1>
+      </div>
+
+      <div className="divider">Team Members</div>
       <table className="table w-full">
         {/* head */}
         <thead>
@@ -37,11 +65,7 @@ function TeamMemberList({
                   </div>
                 </td>
                 <td>{email}</td>
-                <th className="flex gap-2">
-                  {store.userStore.user?.email === captainEmail ? (
-                    <button className="btn btn-xs">Remove</button>
-                  ) : null}
-                </th>
+                <th className="flex gap-2"></th>
               </tr>
             );
           })}

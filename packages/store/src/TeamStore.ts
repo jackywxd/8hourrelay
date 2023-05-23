@@ -126,6 +126,7 @@ export class TeamStore extends BaseStore {
         password,
         name: name.toLowerCase(),
         email: this.userStore?.user?.email.toLowerCase(),
+        captainName: this.userStore?.user?.displayName ?? "",
       });
       console.log(`create team result`, result);
       if (result.error) {

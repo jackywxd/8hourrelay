@@ -1,7 +1,7 @@
+import { observer } from "mobx-react-lite";
+
 import { RaceEntry } from "@8hourrelay/models";
 import { registerStore } from "@8hourrelay/store";
-import { Button } from "@material-tailwind/react";
-import { observer } from "mobx-react-lite";
 
 const TABLE_HEAD = ["Name", "Race", "Bib", "Team", ""];
 
@@ -9,30 +9,32 @@ function DisplayRegistration() {
   return (
     <div className="flex flex-col w-full justify-center items-center gap-8">
       <div>
-        <div>Manage your races</div>
-      </div>
-      <div className="card card-compact w-full bg-base-100 shadow-xl justify-center gap-8">
-        <RegistrationTable />
+        <div>Manage your race entry</div>
       </div>
       <div className="flex w-full justify-end">
-        <Button
-          className="!btn-primary"
+        <button
+          className="btn btn-primary btn-sm w-1/3"
           onClick={() => {
             registerStore.setEditIndex(null);
             registerStore.setState("EDIT");
           }}
         >
           Add
-        </Button>
+        </button>
+      </div>
+      <div className="card card-compact w-full bg-base-100 shadow-xl justify-center gap-8">
+        <RegistrationTable />
       </div>
     </div>
   );
 }
 
-const RegistrationTable = () => {
-  const raceEntries = registerStore.userStore?.raceEntries;
+const RegistrationTable = observer(() => {
+  const raceEntries = registerStore.userStore?.raceEntries.slice();
 
-  if (!raceEntries) {
+  console.log(`raceEntries`, { raceEntries });
+
+  if (!raceEntries || raceEntries.length === 0) {
     return <div>Add your first Race</div>;
   }
   return (
@@ -92,5 +94,6 @@ const RegistrationTable = () => {
       </table>
     </div>
   );
-};
+});
+
 export default observer(DisplayRegistration);

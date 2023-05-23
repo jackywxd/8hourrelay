@@ -1,7 +1,7 @@
 import { makeObservable, observable, action, computed, flow } from "mobx";
 import { BaseStore } from "./UIBaseStore";
 import { UserStore } from "./UserStore";
-import { RaceEntry } from "@8hourrelay/models";
+import { event2023, RaceEntry } from "@8hourrelay/models";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDoc, doc, deleteDoc, getFirestore } from "firebase/firestore";
 import { toast } from "react-toastify";
@@ -11,7 +11,6 @@ import {
   httpsCallable,
   HttpsCallableResult,
 } from "firebase/functions";
-import { Race, Event } from "@8hourrelay/models";
 
 import { entryFormSnapshot } from "./RootStore";
 import { getApp } from "firebase/app";
@@ -46,19 +45,7 @@ export class RegistrationStore extends BaseStore {
   state: RegistrationState = "INIT";
   form: RaceEntry | null = null;
   teamValidated = false;
-  event = new Event({
-    name: `8HourRealy`,
-    description: `2023 8 Hour Realy Race`,
-    year: `2023`,
-    location: "TBD",
-    time: "Sep 10, 2023",
-    isActive: true,
-    createdAt: new Date().getTime(),
-    races: [
-      new Race("2023", "Adult", "TBD", "Adult Race", 30),
-      new Race("2023", "Kids", "TBD", "Kids Run", 5),
-    ],
-  });
+  event = event2023;
   constructor() {
     super();
     makeObservable(this, {
@@ -121,9 +108,13 @@ export class RegistrationStore extends BaseStore {
     this.state = state;
   }
 
+  setLoading(loading: boolean) {
+    this.isLoading = loading;
+  }
+
   // team name could be passed
   initRaceEntryForm(team?: string) {
-    if (this.form) return this.form;
+    if (!team && this.form) return this.form;
     const raceEntry = this.raceEntry;
     const user = this.userStore?.user;
 
