@@ -44,7 +44,7 @@ function RegisterPage({ team }: { team?: string }) {
     );
   }
 
-  if (registerStore.state === "EDIT") {
+  if (registerStore.state === "EDIT" || registerStore.state === "RE_EDIT") {
     return <RegisterForm team={team} />;
   }
   if (registerStore.state === "FORM_SUBMITTED") {

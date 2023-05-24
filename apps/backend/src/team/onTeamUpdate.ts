@@ -2,6 +2,7 @@ import { Team } from "@8hourrelay/models";
 import { functions, logger } from "../fcm";
 import Mail from "nodemailer/lib/mailer";
 import { sendMail } from "../libs/sendMail";
+import { revalidate } from "./revalidate";
 
 const HOST_NAME =
   process.env.ENV === "prod"
@@ -20,9 +21,13 @@ export const onTeamUpdate = functions.firestore
         // we need to send email to user to notify
 
         const teamLink = encodeURI(`${HOST_NAME}/team/${after.name}`);
-        const content = `Congratulations! Your team ${after.name} has been approved. 
-        Now you can share your team by this link: ${teamLink}`;
+        const content = `Congratulations! Your team ${after.name} has been approved. Now you can share your team by this link: ${teamLink} \n\n 8HourRelay Team`;
 
+        // revalidate page to show the new team
+        await Promise.all([
+          revalidate("/teams"),
+          revalidate(encodeURI(`/team/${after.name}`)),
+        ]);
         const email: Mail.Options = {
           from: process.env.FROM_EMAIL,
           to: after.captainEmail,

@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import TeamMemberList from "./TeamDetails";
-import { getTeam, getTeamById } from "@/firebase/serverApi";
-import Link from "next/link";
+import { getTeam } from "@/firebase/serverApi";
 import { Suspense } from "react";
 
 export default async function TeamPage({ params }: any) {
@@ -25,16 +24,6 @@ export default async function TeamPage({ params }: any) {
       <div className="flex flex-col w-full items-center">
         <div className="flex w-full justify-center items-center">
           <h1>Team does not exists</h1>
-        </div>
-      </div>
-    );
-  }
-
-  if (!teamMembers || teamMembers.length === 0) {
-    return (
-      <div className="flex flex-col w-full items-center">
-        <div className="flex w-full justify-center items-center">
-          <h1>Team {team.name} has no team members yet</h1>
         </div>
       </div>
     );

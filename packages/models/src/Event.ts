@@ -33,14 +33,14 @@ export const event2023 = new Event({
   races: [
     new Race({
       year: "2023",
-      name: "Adult",
+      name: "Adult Race",
       description: "Adult Race",
       entryFee: 30,
       isCompetitive: true,
     }),
     new Race({
       year: "2023",
-      name: "Adult",
+      name: "Adult Entertainment",
       description: "Adult Entertainment Run",
       entryFee: 30,
       isCompetitive: false,

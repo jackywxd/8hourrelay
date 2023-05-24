@@ -64,7 +64,7 @@ function ConfirmForm() {
           <Button
             fullWidth
             onClick={() => {
-              registerStore.setState("EDIT");
+              registerStore.setState("RE_EDIT");
             }}
             className="!btn-secondary"
           >

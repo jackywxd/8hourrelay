@@ -26,6 +26,14 @@ export class User {
     Object.assign(this, u);
   }
   get displayName() {
-    return `${this.firstName} ${this.lastName}`;
+    return this.preferName
+      ? this.preferName
+      : this.firstName && this.lastName
+      ? `${this.firstName} ${this.lastName}`
+      : this.firstName
+      ? this.firstName
+      : this.lastName
+      ? this.lastName
+      : "";
   }
 }

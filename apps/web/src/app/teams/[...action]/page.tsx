@@ -35,30 +35,12 @@ export default async function TeamPage({ params }: any) {
   }
 
   // we need to only show the same catagory teams for this race entry
-  if (action === "join" && target) {
-    const [uid, id] = target.split("-");
-    if (uid && id) {
-      const [raceEntry] = await Promise.all([getRaceEntry(uid, id)]);
-
-      if (!raceEntry) {
-        redirect("/teams");
-      }
-      const [teams] = await Promise.all([getTeams(raceEntry.race)]);
-      if (!teams) {
-        redirect("/teams");
-      }
-
-      return (
-        <div className="flex flex-col w-full min-h-fit justify-center items-center">
-          <div className="flex w-full justify-center">
-            <h1>Assign a team to race entry</h1>
-          </div>
-          <h1>Name: {raceEntry?.displayName}</h1>
-          <div className="flex self-end">Select a team below to join</div>
-          <DisplayTeams teams={teams} raceEntryId={id} />
-        </div>
-      );
-    }
+  if (action === "create") {
+    return (
+      <div className="flex flex-col w-full min-h-fit justify-center items-center">
+        {action === "create" && <CreateTeam />}
+      </div>
+    );
   }
 
   return (

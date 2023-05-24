@@ -12,7 +12,7 @@ export default async function TeamsPage() {
         <div>Manage team below</div>
         <div className="divider" />
         <div>No team has been created yet</div>
-        <div className="link link-primary">
+        <div className="link link-primary m-10">
           <Link href="/teams/create">Create Team Now</Link>
         </div>
       </div>

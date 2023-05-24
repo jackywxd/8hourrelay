@@ -1,3 +1,3 @@
-import { default as LayoutMdx } from "../../components/LayboutMdx";
+import { default as LayoutMdx } from "../../components/LayoutMdx";
 
 export default LayoutMdx;

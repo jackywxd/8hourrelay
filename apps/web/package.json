@@ -35,6 +35,7 @@
     "next-mdx-remote": "^4.4.1",
     "next-theme": "^0.1.5",
     "react": "18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "18.2.0",
     "react-native-paper": "^5.7.0",
     "react-native-web": "^0.19.4",
@@ -44,6 +45,7 @@
     "remark-rehype": "^10.1.0",
     "sharp": "^0.32.0",
     "stripe": "^12.4.0",
+    "styled-components": "^6.0.0-rc.1",
     "swr": "^2.1.5",
     "yup": "^1.1.1"
   },

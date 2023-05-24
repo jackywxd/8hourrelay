@@ -1,8 +1,10 @@
+import { event2023 } from "@8hourrelay/models";
 import { makeObservable, observable, action } from "mobx";
 
 export class BaseStore {
   error: string | null = null;
   isLoading = false;
+  event = event2023;
 
   constructor() {
     makeObservable(this, {

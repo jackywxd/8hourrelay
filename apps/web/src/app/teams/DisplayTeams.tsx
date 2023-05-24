@@ -35,7 +35,7 @@ function DisplayTeams({
                 <td>
                   <div>
                     <Link href={`/team/${name}`}>
-                      <div className="font-bold">{name}</div>
+                      <div className="link link-accent font-bold">{name}</div>
                     </Link>
                   </div>
                 </td>

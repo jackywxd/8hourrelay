@@ -18,6 +18,7 @@ import { getApp } from "firebase/app";
 export type RegistrationState =
   | "INIT"
   | "SHOW" // show a form
+  | "RE_EDIT" // editing form
   | "EDIT" // editing form
   | "CONFIRM" // confirm form
   | "FORM_SUBMITTED" //form submitted
@@ -45,7 +46,6 @@ export class RegistrationStore extends BaseStore {
   state: RegistrationState = "INIT";
   form: RaceEntry | null = null;
   teamValidated = false;
-  event = event2023;
   constructor() {
     super();
     makeObservable(this, {
@@ -76,6 +76,7 @@ export class RegistrationStore extends BaseStore {
 
   reset(): void {
     super.reset();
+    this.form = null;
     this.state = "INIT";
   }
 
@@ -114,7 +115,8 @@ export class RegistrationStore extends BaseStore {
 
   // team name could be passed
   initRaceEntryForm(team?: string) {
-    if (!team && this.form) return this.form;
+    if (this.state === "RE_EDIT" && this.form) return this.form;
+    if (this.form) return this.form;
     const raceEntry = this.raceEntry;
     const user = this.userStore?.user;
 
