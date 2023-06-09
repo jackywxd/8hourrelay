@@ -1,14 +1,20 @@
 "use client";
+import { useEffect, useState } from "react";
 import { Select, Option } from "@material-tailwind/react";
 import { useField } from "formik";
 import { registerStore } from "@8hourrelay/store";
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
 
 // props.team is the selected team
 function SelectComponent(props) {
   const teams = registerStore.teams;
   const [field, meta, helpers] = useField(props);
+
+  useEffect(() => {
+    if (!registerStore.allTeams) {
+      registerStore.onListTeams();
+    }
+  }, [registerStore.allTeams]);
 
   if (!props.team && !teams) return null;
 

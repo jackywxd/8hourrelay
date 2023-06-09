@@ -212,7 +212,6 @@ export class RegistrationStore extends BaseStore {
   initRaceEntryForm(team?: string) {
     if (this.state === "RE_EDIT" && this.form) return this.form;
     if (this.form) return this.form;
-    this.onListTeams();
     const raceEntry = this.raceEntry;
     const user = this.userStore?.user;
 

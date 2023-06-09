@@ -44,7 +44,10 @@ function RegisterPage({ team, action }: { team?: string; action?: string }) {
         <ShowRaceEntry raceEntry={registerStore.raceEntry!} />
         <button
           className="btn btn-md btn-primary mt-10"
-          onClick={() => router.push("/register")}
+          onClick={() => {
+            registerStore.setState("INIT");
+            router.push("/register");
+          }}
         >
           Return
         </button>

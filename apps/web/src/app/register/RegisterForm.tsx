@@ -15,7 +15,6 @@ import { RaceEntry, event2023 } from "@8hourrelay/models";
 function RegisterForm({ team }: { team?: string }) {
   const router = useRouter();
   const initialValues = registerStore.initRaceEntryForm(team);
-
   const SignupSchema = Yup.object().shape({
     firstName: Yup.string().max(50, "Too Long!").required("Required"),
     lastName: Yup.string().max(50, "Too Long!").required("Required"),
@@ -70,7 +69,7 @@ function RegisterForm({ team }: { team?: string }) {
 
   console.log(`initalvalue`, {
     initialValues,
-    team: registerStore.teamValidated,
+    isLoading: registerStore.isLoading,
   });
   return (
     <div className="flex flex-col justify-center items-center">
