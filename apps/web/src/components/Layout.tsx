@@ -1,7 +1,5 @@
 import { PropsWithChildren } from "react";
 import Head from "next/head";
-import { useRouter } from "next/navigation";
-
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 
@@ -12,7 +10,6 @@ interface Props extends PropsWithChildren {
 }
 
 export default function MyLayout({ children, meta: pageMeta }: Props) {
-  const router = useRouter();
   const meta = {
     title: "8 Hour Relay Race",
     description: "Brought to you by Vercel, Stripe, and Supabase.",
@@ -38,12 +35,23 @@ export default function MyLayout({ children, meta: pageMeta }: Props) {
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image" content={meta.cardImage} />
       </Head>
-      <div className="flex flex-col min-h-screen justify-between">
-        <Navbar />
-        <div className="flex p-2 h-full w-full bg-opacity-10 justify-center items-center ">
-          <main id="skip">{children}</main>
+      <div className="flex flex-col min-h-screen items-center">
+        <div className="w-full">
+          <Navbar />
         </div>
-        <Footer />
+        <div className="flex flex-col w-full flex-1 justify-center items-center">
+          <div className="flex p-2 flex-1 w-full bg-opacity-10 flex-grow justify-center">
+            <main
+              id="skip"
+              className="flex flex-col w-full flex-1 justify-center items-center"
+            >
+              {children}
+            </main>
+          </div>
+          <div className="flex flex-col self-end w-full items-center">
+            <Footer />
+          </div>
+        </div>
       </div>
     </>
   );

@@ -37,14 +37,14 @@ export default async function TeamPage({ params }: any) {
   // we need to only show the same catagory teams for this race entry
   if (action === "create") {
     return (
-      <div className="flex flex-col w-full min-h-fit justify-center items-center">
+      <div className="flex flex-col w-full min-h-fit items-center">
         {action === "create" && <CreateTeam />}
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col w-full min-h-fit justify-center items-center">
+    <div className="flex flex-col w-full min-h-fit items-center">
       {action === "create" && <CreateTeam />}
     </div>
   );

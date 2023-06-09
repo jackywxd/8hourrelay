@@ -8,7 +8,7 @@ function Login({ initEmail, mode, onSubmit }) {
   });
 
   return (
-    <div className="flex flex-col w-full justify-center">
+    <div className="flex flex-col w-full flex-1 justify-center">
       <Formik
         initialValues={{
           email: initEmail ?? "",

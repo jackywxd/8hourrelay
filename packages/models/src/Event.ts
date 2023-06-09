@@ -37,13 +37,7 @@ export const event2023 = new Event({
       description: "Adult Race",
       entryFee: 30,
       isCompetitive: true,
-    }),
-    new Race({
-      year: "2023",
-      name: "Adult Entertainment",
-      description: "Adult Entertainment Run",
-      entryFee: 30,
-      isCompetitive: false,
+      lowerAge: 18,
     }),
     new Race({
       year: "2023",
@@ -51,6 +45,8 @@ export const event2023 = new Event({
       description: "Kids run",
       entryFee: 5,
       isCompetitive: false,
+      lowerAge: 10,
+      upperAge: 18,
     }),
   ],
 });

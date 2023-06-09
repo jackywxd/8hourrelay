@@ -1,3 +1,4 @@
+"use client";
 import React, {
   createContext,
   useEffect,
@@ -6,11 +7,15 @@ import React, {
   useState,
 } from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
+import { enableStaticRendering } from "mobx-react-lite";
 
 import { RootStore, appStatePersistenceKey } from "@8hourrelay/store";
 import { app } from "@/firebase/config";
 
 const auth = getAuth(app);
+
+// MobX configuration for server-side rendering
+enableStaticRendering(typeof window === "undefined");
 
 interface AuthContextType {
   store: RootStore;
@@ -23,58 +28,54 @@ const AuthContext = createContext<AuthContextType>({
 interface AuthProviderProps {
   children: ReactNode;
 }
+let store: RootStore;
+
+// function to initialize the store
+function initializeStore(): RootStore {
+  const _store = store ?? new RootStore();
+
+  // For server side rendering always create a new store
+  if (typeof window === "undefined") return _store;
+
+  // Create the store once in the client
+  if (!store) store = _store;
+
+  return _store;
+}
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [store] = useState<RootStore>(() => {
-    const rootStore = new RootStore();
-    // register our root store
-    if (auth.currentUser && auth.currentUser.uid) {
-      console.log(`init authStore with currentUser`, {
-        currentUser: auth.currentUser,
-      });
-      rootStore.authStore.setAuthenticated(true);
-      rootStore.userStore.setUid(auth.currentUser.uid);
-    } else {
-      rootStore.authStore.setAuthenticated(false);
-    }
-    rootStore.authStore.setAuth(auth);
-    return rootStore;
-  });
+  const rootStore = initializeStore();
+
+  if (auth.currentUser && auth.currentUser.uid) {
+    console.log(`init authStore with currentUser`, {
+      currentUser: auth.currentUser.uid,
+    });
+    rootStore.authStore.setAuthenticated(true);
+    rootStore.userStore.setUid(auth.currentUser.uid);
+  } else {
+    rootStore.authStore.setAuthenticated(false);
+  }
+  rootStore.authStore.setAuth(auth);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!store) {
-        return;
-      }
-      store.authStore.setAuth(auth);
+      console.log(`useEffect update user`, { user });
       if (user && user.uid) {
-        store.authStore.setAuthenticated(true);
-        store.userStore.setUid(user.uid);
+        rootStore.authStore.setAuthenticated(true);
+        rootStore.userStore.setUid(user.uid);
       }
     });
 
     // clean up
     return () => {
+      console.log(`clean up authProvider`);
       unsubscribe();
-      store.dispose();
+      rootStore.dispose();
     };
-  }, [auth, store]);
+  }, [auth, rootStore]);
 
   return (
-    <AuthContext.Provider value={{ store }}>
-      {/* <div className="relative">
-        {queue.map((snack, index) => (
-          <Snackbar
-            key={snack.key}
-            text={snack.text}
-            variant={snack.variant}
-            icon={snack.icon}
-            handleClose={() =>
-              dispatch({ type: "REMOVE_SNACKBAR", payload: { key: snack.key } })
-            }
-          />
-        ))}
-      </div> */}
+    <AuthContext.Provider value={{ store: rootStore }}>
       {children}
     </AuthContext.Provider>
   );

@@ -48,7 +48,7 @@ export const onValidateTeamPassword = functions
     const teamData = teamRef.docs[0].data() as Team;
 
     if (teamPassword === teamData?.password) {
-      return true;
+      return { id: teamRef.docs[0].ref.id };
     }
 
     return false;

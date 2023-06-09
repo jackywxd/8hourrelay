@@ -33,7 +33,10 @@ function TeamMemberList({
         <h1>Team: {team.displayName}</h1>
       </div>
       <div className="self-end">
-        <Link className="link link-primary" href={`/register/${team.name}`}>
+        <Link
+          className="link link-primary"
+          href={`/register/join/${team.name}`}
+        >
           JOIN
         </Link>
       </div>

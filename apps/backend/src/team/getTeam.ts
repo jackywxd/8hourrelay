@@ -1,5 +1,5 @@
-import { logger } from "firebase-functions";
-import { functions } from "../fcm";
+import { db, functions, logger } from "../fcm";
+import { Team } from "@8hourrelay/models";
 
 export const onGetTeam = functions
   .runWith({
@@ -15,7 +15,24 @@ export const onGetTeam = functions
         "The function must be called from an App Check verified app."
       );
     }
+    logger.info(`get team incoming data`, { data });
+    const { teamId } = data;
+    if (!teamId) {
+      throw new Error(`Invalid data`);
+    }
+    const year = new Date().getFullYear().toString();
 
-    logger.info(`Stripe checkout form`, data);
-    return null;
+    const teamRef = await db
+      .collection("Race")
+      .doc(year)
+      .collection("Teams")
+      .doc(teamId)
+      .get();
+
+    if (!teamRef.exists) {
+      throw new Error(`Team not exists`);
+    }
+    const team = teamRef.data() as Team;
+    logger.debug(`Returning team data`, { team });
+    return team;
   });

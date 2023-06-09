@@ -1,6 +1,7 @@
 "use client";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/context/AuthContext";
 import { registerStore } from "@8hourrelay/store";
@@ -10,15 +11,22 @@ import ShowRaceEntry from "./ShowRaceEntry";
 import ConfirmForm from "./ConfirmPayment";
 import LoginFirst from "@/components/LoginFirst";
 
-function RegisterPage({ team }: { team?: string }) {
+function RegisterPage({ team, action }: { team?: string; action?: string }) {
+  const router = useRouter();
   const { store } = useAuth();
 
   useEffect(() => {
-    if (team) {
+    if (action === "create") {
+      registerStore.reset();
       registerStore.setState("EDIT");
     } else {
-      registerStore.setState("INIT");
+      if (team) {
+        registerStore.setState("EDIT");
+      } else {
+        registerStore.setState("INIT");
+      }
     }
+
     registerStore.setTeamValidated(false);
   }, [team]);
 
@@ -28,7 +36,7 @@ function RegisterPage({ team }: { team?: string }) {
   }
 
   registerStore.attachedUserStore(store.userStore);
-  console.log(`state is ${registerStore.state}`);
+  console.log(`action ${action} team ${team} state is ${registerStore.state}`);
 
   if (registerStore.state === "SHOW") {
     return (
@@ -36,7 +44,7 @@ function RegisterPage({ team }: { team?: string }) {
         <ShowRaceEntry raceEntry={registerStore.raceEntry!} />
         <button
           className="btn btn-md btn-primary mt-10"
-          onClick={() => registerStore.setState("INIT")}
+          onClick={() => router.push("/register")}
         >
           Return
         </button>
@@ -51,7 +59,11 @@ function RegisterPage({ team }: { team?: string }) {
     return <ConfirmForm />;
   }
 
-  return <DisplayRegistration />;
+  return (
+    <div className="w-full overflow-clip">
+      <DisplayRegistration />
+    </div>
+  );
 }
 
 export default observer(RegisterPage);

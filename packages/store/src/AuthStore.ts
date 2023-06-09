@@ -28,7 +28,8 @@ export type RegisterState =
   | "MISSING_EMAIL"
   | "VERIFY_EMAIL_SEND"
   | "VERFIED"
-  | "LOGINED";
+  | "LOGINED"
+  | "DONE";
 
 export class AuthStore extends BaseStore {
   root: RootStore;
@@ -52,6 +53,7 @@ export class AuthStore extends BaseStore {
       setEmail: action,
       setState: action,
       onInit: action,
+      setAuthenticated: action,
       dispose: action,
       currentUser: computed,
       signinWithEmailLink: flow,
@@ -62,6 +64,7 @@ export class AuthStore extends BaseStore {
 
   setAuthenticated = (status: boolean) => {
     this.isAuthenticated = status;
+    if (status) this.state = "DONE";
   };
 
   setEmail = (email: string) => {
@@ -79,7 +82,7 @@ export class AuthStore extends BaseStore {
     this.disposer = reaction(
       () => this.email,
       (newEmail, prev) => {
-        console.log(`new authstore snapshot`, { newEmail, prev });
+        console.log(`reaction authstore snapshot`, { newEmail, prev });
         // save new email
         if (newEmail) {
           AsyncStorage.setItem(this.emailLocalKey, newEmail);

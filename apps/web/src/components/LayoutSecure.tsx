@@ -18,9 +18,11 @@ function LayoutSecure({
     }
   }, [store.error]);
   return (
-    <div className="relative flex justify-center min-h-full grow">
+    <div className="relative flex justify-center w-full min-h-full grow">
       {store.authStore.isAuthenticated ? (
-        <div className="w-full">{children}</div>
+        <div className="flex justify-center w-full md:w-[800px]">
+          {children}
+        </div>
       ) : (
         <LoginFirst />
       )}

@@ -1,10 +1,22 @@
 import { makeObservable, observable, action, computed, flow } from "mobx";
 import { BaseStore } from "./UIBaseStore";
 import { UserStore } from "./UserStore";
-import { event2023, RaceEntry } from "@8hourrelay/models";
+import { event2023, RaceEntry, Team } from "@8hourrelay/models";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDoc, doc, deleteDoc, getFirestore } from "firebase/firestore";
 import { toast } from "react-toastify";
+
+function validatePhoneNumber(phoneNumber: string) {
+  // The regex matches U.S. phone number format
+  const re = /^(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$/;
+  const e164 = /^\+?[1-9]\d{1,14}$/;
+
+  if (re.test(phoneNumber) || e164.test(phoneNumber)) {
+    return true;
+  }
+
+  return false;
+}
 
 import {
   getFunctions,
@@ -45,6 +57,8 @@ export class RegistrationStore extends BaseStore {
   userStore: UserStore | null = null;
   state: RegistrationState = "INIT";
   form: RaceEntry | null = null;
+  allTeams: Team[] | null = null;
+  teamFilter: string | null = null;
   teamValidated = false;
   constructor() {
     super();
@@ -52,18 +66,97 @@ export class RegistrationStore extends BaseStore {
       editIndex: observable,
       state: observable,
       teamValidated: observable,
+      teamFilter: observable,
       form: observable,
+      allTeams: observable,
+      validateForm: action,
       setForm: action,
       setState: action,
       setEditIndex: action,
+      setTeamFilter: action,
       setTeamValidated: action,
+      teams: computed,
+      isAgeValid: action,
       raceEntry: computed,
       onGetStripeSession: flow,
       deleteRaceEntry: flow,
       updateRaceEntry: flow,
       submitRaceForm: flow,
       validateTeamPassword: flow,
+      onListTeams: flow,
     });
+  }
+
+  get teams() {
+    let teams: Team[] = [];
+    if (this.teamFilter && this.allTeams && this.allTeams.length > 0) {
+      teams = this.allTeams.filter((f) => f.race === this.teamFilter);
+    }
+    if (!this.teamFilter && this.allTeams) {
+      teams = this.allTeams;
+    }
+    console.log(`updating new teams data`, teams);
+    return teams;
+  }
+
+  get existingEntries() {
+    if (this.userStore?.raceEntries) {
+      return this.userStore.raceEntries
+        .filter((r) => r.isPaid)
+        .map((r) => `${r.email}${r.firstName}${r.lastName}`.toLowerCase());
+    }
+    return [];
+  }
+
+  validateForm(form: RaceEntry) {
+    let errors = {};
+    const age = form.birthYear;
+    console.log(`validatForm`, form, this.userStore?.raceEntries.slice());
+
+    if (form.birthYear) {
+      const re = /^\d{4}$/;
+
+      if (!re.test(form.birthYear)) {
+        errors.birthYear = `Year of birth must be 4 digits`;
+      } else if (!this.isAgeValid(form.birthYear))
+        errors[`birthYear`] = `Invalid age`;
+    }
+    console.log(`formvalidate errors`, { errors });
+    if (form.email && form.firstName && form.lastName) {
+      if (
+        this.existingEntries.includes(
+          `${form.email}${form.firstName}${form.lastName}`.toLowerCase()
+        )
+      ) {
+        errors.email = `Duplicated entry`;
+        errors.firstName = `Duplicated entry`;
+        errors.lastName = `Duplicated entry`;
+      }
+    }
+    if (form.phone && !validatePhoneNumber(form.phone)) {
+      errors.phone = `Invalid phone number`;
+    }
+    if (form.emergencyPhone && !validatePhoneNumber(form.emergencyPhone)) {
+      errors.emergencyPhone = `Invalid phone number`;
+    }
+    return errors;
+  }
+
+  isAgeValid(birthYear: string) {
+    let valid = false;
+    if (this.teamFilter) {
+      const race = event2023.races.filter((r) => r.name === this.teamFilter);
+      if (race && race.length > 0) {
+        valid = race[0].isValid(birthYear);
+      }
+    }
+    console.log(`birhty year is valid ${valid}`);
+    return valid;
+  }
+
+  setTeamFilter(race: string | null) {
+    console.log(`setting team filter to ${race}`);
+    this.teamFilter = race;
   }
 
   setTeamValidated(status: boolean) {
@@ -77,6 +170,8 @@ export class RegistrationStore extends BaseStore {
   reset(): void {
     super.reset();
     this.form = null;
+    this.editIndex = null;
+    this.teamFilter = null;
     this.state = "INIT";
   }
 
@@ -117,6 +212,7 @@ export class RegistrationStore extends BaseStore {
   initRaceEntryForm(team?: string) {
     if (this.state === "RE_EDIT" && this.form) return this.form;
     if (this.form) return this.form;
+    this.onListTeams();
     const raceEntry = this.raceEntry;
     const user = this.userStore?.user;
 
@@ -140,6 +236,7 @@ export class RegistrationStore extends BaseStore {
       isActive: raceEntry?.isActive ?? true,
       isPaid: raceEntry?.isPaid ?? false,
       team: team ? team : raceEntry?.team ?? "",
+      teamId: raceEntry?.teamId ?? "",
       teamPassword: "",
       teamState: "",
       accepted: false,
@@ -308,15 +405,22 @@ export class RegistrationStore extends BaseStore {
       "onValidateTeamPassword"
     );
 
+    console.log(`sending toast...`);
     const id = toast.loading(`Validating team password...`);
     this.setLoading(true);
     try {
-      const result: HttpsCallableResult<unknown> = yield onValidateTeamPassword(
-        { team: team.toLowerCase(), teamPassword }
-      );
+      const result: HttpsCallableResult<{ id: string }> =
+        yield onValidateTeamPassword({
+          team: team.toLowerCase(),
+          teamPassword,
+        });
       console.log(`validated result`, result.data);
 
       if (result.data) {
+        // return team ID, then set the team ID
+        if (result.data.id && this.form) {
+          this.form.teamId = result.data.id;
+        }
         this.setTeamValidated(true);
         toast.update(id, {
           render: `Team password validated`,
@@ -339,5 +443,30 @@ export class RegistrationStore extends BaseStore {
       autoClose: 5000,
     });
     return false;
+  }
+
+  *onListTeams(race?: string) {
+    if (this.isLoading) return;
+    const functions = getFunctions();
+    const onListTeams = httpsCallable(functions, "onListTeams");
+
+    this.isLoading = true;
+    try {
+      const result: HttpsCallableResult<Team[]> = yield onListTeams({
+        race,
+      });
+      console.log(`list teams result`, result);
+
+      if (result.data) {
+        this.allTeams = result.data.map((f) => f && new Team(f));
+      }
+      this.isLoading = false;
+      return result.data;
+    } catch (error) {
+      console.log(`Failed to list teams`, { error });
+      this.error = (error as Error).message;
+    }
+    this.isLoading = false;
+    return null;
   }
 }

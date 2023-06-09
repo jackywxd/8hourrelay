@@ -25,7 +25,9 @@ function SelectComponent(props) {
         })}
       </Select>
       {meta.touched && meta.error ? (
-        <div className="error">{meta.error}</div>
+        <p className="mt-2 text-sm text-red-600" id="error">
+          {meta.error}
+        </p>
       ) : null}
     </div>
   );

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import TeamMemberList from "./TeamDetails";
 import { getTeam } from "@/firebase/serverApi";
 import { Suspense } from "react";
+import Loader from "@/components/Loader";
 
 export default async function TeamPage({ params }: any) {
   // not team name, just redirect to teams
@@ -36,7 +37,7 @@ export default async function TeamPage({ params }: any) {
   return (
     <div className="flex flex-col w-full items-center">
       <div className="flex w-full justify-center items-center">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={Loader}>
           <TeamMemberList teamData={team} membersData={teamMembers} />
         </Suspense>
       </div>

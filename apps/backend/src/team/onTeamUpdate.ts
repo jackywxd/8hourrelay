@@ -2,7 +2,7 @@ import { Team } from "@8hourrelay/models";
 import { functions, logger } from "../fcm";
 import Mail from "nodemailer/lib/mailer";
 import { sendMail } from "../libs/sendMail";
-import { revalidate } from "./revalidate";
+import { revalidate } from "../libs/revalidate";
 
 const HOST_NAME =
   process.env.ENV === "prod"
@@ -26,6 +26,7 @@ export const onTeamUpdate = functions.firestore
         // revalidate page to show the new team
         await Promise.all([
           revalidate("/teams"),
+          revalidate("/register"),
           revalidate(encodeURI(`/team/${after.name}`)),
         ]);
         const email: Mail.Options = {

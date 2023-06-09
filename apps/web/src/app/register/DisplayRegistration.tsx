@@ -1,7 +1,8 @@
+"use client";
 import { observer } from "mobx-react-lite";
-
 import { RaceEntry } from "@8hourrelay/models";
 import { registerStore } from "@8hourrelay/store";
+import Link from "next/link";
 
 const TABLE_HEAD = ["Name", "Race", "Bib", "Team", ""];
 
@@ -12,15 +13,9 @@ function DisplayRegistration() {
         <div>Manage your race entry</div>
       </div>
       <div className="flex w-full justify-end">
-        <button
-          className="btn btn-primary btn-sm w-1/3"
-          onClick={() => {
-            registerStore.setEditIndex(null);
-            registerStore.setState("EDIT");
-          }}
-        >
+        <Link className="link link-primary" href="/register/create">
           Add
-        </button>
+        </Link>
       </div>
       <div className="card card-compact w-full bg-base-100 shadow-xl justify-center gap-8">
         <RegistrationTable />
@@ -61,7 +56,19 @@ const RegistrationTable = observer(() => {
                   </td>
                   <td>{race}</td>
                   <td>{bib ? bib : `TBD`}</td>
-                  <td>{isPaid ? team : ``}</td>
+                  <td>
+                    {isPaid ? (
+                      <div>
+                        <Link href={`/team/${team}`}>
+                          <div className="link link-accent font-bold">
+                            {team}
+                          </div>
+                        </Link>
+                      </div>
+                    ) : (
+                      ``
+                    )}
+                  </td>
                   <th className="flex gap-2">
                     {!isPaid ? (
                       <>

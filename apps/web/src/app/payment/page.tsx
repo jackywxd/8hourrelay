@@ -24,7 +24,7 @@ export default function PaymentPage() {
 
   if (canceled) {
     return (
-      <div className="flex flex-col h-full items-center">
+      <div className="flex flex-col h-full items-center mt-10">
         <div>Payment canceled! Reidirect to home in 5 seconds</div>
         <div>
           <Link className="link link-primary" href="/">
@@ -37,9 +37,9 @@ export default function PaymentPage() {
 
   if (sessionId && success) {
     return (
-      <div className="flex flex-col w-full h-full items-center">
+      <div className="flex flex-col w-full h-full items-center mt-10">
         <div>Payment successfully! Thank you!</div>
-        <div className="flex w-full justify-between pt-10">
+        <div className="flex w-2/3 justify-between pt-10">
           <Link className="link link-primary" href="/register">
             Manage my race
           </Link>

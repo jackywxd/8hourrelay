@@ -96,6 +96,7 @@ export const stripeWebhook = functions.https.onRequest(
                   {
                     teamState: "APPROVED",
                     isPaid: true,
+                    teamId: teamRef.docs[0].ref.id,
                     updatedAt: now,
                   },
                   { merge: true }
@@ -246,6 +247,7 @@ export const stripeWebhook = functions.https.onRequest(
                   receiptNumber: charge?.receipt_number ?? null, // receipt number
                   receiptUrl: charge?.receipt_url ?? null,
                   teamState: "APPROVED",
+                  teamId: teamRef.docs[0].ref.id,
                   updatedAt: now,
                 },
                 { merge: true }

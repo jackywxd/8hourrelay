@@ -30,14 +30,14 @@ function ConfirmForm() {
   const raceEntry = new RaceEntry(registerStore.form!);
 
   return (
-    <div className="w-full max-w-lg">
+    <div className="w-full p-2">
       <p>
         Please review your registration information carefully and confirm. Race
         entry cannot be change after submitted
       </p>
       <div className="divider">Race Entry Info</div>
       <ShowRaceEntry raceEntry={raceEntry} />
-      <div className="flex flex-wrap min-w-full -mx-3 mb-6">
+      <div className="flex flex-wrap">
         <div className="form-control mt-3">
           <label className="label cursor-pointer gap-3">
             <span className="label-text">CONFIRM</span>
@@ -64,6 +64,7 @@ function ConfirmForm() {
           <Button
             fullWidth
             onClick={() => {
+              registerStore.setTeamValidated(false);
               registerStore.setState("RE_EDIT");
             }}
             className="!btn-secondary"

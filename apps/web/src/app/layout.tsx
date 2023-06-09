@@ -1,13 +1,14 @@
 "use client";
 import { AuthProvider } from "@/context/AuthContext";
-import React from "react";
-import { ThemeProvider } from "@material-tailwind/react";
+import React, { Suspense } from "react";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.min.css";
 
 import Layout from "@/components/Layout";
 import "../styles/main.css";
 import "../styles/chrome-bug.css";
+import "focus-visible";
+import Loader from "@/components/Loader";
 
 // export const theme = {
 //   ...MD3DarkTheme,
@@ -28,15 +29,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html data-theme="dark" lang="en">
+    <html className="antialiased h-full dark" data-theme="dark" lang="en">
       <head />
-      <body className="text-brown-100">
-        <ThemeProvider>
+      <body className="text-brown-100 h-full">
+        <Suspense fallback={Loader}>
           <AuthProvider>
             <Layout>{children}</Layout>
-            <ToastContainer />
           </AuthProvider>
-        </ThemeProvider>
+        </Suspense>
+        <ToastContainer />
       </body>
     </html>
   );

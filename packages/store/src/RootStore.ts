@@ -13,7 +13,9 @@ export class RootStore {
   constructor() {
     this.authStore = new AuthStore(this);
     this.userStore = new UserStore(this);
-    makeAutoObservable(this, {}, { autoBind: true });
+    makeAutoObservable(this, {
+      event: false,
+    });
   }
 
   get isLoading() {

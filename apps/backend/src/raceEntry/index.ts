@@ -1,6 +1,7 @@
 import { RaceEntry } from "@8hourrelay/models";
 import { admin, db, functions, logger } from "../fcm";
 import { slackSendMsg } from "../libs/slack";
+import { revalidate } from "../libs/revalidate";
 
 const increment = admin.firestore.FieldValue.increment(1);
 
@@ -38,10 +39,12 @@ export const onRaceEntryUpdate = functions.firestore
       if (data.isPaid !== oldData.isPaid && data.isPaid) {
         const raceEntry = new RaceEntry(data);
         const year = new Date().getFullYear().toString();
+
         await Promise.all([
           slackSendMsg(
             `New user ${raceEntry.displayName} ${raceEntry.email} joined team ${raceEntry.team} for race ${raceEntry.race}. Registration completed!`
           ),
+          revalidate(`/team/${raceEntry.team}`),
           db.collection("Race").doc(year).set(
             {
               totalPaid: increment,

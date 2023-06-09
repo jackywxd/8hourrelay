@@ -54,24 +54,26 @@ function LoginPage() {
   }, [authStore.isAuthenticated, nextPath, race]);
 
   return (
-    <div className="flex flex-col p-2 w-full md:max-w-[800px] min-h-full justify-center ">
+    <div className="flex flex-col p-2 w-full md:max-w-[800px] flex-1 justify-center ">
       {authStore.state === "INIT" ? (
         <div className="flex flex-col min-h-full">
           <div className="flex text-center my-8 justify-center">
-            <h1 className="text-left mb-10">
+            <h2 className="text-left mb-10">
               {race
                 ? `Please enter your email address and proceed to register for the race. As all communication by us will be via email, please ensure to enter a valid and working email address.`
                 : `Please enter your email address. As all communication by us will be via email, please ensure to enter a valid and working email address.`}
-            </h1>
+            </h2>
           </div>
-          <Login
-            initEmail={authStore.email}
-            mode="login"
-            onSubmit={(email: string) => {
-              authStore.setEmail(email);
-              authStore.setState("CONFIRM");
-            }}
-          />
+          <div>
+            <Login
+              initEmail={authStore.email}
+              mode="login"
+              onSubmit={(email: string) => {
+                authStore.setEmail(email);
+                authStore.setState("CONFIRM");
+              }}
+            />
+          </div>
         </div>
       ) : authStore.state === "CONFIRM" ? (
         <div className="flex flex-col min-h-full">

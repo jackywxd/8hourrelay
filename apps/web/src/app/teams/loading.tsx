@@ -1,7 +1,7 @@
 export default function Page() {
   return (
     <div>
-    Loading
+      <span className="loading loading-ring loading-md"></span>
     </div>
   );
 }

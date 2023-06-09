@@ -44,7 +44,7 @@ function DisplayTeams({
                   {isOpen && (
                     <Link
                       className="link link-primary"
-                      href={`/register/${name}`}
+                      href={`/register/join/${name}`}
                     >
                       Join this team
                     </Link>

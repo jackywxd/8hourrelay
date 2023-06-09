@@ -1,30 +1,16 @@
-"use client";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { useAuth } from "@/context/AuthContext";
-import { observer } from "mobx-react-lite";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@material-tailwind/react";
-import { profileStore } from "./ProfileStore";
+import Loader from "@/components/Loader";
+import { Suspense } from "react";
+import AccountPage from "./AccountPage";
 
-const ProtectedPage: React.FC = () => {
-  const router = useRouter();
-  const { store } = useAuth();
-
-  const user = store.userStore.user;
-
-  console.log(`profileStore PAGE selected`, {
-    selected: profileStore.selectedTab,
-  });
-
+const ProtectedPage = async () => {
+  // user logged in and authStore has been fullfilled with user data
   return (
-    <ProtectedRoute>
-      <div className="flex flex-col min-h-fit justify-center items-center">
-        <div>Current Login User</div>
-        <div>Email: {user?.email}</div>
-        <div></div>
-      </div>
-    </ProtectedRoute>
+    <div className="flex pt-10 items-center">
+      <Suspense fallback={Loader}>
+        <AccountPage />
+      </Suspense>
+    </div>
   );
 };
 
-export default observer(ProtectedPage);
+export default ProtectedPage;

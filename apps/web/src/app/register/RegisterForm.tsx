@@ -7,6 +7,10 @@ import { Input, Button } from "@material-tailwind/react";
 
 import SelectComponent from "@/components/SelecComponent";
 import { registerStore } from "@8hourrelay/store";
+import SelectTeam from "./SelectTeam";
+import { Suspense } from "react";
+import Loader from "@/components/Loader";
+import { RaceEntry, event2023 } from "@8hourrelay/models";
 
 function RegisterForm({ team }: { team?: string }) {
   const router = useRouter();
@@ -51,8 +55,7 @@ function RegisterForm({ team }: { team?: string }) {
 
   const onCancel = () => {
     registerStore.setForm(null);
-    if (team) router.push("/register");
-    else registerStore.setState("INIT");
+    router.push("/register");
   };
 
   const genderOptions = ["Male", "Femal"].map((m) => ({ value: m, label: m }));
@@ -77,6 +80,13 @@ function RegisterForm({ team }: { team?: string }) {
         <Formik
           initialValues={initialValues}
           validationSchema={SignupSchema}
+          validate={(values) => {
+            // console.log(`validating forms data`, { values });
+            let errors = {};
+
+            errors = registerStore.validateForm(values as RaceEntry);
+            return errors;
+          }}
           onSubmit={async (values) => await onSubmit(values)}
         >
           {(props) => (
@@ -84,6 +94,10 @@ function RegisterForm({ team }: { team?: string }) {
               {/* {fee && <div>{`Entery fee: ${props.values.race}`}</div>} */}
               <SelectComponent
                 disabled={registerStore.editIndex !== null ? true : false}
+                validate={(value) => {
+                  console.log(`race value`, value);
+                  if (value) registerStore.setTeamFilter(value);
+                }}
                 options={raceOptions}
                 label="Select Race"
                 name="race"
@@ -109,11 +123,10 @@ function RegisterForm({ team }: { team?: string }) {
                 {...props}
               />
               <div className="divider">Team Info</div>
-              <FieldItem
-                label="Team Name*"
-                fieldName="team"
-                disabled={team ? true : false}
-              />
+
+              <Suspense fallback={Loader}>
+                <SelectTeam name="team" team={team} />
+              </Suspense>
               <FieldItem label="Team Password*" fieldName="teamPassword" />
               <div className="divider">Emergency Contact</div>
               <FieldItem label="Name*" fieldName="emergencyName" />
@@ -126,9 +139,7 @@ function RegisterForm({ team }: { team?: string }) {
                   type="submit"
                   fullWidth
                   disabled={
-                    !props.isValid ||
-                    props.values.accepted === false ||
-                    registerStore.isLoading
+                    props.values.accepted === false || registerStore.isLoading
                       ? true
                       : false
                   }
@@ -168,7 +179,7 @@ export default observer(RegisterForm);
 
 export const FieldItem = ({ label, fieldName, ...props }) => {
   return (
-    <>
+    <div>
       <Field
         as={CustomInputComponent}
         id={fieldName}
@@ -176,8 +187,10 @@ export const FieldItem = ({ label, fieldName, ...props }) => {
         label={label}
         {...props}
       />
-      <ErrorMessage component="a" name={fieldName} />
-    </>
+      <ErrorMessage name={fieldName}>
+        {(msg) => <p className="mt-2 text-sm text-red-600">{msg}</p>}
+      </ErrorMessage>
+    </div>
   );
 };
 
@@ -185,7 +198,9 @@ export const FieldCheckBox = ({ label, fieldName, ...props }) => {
   return (
     <>
       <Field as={CustomCheckBox} label={label} name={fieldName} {...props} />
-      <ErrorMessage component="a" name={fieldName} />
+      <ErrorMessage name={fieldName}>
+        {(msg) => <p className="mt-2 text-sm text-red-600">{msg}</p>}
+      </ErrorMessage>
     </>
   );
 };

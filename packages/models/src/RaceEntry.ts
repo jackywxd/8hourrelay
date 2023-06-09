@@ -1,3 +1,4 @@
+import { event2023 } from "./Event";
 import { TeamState } from "./Team";
 
 export type Gender = "Male" | "Femal";
@@ -33,6 +34,7 @@ export class RaceEntry {
   size?: string;
   emergencyName?: string;
   emergencyPhone?: string;
+  medicalInfo?: string; // any medical information you would like to disclose
   race!: string;
   team?: string; // team name
   teamPassword?: string; // team password, should never be saved
@@ -44,6 +46,7 @@ export class RaceEntry {
   receiptNumber?: string;
   wechatId?: string;
   isPaid?: boolean;
+  isWaitingList?: boolean; // whether is race entry is waiting list
   bib?: string;
   raceOrder?: number; // the sequence in the team
   raceDuration?: number; // run period in minutes
@@ -53,6 +56,9 @@ export class RaceEntry {
   raceStartTime?: string;
   raceEndTime?: string;
   accepted?: boolean; // accepted race waver
+  smsOptIn?: boolean;
+  emailConsent?: boolean;
+  promoCode?: string;
   constructor(r: RaceEntry) {
     Object.assign(this, r);
   }
@@ -60,8 +66,8 @@ export class RaceEntry {
     return `${this.firstName} ${this.lastName}`;
   }
   get entryFee() {
-    if (this.race === "Adult") return 30;
-    if (this.race === "Kids") return 5;
+    const races = event2023.races.filter((r) => r.name === this.race);
+    if (races.length === 1) return races[0].entryFee;
     return undefined;
   }
   get raceId() {

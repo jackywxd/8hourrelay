@@ -3,27 +3,25 @@ import { firebaseDb } from "@/firebase/adminConfig";
 
 export async function getTeam(name: string) {
   try {
-    const decodedName = decodeURI(name);
+    const decodedName = decodeURI(name.toLowerCase());
     const teamsRef = await firebaseDb
       .collection("Race")
       .doc("2023")
       .collection("Teams")
-      .where("name", "==", decodedName.toLowerCase())
+      .where("name", "==", decodedName)
       .get();
 
     let team, teamMembers;
 
+    console.log(teamsRef.size);
     if (teamsRef.size > 0) {
-      const teams = teamsRef.docs.map((data) => {
-        const team = data.data();
-        return { ...team, id: data.id }; // we need the ID for the team
-      });
+      const teams = teamsRef.docs[0].data();
 
-      if (!teams[0]) {
+      if (!teams) {
         return null;
       }
 
-      team = teams[0];
+      team = { ...teams, id: teamsRef.docs[0].id };
 
       if (team && team.teamMembers) {
         const teamMembersPromise = team.teamMembers.map((m) => {
@@ -35,7 +33,7 @@ export async function getTeam(name: string) {
         });
         const teamMembersRef = await Promise.all(teamMembersPromise);
         teamMembers = teamMembersRef.map(
-          (ref) => ref.docs[0].data() as RaceEntry
+          (ref) => ref.docs[0] && (ref.docs[0].data() as RaceEntry)
         );
       }
       return { team, teamMembers } as { team: Team; teamMembers: RaceEntry[] };

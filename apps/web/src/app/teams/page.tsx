@@ -23,7 +23,7 @@ export default async function TeamsPage() {
   console.log(`all teams data`, { teams });
 
   return (
-    <div className="flex flex-col w-full justify-center items-center">
+    <div className="flex flex-col w-full md:w-[800px]">
       <div className="flex flex-row w-full justify-center mt-10">
         <div className="flex">
           <h1>All teams</h1>
@@ -33,7 +33,7 @@ export default async function TeamsPage() {
         <Link href="/teams/create">Create Team</Link>
       </div>
       <div className="divider" />
-      <div className="items-center w-full">
+      <div className="w-full">
         <DisplayTeams teams={teams} />
       </div>
     </div>
