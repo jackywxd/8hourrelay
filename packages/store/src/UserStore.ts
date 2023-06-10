@@ -25,10 +25,10 @@ import {
   getFunctions,
   httpsCallable,
 } from "firebase/functions";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStore, entryFormSnapshot } from "./RootStore";
 import { BaseStore } from "./UIBaseStore";
 import { toast } from "react-toastify";
+import { validatePhoneNumber } from "./RegistrationStore";
 
 export type RaceEntryState = "FORM_SUBMITTED" | "PAID" | "INVALID_FORM" | "WIP";
 
@@ -64,6 +64,8 @@ export class UserStore extends BaseStore {
       getTeam: flow,
       getUser: flow,
       onUpdateTeam: flow,
+      onUpdateUser: flow,
+      addUserListner: action,
     });
 
     this.disposer = reaction(
@@ -85,6 +87,23 @@ export class UserStore extends BaseStore {
         await this.getTeam();
       }
     );
+  }
+
+  validateForm(form: RaceEntry) {
+    let errors: any = {};
+
+    if (form.birthYear) {
+      const re = /^\d{4}$/;
+
+      if (!re.test(form.birthYear)) {
+        errors.birthYear = `Year of birth must be 4 digits`;
+      }
+    }
+    console.log(`formvalidate errors`, { errors });
+    if (form.phone && !validatePhoneNumber(form.phone)) {
+      errors.phone = `Invalid phone number`;
+    }
+    return errors;
   }
 
   setState(state: string) {
@@ -212,11 +231,12 @@ export class UserStore extends BaseStore {
     } catch (error) {
       console.log(`failed to getUser`, error);
       this.error = (error as Error).message;
-      this.isLoading = false;
     }
+    this.isLoading = false;
   }
 
   *getTeam() {
+    if (!this.teamId) return;
     const functions = getFunctions();
     const onGetTeam = httpsCallable(functions, "onGetTeam");
 
@@ -252,6 +272,7 @@ export class UserStore extends BaseStore {
         ...newTeam,
         id: this.teamId,
       });
+
       console.log(`update team result`, result.data);
       yield this.getTeam();
       this.isLoading = false;
@@ -265,6 +286,33 @@ export class UserStore extends BaseStore {
       console.log(`Failed to list teams`, { error });
       toast.update(id, {
         render: `Failed to update team settings. Please try again later.`,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
+    }
+    this.isLoading = false;
+  }
+
+  *onUpdateUser(form: Partial<User>) {
+    console.log(`updating user form`, form);
+    const id = toast.loading(`Updating account settings...`);
+    this.isLoading = true;
+    try {
+      yield setDoc(doc(this.db!, "Users", this.uid!), form, {
+        merge: true,
+      });
+      this.isLoading = false;
+      toast.update(id, {
+        render: `Account settings updated`,
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+    } catch (error) {
+      console.log(`Failed to list teams`, { error });
+      toast.update(id, {
+        render: `Failed to update account settings. Please try again later.`,
         type: "error",
         isLoading: false,
         autoClose: 5000,

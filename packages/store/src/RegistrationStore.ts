@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDoc, doc, deleteDoc, getFirestore } from "firebase/firestore";
 import { toast } from "react-toastify";
 
-function validatePhoneNumber(phoneNumber: string) {
+export function validatePhoneNumber(phoneNumber: string) {
   // The regex matches U.S. phone number format
   const re = /^(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$/;
   const e164 = /^\+?[1-9]\d{1,14}$/;
@@ -137,7 +137,7 @@ export class RegistrationStore extends BaseStore {
     const age = form.birthYear;
     console.log(`validatForm`, form, this.userStore?.raceEntries.slice());
 
-    if (form.birthYear) {
+    if (form.race && form.birthYear) {
       const re = /^\d{4}$/;
 
       if (!re.test(form.birthYear)) {

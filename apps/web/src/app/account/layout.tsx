@@ -7,7 +7,7 @@ function ProfileLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full md:w-[800px] flex-1 pt-5">
+    <div className="w-full md:w-[800px] flex-1 pt-3">
       <>
         <div className="hidden md:block h-full w-full">
           <Sidebar children={children} />

@@ -17,7 +17,7 @@ export default function Web() {
 
   console.log(`process.env`, { env: process.env.NEXT_PUBLIC_ENV });
   return (
-    <div className="flex-1 w-full">
+    <div className="flex flex-col w-full">
       <div className="relative p-2">
         <div
           className="absolute inset-0 bg-center bg-cover blur-sm opacity-20"
@@ -61,6 +61,21 @@ export default function Web() {
         <div className="text-3xl font-semibold py-10 px-3">Our Mission</div>
         <div className="w-full md:w-[800px]">
           <About />
+        </div>
+      </div>
+      <div className="divider"></div>
+      <div className="flex flex-col w-full md:w-[800px] self-center text-left py-10 px-2">
+        <label htmlFor="comment" className="block font-medium leading-6">
+          Add your comment
+        </label>
+        <div className="mt-2 w-full items-center">
+          <textarea
+            rows={4}
+            name="comment"
+            id="comment"
+            className="block w-full rounded-md border-0 py-1.5  sm:text-sm sm:leading-6"
+            defaultValue={""}
+          />
         </div>
       </div>
     </div>

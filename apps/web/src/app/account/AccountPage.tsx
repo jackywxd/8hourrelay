@@ -1,7 +1,6 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
-import { useRouter, useSearchParams } from "next/navigation";
 import { profileStore } from "./ProfileStore";
 import DisplayPage from "../register/RegisterPage";
 import ProfileForm from "./ProfileForm";
@@ -10,11 +9,8 @@ import { Suspense } from "react";
 import Loader from "@/components/Loader";
 
 const ProtectedPage = () => {
-  const router = useRouter();
   const { store } = useAuth();
 
-  const user = store.userStore.user;
-  console.log(`my Team`, store.userStore.myTeam);
   if (!store.authStore.isAuthenticated) return null;
   if (profileStore.active === 0)
     return (

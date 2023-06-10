@@ -69,6 +69,7 @@ export async function getTeamById(id: string) {
 
 export async function getTeams(race?: string) {
   const year = new Date().getFullYear().toString();
+  if (!firebaseDb) return null;
   const teamsRef = await firebaseDb
     .collection("Race")
     .doc(year)

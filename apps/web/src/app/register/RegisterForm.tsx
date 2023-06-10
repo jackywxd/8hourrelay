@@ -33,8 +33,8 @@ function RegisterForm({ team }: { team?: Team }) {
   const onSubmit = async (values) => {
     console.log(`Register Form data`, { values });
     const form = { ...values };
-    registerStore.setForm(form);
     if (!registerStore.teamValidated) {
+      registerStore.setForm(form);
       if (
         !(await registerStore.validateTeamPassword(
           values.team,

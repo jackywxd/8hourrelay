@@ -25,7 +25,7 @@ function TabMenu({
           </a>
         ))}
       </div>
-      <div className="w-full pt-10 flex-1">{children}</div>
+      <div className="w-full flex-1">{children}</div>
     </div>
   );
 }
