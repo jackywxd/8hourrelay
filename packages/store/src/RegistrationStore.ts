@@ -442,7 +442,7 @@ export class RegistrationStore extends BaseStore {
     const id = toast.loading(`Validating team password...`);
     this.setLoading(true);
     try {
-      const result: HttpsCallableResult<{ id: string }> =
+      const result: HttpsCallableResult<{ id: string; error?: string }> =
         yield onValidateTeamPassword({
           team: team.toLowerCase(),
           teamPassword,
@@ -451,16 +451,25 @@ export class RegistrationStore extends BaseStore {
 
       if (result.data) {
         // return team ID, then set the team ID
-        if (result.data.id && this.form) {
-          this.form.teamId = result.data.id;
+        if (result.data.id) {
+          if (this.form) this.form.teamId = result.data.id;
+          this.setTeamValidated(true);
+          toast.update(id, {
+            render: `Team password validated`,
+            type: "success",
+            isLoading: false,
+            autoClose: 5000,
+          });
+        } else if (result.data.error) {
+          toast.update(id, {
+            render: result.data.error,
+            type: "error",
+            isLoading: false,
+            autoClose: 5000,
+          });
+          this.setLoading(false);
+          return false;
         }
-        this.setTeamValidated(true);
-        toast.update(id, {
-          render: `Team password validated`,
-          type: "success",
-          isLoading: false,
-          autoClose: 5000,
-        });
         this.setLoading(false);
         return true;
       }

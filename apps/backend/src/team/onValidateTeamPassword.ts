@@ -47,6 +47,13 @@ export const onValidateTeamPassword = functions
     }
     const teamData = teamRef.docs[0].data() as Team;
 
+    if (!teamData.isOpen) {
+      return { error: `Team is closed for registration!` };
+    }
+    if (teamData.state !== "APPROVED") {
+      return { error: `Team is not approved for registration!` };
+    }
+
     if (teamPassword === teamData?.password) {
       return { id: teamRef.docs[0].ref.id };
     }
