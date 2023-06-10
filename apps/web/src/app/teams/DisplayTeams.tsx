@@ -41,13 +41,15 @@ function DisplayTeams({
                 </td>
                 <td>{race}</td>
                 <td className="flex">
-                  {isOpen && (
+                  {isOpen ? (
                     <Link
                       className="link link-primary"
                       href={`/register/join/${name}`}
                     >
                       Join this team
                     </Link>
+                  ) : (
+                    <div>Closed</div>
                   )}
                 </td>
               </tr>

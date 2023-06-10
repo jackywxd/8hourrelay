@@ -11,9 +11,9 @@ function SelectComponent(props) {
           mount: { y: 0 },
           unmount: { y: 25 },
         }}
+        label={props.selected ? "" : props.label}
         onChange={helpers.setValue}
         disabled={props.disabled}
-        label={props.label}
         error={meta.touched && meta.error ? true : false}
       >
         {props.options?.map((option) => {

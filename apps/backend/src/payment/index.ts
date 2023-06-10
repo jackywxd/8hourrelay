@@ -97,6 +97,14 @@ export const onCreateCheckout = functions
 
     const team = teamRef.docs[0].data() as Team;
 
+    if (team.state !== "APPROVED") {
+      return { error: `Team is not approved!` };
+    }
+
+    if (!team.isOpen) {
+      return { error: `Team registration is closed!` };
+    }
+
     if (teamPassword !== team?.password) {
       return { error: `Invalid team password!` };
     }

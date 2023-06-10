@@ -60,6 +60,16 @@ export class RegistrationStore extends BaseStore {
   allTeams: Team[] | null = null;
   teamFilter: string | null = null;
   teamValidated = false;
+  genderOptions = ["Male", "Femal"].map((m) => ({ value: m, label: m }));
+  shirtSizeOptions = ["XS", "Small", "Medium", "Large", "XLarge"].map((m) => ({
+    value: m,
+    label: m,
+  }));
+  raceOptions = event2023.races.map((race) => ({
+    value: race.name,
+    label: race.description,
+    entryFee: race.entryFee,
+  }));
   constructor() {
     super();
     makeObservable(this, {
@@ -75,8 +85,10 @@ export class RegistrationStore extends BaseStore {
       setEditIndex: action,
       setTeamFilter: action,
       setTeamValidated: action,
-      teams: computed,
+      getRaceByTeam: action,
+      initRaceEntryForm: action,
       isAgeValid: action,
+      teams: computed,
       raceEntry: computed,
       onGetStripeSession: flow,
       deleteRaceEntry: flow,
@@ -99,6 +111,18 @@ export class RegistrationStore extends BaseStore {
     return teams;
   }
 
+  getRaceByTeam(team: string) {
+    if (this.allTeams) {
+      const teams = this.allTeams.filter(
+        (f) => f.name.toLowerCase() === team.toLowerCase()
+      );
+      const race = teams[0].race;
+      console.log(`getRaceByTeam`, race);
+      return race;
+    }
+    return null;
+  }
+
   get existingEntries() {
     if (this.userStore?.raceEntries) {
       return this.userStore.raceEntries
@@ -109,7 +133,7 @@ export class RegistrationStore extends BaseStore {
   }
 
   validateForm(form: RaceEntry) {
-    let errors = {};
+    let errors: any = {};
     const age = form.birthYear;
     console.log(`validatForm`, form, this.userStore?.raceEntries.slice());
 
@@ -165,6 +189,7 @@ export class RegistrationStore extends BaseStore {
 
   attachedUserStore(userStore: UserStore) {
     this.userStore = userStore;
+    this.onListTeams();
   }
 
   reset(): void {
@@ -181,6 +206,13 @@ export class RegistrationStore extends BaseStore {
 
   setEditIndex(index: number | null) {
     this.editIndex = index;
+    if (
+      index &&
+      this.userStore?.raceEntries?.length &&
+      this.userStore.raceEntries.length > index
+    ) {
+      this.teamFilter = this.userStore.raceEntries[index].race;
+    }
   }
 
   get db() {
@@ -209,9 +241,11 @@ export class RegistrationStore extends BaseStore {
   }
 
   // team name could be passed
-  initRaceEntryForm(team?: string) {
+  initRaceEntryForm(team?: Team) {
     if (this.state === "RE_EDIT" && this.form) return this.form;
     if (this.form) return this.form;
+    if (team) this.teamFilter = team.race;
+
     const raceEntry = this.raceEntry;
     const user = this.userStore?.user;
 
@@ -228,13 +262,13 @@ export class RegistrationStore extends BaseStore {
       wechatId: raceEntry?.wechatId ?? user?.wechatId ?? "",
       birthYear: raceEntry?.birthYear ?? user?.birthYear ?? "",
       personalBest: raceEntry?.personalBest ?? user?.personalBest ?? "",
-      race: raceEntry?.race ?? "",
+      race: team ? team.race : raceEntry?.race ?? "",
       size: raceEntry?.size ?? "",
       emergencyName: raceEntry?.emergencyName ?? "",
       emergencyPhone: raceEntry?.emergencyPhone ?? "",
       isActive: raceEntry?.isActive ?? true,
       isPaid: raceEntry?.isPaid ?? false,
-      team: team ? team : raceEntry?.team ?? "",
+      team: team ? team.displayName : raceEntry?.team ?? "",
       teamId: raceEntry?.teamId ?? "",
       teamPassword: "",
       teamState: "",

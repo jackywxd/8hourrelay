@@ -25,13 +25,11 @@ export const onListTeams = functions
       .where("state", "==", "APPROVED")
       .get();
     if (teamsRef.size > 0) {
-      const teams = teamsRef.docs
-        .filter((f) => f)
-        .map((data) => {
-          const d = data.data();
-          const team = { ...d, id: data.id, password: "" };
-          return team as Team;
-        });
+      const teams = teamsRef.docs.map((data) => {
+        const d = data.data();
+        const team = { ...d, id: data.id, password: "" };
+        return team as Team;
+      });
       const validTeams = teams.filter(
         (f) => f.isOpen && f.state === "APPROVED"
       );

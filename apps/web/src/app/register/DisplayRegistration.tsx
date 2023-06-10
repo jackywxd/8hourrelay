@@ -14,7 +14,7 @@ function DisplayRegistration() {
       </div>
       <div className="flex w-full justify-end">
         <Link className="link link-primary" href="/register/create">
-          Add
+          New Registration
         </Link>
       </div>
       <div className="card card-compact w-full bg-base-100 shadow-xl justify-center gap-8">

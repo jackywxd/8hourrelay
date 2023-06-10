@@ -28,6 +28,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStore, entryFormSnapshot } from "./RootStore";
 import { BaseStore } from "./UIBaseStore";
+import { toast } from "react-toastify";
 
 export type RaceEntryState = "FORM_SUBMITTED" | "PAID" | "INVALID_FORM" | "WIP";
 
@@ -36,8 +37,7 @@ export class UserStore extends BaseStore {
   uid: string | null = null;
   user?: User;
   raceEntries: RaceEntry[] | [] = []; // race entriy array
-  teamsIds = observable.set(); // user's team
-  teams: Set<Team>;
+  myTeam: Team | null = null;
   state = "";
   userListner: null | (() => void) = null;
   raceEntryListner: null | (() => void) = null;
@@ -47,7 +47,25 @@ export class UserStore extends BaseStore {
   constructor(root: RootStore) {
     super();
     this.root = root;
-    this.teams = new Set();
+
+    makeObservable(this, {
+      uid: observable,
+      user: observable,
+      raceEntries: observable,
+      state: observable,
+      myTeam: observable,
+      pendingTeamRequest: computed,
+      teamId: computed,
+      setUid: action,
+      setUser: action,
+      setRaceEntries: action,
+      spliceRaceEntry: action,
+      setState: action,
+      getTeam: flow,
+      getUser: flow,
+      onUpdateTeam: flow,
+    });
+
     this.disposer = reaction(
       () => this.uid,
       (newUid) => {
@@ -61,36 +79,12 @@ export class UserStore extends BaseStore {
       }
     );
     this.teamDisposer = reaction(
-      () => Array.from(this.teamsIds.values()),
-      async (teamIds, prev) => {
-        console.log(`reaction teamsIds snapshot`, { teamIds, prev });
-        // const team = (await this.getTeam(entry.teamId)) as Team;
-        // console.log(`team data`, { team });
-        // this.teams.add(team);
+      () => this.teamId,
+      async (teamId) => {
+        console.log(`reaction teamsId snapshot`, { teamId });
+        await this.getTeam();
       }
     );
-
-    makeObservable(this, {
-      uid: observable,
-      user: observable,
-      teams: observable,
-      teamsIds: observable,
-      raceEntries: observable,
-      state: observable,
-      pendingTeamRequest: computed,
-      teamId: computed,
-      // dispose: action,
-      // teamDisposer: action,
-      setUid: action,
-      setUser: action,
-      setTeamsIds: action,
-      setRaceEntries: action,
-      spliceRaceEntry: action,
-      setState: action,
-      getTeam: flow,
-      getUser: flow,
-      // addUserListner: flow,
-    });
   }
 
   setState(state: string) {
@@ -115,7 +109,10 @@ export class UserStore extends BaseStore {
         return null;
       }
       const year = new Date().getFullYear().toString();
-      if (y[0] === year && y[1] === "APPROVED" && y[2]) return y[2];
+      if (y[0] === year && y[1] === "APPROVED" && y[2]) {
+        console.log(`computed teamId`, y[2]);
+        return y[2];
+      }
     }
     return null;
   }
@@ -135,15 +132,10 @@ export class UserStore extends BaseStore {
     return db;
   }
 
-  setTeamsIds(id: string) {
-    this.teamsIds.add(id);
-  }
-
   setUid(uid: string | null) {
     if (this.uid === uid) return;
     console.log(`setting uid to ${uid} ${this.uid}`);
     this.uid = uid;
-    if (uid) this.addUserListner(uid);
   }
 
   setUser(user: User) {
@@ -167,7 +159,6 @@ export class UserStore extends BaseStore {
     if (this.raceEntryListner) {
       this.raceEntryListner();
     }
-
     this.userListner = onSnapshot(doc(this.db, "Users", uid), (doc) => {
       const user = doc.data() as User;
       console.log(`New User data`, user);
@@ -185,15 +176,6 @@ export class UserStore extends BaseStore {
           entry.id = doc.id; // race entry's ID
           // teamId updated, we need to get the team Info
           raceEntries.push(entry);
-          if (entry.teamId) {
-            if (!this.teamsIds.has(entry.teamId)) {
-              console.log(`New team ID: ${entry.teamId}`);
-              this.setTeamsIds(entry.teamId);
-              // const team = (await this.getTeam(entry.teamId)) as Team;
-              // console.log(`Team`, { team });
-              // this.teams.add(team);
-            }
-          }
         });
         this.setRaceEntries(raceEntries);
       }
@@ -234,25 +216,59 @@ export class UserStore extends BaseStore {
     }
   }
 
-  *getTeam(teamId: string) {
-    if (this.isLoading) return;
+  *getTeam() {
     const functions = getFunctions();
     const onGetTeam = httpsCallable(functions, "onGetTeam");
 
     this.isLoading = true;
     try {
-      const result: HttpsCallableResult<Team> = yield onGetTeam({ teamId });
+      const result: HttpsCallableResult<Team> = yield onGetTeam({
+        teamId: this.teamId,
+      });
       console.log(`team data`, { result });
       if (!result) {
         throw new Error(`No team data!`);
       }
       console.log(`team result data`, { result: result.data });
       this.isLoading = false;
+      this.myTeam = new Team(result.data);
       return result.data;
     } catch (error) {
       console.log(`failed to getTeam`, error);
       this.error = (error as Error).message;
+    }
+    this.isLoading = false;
+  }
+
+  *onUpdateTeam(newTeam: Partial<Team>) {
+    if (this.isLoading) return;
+    const functions = getFunctions();
+    const onUpdateTeam = httpsCallable(functions, "onUpdateTeam");
+
+    const id = toast.loading(`Updating team settings...`);
+    this.isLoading = true;
+    try {
+      const result: HttpsCallableResult<Team[]> = yield onUpdateTeam({
+        ...newTeam,
+        id: this.teamId,
+      });
+      console.log(`update team result`, result.data);
+      yield this.getTeam();
       this.isLoading = false;
+      toast.update(id, {
+        render: `Team settings updated`,
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+    } catch (error) {
+      console.log(`Failed to list teams`, { error });
+      toast.update(id, {
+        render: `Failed to update team settings. Please try again later.`,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
     }
     this.isLoading = false;
   }

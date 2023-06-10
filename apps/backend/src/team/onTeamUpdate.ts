@@ -38,6 +38,14 @@ export const onTeamUpdate = functions.firestore
         };
         await sendMail(email);
       }
+      if (after.isOpen !== before.isOpen) {
+        // revalidate page to show the new team
+        await Promise.all([
+          revalidate("/teams"),
+          revalidate("/register"),
+          revalidate(encodeURI(`/team/${after.name}`)),
+        ]);
+      }
     } catch (err) {
       logger.error(`Failed to onUpdateTeam`, { err });
     }

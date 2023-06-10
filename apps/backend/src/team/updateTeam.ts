@@ -17,7 +17,7 @@ export const onUpdateTeam = functions
       );
     }
 
-    logger.info(`Create team for user ${context.auth.uid}`, data);
+    logger.info(`Update team for user ${context.auth.uid}`, data);
     const year = new Date().getFullYear().toString();
     const now = new Date().getTime();
 
@@ -46,7 +46,7 @@ export const onUpdateTeam = functions
     const team: Partial<Team> = {};
 
     if (name) team.name = name;
-    if (slogan) team.slogan = slogan;
+    if (slogan || slogan === "") team.slogan = slogan;
     if (isOpen !== undefined) team.isOpen = isOpen;
     if (password) team.password = password;
     if (Object.keys(team).length > 0) team.updatedAt = now;
@@ -56,7 +56,7 @@ export const onUpdateTeam = functions
         .collection("Race")
         .doc(year)
         .collection("Teams")
-        .doc()
+        .doc(id)
         .set(team, { merge: true }),
     ]);
     return {};

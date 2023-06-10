@@ -1,6 +1,6 @@
 "use client";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/context/AuthContext";
@@ -10,8 +10,10 @@ import RegisterForm from "./RegisterForm";
 import ShowRaceEntry from "./ShowRaceEntry";
 import ConfirmForm from "./ConfirmPayment";
 import LoginFirst from "@/components/LoginFirst";
+import Loader from "@/components/Loader";
+import { Team } from "@8hourrelay/models";
 
-function RegisterPage({ team, action }: { team?: string; action?: string }) {
+function RegisterPage({ team, action }: { team?: Team; action?: string }) {
   const router = useRouter();
   const { store } = useAuth();
 
@@ -56,7 +58,11 @@ function RegisterPage({ team, action }: { team?: string; action?: string }) {
   }
 
   if (registerStore.state === "EDIT" || registerStore.state === "RE_EDIT") {
-    return <RegisterForm team={team} />;
+    return (
+      <Suspense fallback={Loader}>
+        <RegisterForm team={team ? new Team(team) : undefined} />
+      </Suspense>
+    );
   }
   if (registerStore.state === "FORM_SUBMITTED") {
     return <ConfirmForm />;

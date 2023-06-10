@@ -33,6 +33,7 @@ export const onGetTeam = functions
       throw new Error(`Team not exists`);
     }
     const team = teamRef.data() as Team;
+
     logger.debug(`Returning team data`, { team });
     return team;
   });

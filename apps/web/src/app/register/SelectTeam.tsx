@@ -27,7 +27,7 @@ function SelectComponent(props) {
           unmount: { y: 25 },
         }}
         disabled={props.team ? true : false}
-        defaultValue={props.team ? props.team : undefined}
+        // defaultValue={props.team ? props.team : undefined}
         selected={() => (props.team ? props.team : field.value)}
         onChange={helpers.setValue}
         label="Select Team"
@@ -35,7 +35,7 @@ function SelectComponent(props) {
       >
         {teams?.map((team) => {
           return (
-            <Option key={team.id} value={team.name}>
+            <Option key={team.id} value={team.displayName}>
               {team.displayName}
             </Option>
           );

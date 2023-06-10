@@ -10,7 +10,7 @@ function LayoutSecure({
   children: React.ReactNode;
 }) {
   const { store } = useAuth();
-  registerStore.attachedUserStore(store.userStore);
+  // registerStore.attachedUserStore(store.userStore);
 
   return (
     <div className="relative flex justify-center w-full min-h-full grow">

@@ -17,13 +17,11 @@ function TeamMemberList({
 }) {
   const { store } = useAuth();
 
-  if (
+  const isMember =
     store.userStore.user?.email &&
     membersData &&
-    !membersData.some((f) => f.email === store.userStore?.user?.email)
-  ) {
-    return <div>You are not the member of this team</div>;
-  }
+    membersData.some((f) => f.email === store.userStore?.user?.email);
+
   const team = new Team(teamData);
   const members = membersData?.map((m) => new RaceEntry(m));
 
@@ -32,14 +30,17 @@ function TeamMemberList({
       <div>
         <h1>Team: {team.displayName}</h1>
       </div>
-      <div className="self-end">
-        <Link
-          className="link link-primary"
-          href={`/register/join/${team.name}`}
-        >
-          JOIN
-        </Link>
-      </div>
+      {team.isOpen && (
+        <div className="self-end">
+          <Link
+            className="link link-primary"
+            href={`/register/join/${team.name}`}
+          >
+            JOIN
+          </Link>
+        </div>
+      )}
+
       <div className="divider" />
       <div className="flex w-full justify-between m-8">
         <h2>Race: {team.race}</h2>
@@ -49,34 +50,36 @@ function TeamMemberList({
       {!membersData || membersData.length === 0 ? (
         <h1>Team {team.name} has no team members yet</h1>
       ) : (
-        <>
-          <div className="divider">Team Members</div>
-          <table className="table w-full">
-            {/* head */}
-            <thead>
-              <tr>
-                {TABLE_HEAD.map((head) => (
-                  <th key={head}>{head}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {members.map(({ displayName: name, email }, index) => {
-                return (
-                  <tr key={`${name}-${index}`}>
-                    <td>
-                      <div>
-                        <div className="font-bold">{name}</div>
-                      </div>
-                    </td>
-                    <td>{email}</td>
-                    <th className="flex gap-2"></th>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </>
+        isMember && (
+          <>
+            <div className="divider">Team Members</div>
+            <table className="table w-full">
+              {/* head */}
+              <thead>
+                <tr>
+                  {TABLE_HEAD.map((head) => (
+                    <th key={head}>{head}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {members.map(({ displayName: name, email }, index) => {
+                  return (
+                    <tr key={`${name}-${index}`}>
+                      <td>
+                        <div>
+                          <div className="font-bold">{name}</div>
+                        </div>
+                      </td>
+                      <td>{email}</td>
+                      <th className="flex gap-2"></th>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </>
+        )
       )}
     </div>
   );
