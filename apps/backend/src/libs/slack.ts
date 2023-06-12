@@ -1,15 +1,11 @@
 import { IncomingWebhook } from "@slack/webhook";
 import { WebClient } from "@slack/web-api";
 
-const url =
-  process.env.SLACK_WEBHOOK ??
-  "https://hooks.slack.com/services/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";
+const url = process.env.SLACK_WEBHOOK;
 
 const ENV = process.env.ENV;
 
 const web = new WebClient(process.env.SLACK_TOKEN);
-
-const webhook = new IncomingWebhook(url!);
 
 export const updateMessage = async (
   channelId: string,
@@ -30,30 +26,11 @@ export const updateMessage = async (
       },
     ],
   });
-
-  /*
- // Update the message to remove the approve button
-    const updatedBlocks = payload.message.blocks.map((block) => {
-      if (block.block_id === 'approval_buttons') {
-        return {
-          ...block,
-          elements: block.elements.filter((element) => element.value !== 'approve_' + collectionId),
-        };
-      }
-      return block;
-    });
-
-    await slackWebClient.chat.update({
-      channel: payload.channel.id,
-      ts: payload.message.ts,
-      blocks: updatedBlocks,
-    });
-
-  */
 };
 
 // Send the notification
 export const slackSendMsg = async (text: string): Promise<void> => {
+  const webhook = new IncomingWebhook(url!);
   await webhook.send({
     blocks: [
       { type: "section", text: { type: "mrkdwn", text: `[${ENV}] ${text}` } },
@@ -63,6 +40,7 @@ export const slackSendMsg = async (text: string): Promise<void> => {
 
 // Send the notification
 export const slackSendText = async (text: string) => {
+  const webhook = new IncomingWebhook(url!);
   return webhook.send(`[${ENV}] ${text}`);
 };
 
@@ -72,6 +50,7 @@ export const slackActionSend = async (
   id: string, // team ID
   uid: string // user uid
 ) => {
+  const webhook = new IncomingWebhook(url!);
   return webhook.send({
     text: `[${ENV}] ${text}`,
     attachments: [
