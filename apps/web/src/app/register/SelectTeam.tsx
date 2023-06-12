@@ -30,7 +30,7 @@ function SelectComponent(props) {
         // defaultValue={props.team ? props.team : undefined}
         selected={() => (props.team ? props.team : field.value)}
         onChange={helpers.setValue}
-        label="Select Team"
+        label="Select Team*"
         error={meta.touched && meta.error ? true : false}
       >
         {teams?.map((team) => {

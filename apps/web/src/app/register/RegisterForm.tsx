@@ -63,8 +63,6 @@ function RegisterForm({ team }: { team?: Team }) {
   });
   return (
     <div className="flex flex-col justify-center items-center">
-      <div className="divider">Basic Info</div>
-
       <div className="flex flex-wrap min-w-full -mx-3 mb-6 items-center justify-center">
         <Formik
           initialValues={initialValues}
@@ -79,58 +77,97 @@ function RegisterForm({ team }: { team?: Team }) {
           onSubmit={async (values) => await onSubmit(values)}
         >
           {(props) => (
-            <Form className="flex flex-col w-72 items-end gap-6">
-              {/* {fee && <div>{`Entery fee: ${props.values.race}`}</div>} */}
-              <SelectComponent
-                {...props}
-                disabled={
-                  team || registerStore.editIndex !== null ? true : false
-                }
-                validate={(value) => {
-                  console.log(`race value`, value);
-                  if (value && registerStore.teamFilter !== value) {
-                    registerStore.setTeamFilter(value);
-                    props.values.team = "";
-                  }
-                }}
-                options={registerStore.raceOptions}
-                label="Select Race"
-                name="race"
-              />
-              <FieldItem label="Email*" fieldName="email" />
-              <FieldItem label="First Name*" fieldName="firstName" />
-              <FieldItem label="Last Name*" fieldName="lastName" />
-              <FieldItem label="Prefer Name" fieldName="preferName" />
-              <SelectComponent
-                {...props}
-                options={registerStore.genderOptions}
-                label="Gender"
-                name="gender"
-              />
-              <FieldItem label="Phone*" fieldName="phone" />
-              <FieldItem label="Year of birth*" fieldName="birthYear" />
-              <FieldItem label="Personal Best Time" fieldName="personalBest" />
-              <SelectComponent
-                {...props}
-                options={registerStore.shirtSizeOptions}
-                label="Select Shirt Size"
-                name="size"
-              />
-
-              <div className="divider">Emergency Contact</div>
-              <FieldItem label="Name*" fieldName="emergencyName" />
-              <FieldItem label="Phone*" fieldName="emergencyPhone" />
+            <Form className="flex flex-col w-full justify-center gap-8">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+                <div className="sm:col-span-3 gap-5">
+                  <h2 className="text-base font-semibold leading-7 ">
+                    Personal Info
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-gray-400">
+                    Select the race you would like to register and provide your
+                    personal data, * fields are required.
+                  </p>
+                </div>
+                <div className="sm:col-span-3">
+                  <SelectComponent
+                    {...props}
+                    disabled={
+                      team || registerStore.editIndex !== null ? true : false
+                    }
+                    validate={(value) => {
+                      console.log(`race value`, value);
+                      if (value && registerStore.teamFilter !== value) {
+                        registerStore.setTeamFilter(value);
+                        props.values.team = "";
+                      }
+                    }}
+                    options={registerStore.raceOptions}
+                    label="Select Race"
+                    name="race"
+                  />
+                  <FieldItem label="Email*" fieldName="email" />
+                  <FieldItem label="First Name*" fieldName="firstName" />
+                  <FieldItem label="Last Name*" fieldName="lastName" />
+                  <FieldItem label="Prefer Name" fieldName="preferName" />
+                  <SelectComponent
+                    {...props}
+                    options={registerStore.genderOptions}
+                    label="Gender*"
+                    name="gender"
+                  />
+                  <FieldItem label="Phone*" fieldName="phone" />
+                  <FieldItem label="Year of birth*" fieldName="birthYear" />
+                  <FieldItem
+                    label="Personal Best Time"
+                    fieldName="personalBest"
+                  />
+                  <SelectComponent
+                    {...props}
+                    options={registerStore.shirtSizeOptions}
+                    label="Select Shirt Size"
+                    name="size"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+                <div className="sm:col-span-3 gap-3">
+                  <h2 className="text-base font-semibold leading-7 ">
+                    Emergency Contact
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-gray-400">
+                    Emergency contact name and mobile phone number
+                  </p>
+                </div>
+                <div className="sm:col-span-3 gap-3">
+                  <div>
+                    <FieldItem label="Name*" fieldName="emergencyName" />
+                  </div>
+                  <FieldItem label="Phone*" fieldName="emergencyPhone" />
+                </div>
+              </div>
               {registerStore.teamFilter && (
-                <>
-                  <div className="divider">Team Info</div>
-
-                  <Suspense fallback={Loader}>
-                    <SelectTeam name="team" team={team?.displayName} />
-                  </Suspense>
-                  <FieldItem label="Team Password*" fieldName="teamPassword" />
-                </>
+                <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+                  <div className="sm:col-span-3 gap-3">
+                    <h2 className="text-base font-semibold leading-7 ">
+                      Team Info
+                    </h2>
+                    <p className="mt-1 text-sm leading-6 text-gray-400">
+                      Please select team and team password. If you don't know
+                      the team password, contact team captain. You can create
+                      your own team.
+                    </p>
+                  </div>
+                  <div className="sm:col-span-3 gap-3">
+                    <Suspense fallback={Loader}>
+                      <SelectTeam name="team" team={team?.displayName} />
+                    </Suspense>
+                    <FieldItem
+                      label="Team Password*"
+                      fieldName="teamPassword"
+                    />
+                  </div>
+                </div>
               )}
-
               <div className="divider"></div>
               <FieldCheckBox label="Accepte race wavier" fieldName="accepted" />
               <div className="flex w-full justify-between gap-2">
@@ -179,7 +216,7 @@ export default observer(RegisterForm);
 
 export const FieldItem = ({ label, fieldName, ...props }) => {
   return (
-    <div>
+    <div className="mt-5">
       <Field
         as={CustomInputComponent}
         id={fieldName}
@@ -206,7 +243,7 @@ export const FieldCheckBox = ({ label, fieldName, ...props }) => {
 };
 const CustomCheckBox = (props) => {
   return (
-    <div className="form-control mt-3">
+    <div className="form-control mt-5">
       <label className="label cursor-pointer gap-3">
         <span className="label-text">{props.label}</span>
         <input
@@ -221,7 +258,7 @@ const CustomCheckBox = (props) => {
 };
 
 const CustomInputComponent = (props) => (
-  <div className="flex flex-col w-72 items-end gap-6">
+  <div className="flex flex-col w-72 items-end mt-5">
     {/* <label className="label">
       <span className="label-text">{props.label}</span>
     </label> */}

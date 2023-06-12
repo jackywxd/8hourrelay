@@ -4,7 +4,7 @@ import { useField } from "formik";
 function SelectComponent(props) {
   const [field, meta, helpers] = useField(props);
   return (
-    <div className="w-72 pt-2">
+    <div className="w-72 mt-5">
       <Select
         {...field}
         animate={{

@@ -29,7 +29,11 @@ function DisplayTeams({
         </thead>
         <tbody>
           {teams.map((team, index) => {
-            const { displayName: name, isOpen, race } = new Team(team);
+            const {
+              displayName: name,
+              isOpen,
+              raceDisplayName,
+            } = new Team(team);
             return (
               <tr key={`${name}-${index}`}>
                 <td>
@@ -39,7 +43,7 @@ function DisplayTeams({
                     </Link>
                   </div>
                 </td>
-                <td>{race}</td>
+                <td>{raceDisplayName}</td>
                 <td className="flex">
                   {isOpen ? (
                     <Link

@@ -1,3 +1,5 @@
+import { event2023 } from "./Event";
+
 export type TeamState = "APPROVED" | "PENDING" | "DENIED";
 
 export class Team {
@@ -21,11 +23,19 @@ export class Team {
     Object.assign(this, t);
   }
 
+  get raceDisplayName() {
+    const races = event2023.races.filter((r) => r.name === this.race);
+    if (races.length === 1) return races[0].description;
+    return "";
+  }
+
   get displayName() {
-    return this.name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+    if (this.name)
+      return this.name
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    else return "";
   }
   // the total distance of this team
   // get totalDistance() {

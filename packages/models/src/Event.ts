@@ -34,7 +34,7 @@ export const event2023 = new Event({
     new Race({
       year: "2023",
       name: "Adult Race",
-      description: "Adult Race",
+      description: "8 Hour Relay",
       entryFee: 30,
       isCompetitive: true,
       lowerAge: 18,
@@ -42,7 +42,7 @@ export const event2023 = new Event({
     new Race({
       year: "2023",
       name: "Kids",
-      description: "Kids run",
+      description: "4 Hour Youth Relay",
       entryFee: 5,
       isCompetitive: false,
       lowerAge: 10,

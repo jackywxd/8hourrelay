@@ -46,57 +46,59 @@ const RegistrationTable = observer(() => {
         <tbody>
           {raceEntries
             .filter((f: RaceEntry) => f && f.isActive)
-            .map(({ displayName, race, bib, team, isPaid }, index) => {
-              return (
-                <tr key={`${displayName}-${index}`}>
-                  <td>
-                    <div>
-                      <div className="font-bold">{displayName}</div>
-                    </div>
-                  </td>
-                  <td>{race}</td>
-                  <td>{bib ? bib : `TBD`}</td>
-                  <td>
-                    {isPaid ? (
+            .map(
+              ({ displayName, raceDisplayName, bib, team, isPaid }, index) => {
+                return (
+                  <tr key={`${displayName}-${index}`}>
+                    <td>
                       <div>
-                        <Link href={`/team/${team}`}>
-                          <div className="link link-accent font-bold">
-                            {team}
-                          </div>
-                        </Link>
+                        <div className="font-bold">{displayName}</div>
                       </div>
-                    ) : (
-                      ``
-                    )}
-                  </td>
-                  <th className="flex gap-2">
-                    {!isPaid ? (
-                      <>
+                    </td>
+                    <td>{raceDisplayName}</td>
+                    <td>{bib ? bib : `TBD`}</td>
+                    <td>
+                      {isPaid ? (
+                        <div>
+                          <Link href={`/team/${team}`}>
+                            <div className="link link-accent font-bold">
+                              {team}
+                            </div>
+                          </Link>
+                        </div>
+                      ) : (
+                        ``
+                      )}
+                    </td>
+                    <th className="flex gap-2">
+                      {!isPaid ? (
+                        <>
+                          <button
+                            className="btn btn-xs"
+                            onClick={() => {
+                              registerStore.setEditIndex(index);
+                              registerStore.setState("EDIT");
+                            }} // set edit index
+                          >
+                            Edit
+                          </button>
+                        </>
+                      ) : (
                         <button
                           className="btn btn-xs"
                           onClick={() => {
                             registerStore.setEditIndex(index);
-                            registerStore.setState("EDIT");
+                            registerStore.setState("SHOW");
                           }} // set edit index
                         >
-                          Edit
+                          details
                         </button>
-                      </>
-                    ) : (
-                      <button
-                        className="btn btn-xs"
-                        onClick={() => {
-                          registerStore.setEditIndex(index);
-                          registerStore.setState("SHOW");
-                        }} // set edit index
-                      >
-                        details
-                      </button>
-                    )}
-                  </th>
-                </tr>
-              );
-            })}
+                      )}
+                    </th>
+                  </tr>
+                );
+              }
+            )}
         </tbody>
       </table>
     </div>

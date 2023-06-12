@@ -45,7 +45,7 @@ function MyTeam() {
     <div className="flex flex-col w-full items-center">
       <div>
         <h1>My Team: {store.userStore.myTeam.displayName}</h1>
-        <h2>Race: {store.userStore.myTeam.race}</h2>
+        <h2>Race: {store.userStore.myTeam.raceDisplayName}</h2>
       </div>
       <div className="flex self-end">
         <Link

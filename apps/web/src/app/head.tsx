@@ -13,7 +13,7 @@ export default function Head() {
         href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=DM+Sans:wght@400;500;700&display=swap"
       />
       <meta content="width=device-width, initial-scale=1" name="viewport" />
-      <meta name="description" content="8 Hour Relay" />
+      <meta name="description" content="Vancouver 8 Hour Relay" />
       <link rel="icon" href="/favicon.ico" />
     </>
   );

@@ -1,21 +1,12 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { Suspense } from "react";
+import Link from "next/link";
+
 import About from "../content/about.mdx";
 import Register from "../content/register.mdx";
 import TimeCard from "@/components/TimeCard";
-import { Hero } from "@/components/Hero";
-import styles from "@/styles/index.module.css";
-import { Button } from "@material-tailwind/react";
+import MessageForm from "./message";
 
 export default function Web() {
-  const router = useRouter();
-
-  const onClick = useCallback(() => {
-    router.push("/register");
-  }, []);
-
-  console.log(`process.env`, { env: process.env.NEXT_PUBLIC_ENV });
   return (
     <div className="flex flex-col w-full">
       <div className="relative p-2">
@@ -40,9 +31,11 @@ export default function Web() {
           <div className="flex grow">
             <TimeCard />
           </div>
-          <Button className="!btn-primary btn-lg m-10" onClick={onClick}>
-            Register Now
-          </Button>
+          <Link href="/register">
+            <button className="btn btn-primary btn-md m-10">
+              Register Now
+            </button>
+          </Link>
         </div>
       </div>
 
@@ -52,9 +45,9 @@ export default function Web() {
         <div className="">
           <Register />
         </div>
-        <Button className="!btn-primary btn-lg m-10" onClick={onClick}>
-          Register Now
-        </Button>
+        <Link href="/register">
+          <button className="btn btn-primary btn-md m-10">Register Now</button>
+        </Link>
       </div>
       <div className="divider"></div>
       <div className="flex flex-col justify-center items-center text-left py-10 px-2">
@@ -63,20 +56,12 @@ export default function Web() {
           <About />
         </div>
       </div>
-      <div className="divider"></div>
-      <div className="flex flex-col w-full md:w-[800px] self-center text-left py-10 px-2">
-        <label htmlFor="comment" className="block font-medium leading-6">
-          Add your comment
-        </label>
-        <div className="mt-2 w-full items-center">
-          <textarea
-            rows={4}
-            name="comment"
-            id="comment"
-            className="block w-full rounded-md border-0 py-1.5  sm:text-sm sm:leading-6"
-            defaultValue={""}
-          />
-        </div>
+      <div className="flex flex-col md:w-[800px] self-center items-center text-left py-10 px-2">
+        <div className="divider"></div>
+        <div className="text-3xl font-semibold py-10 px-3">Keep in touch</div>
+        <Suspense>
+          <MessageForm />
+        </Suspense>
       </div>
     </div>
   );

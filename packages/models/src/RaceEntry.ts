@@ -62,9 +62,17 @@ export class RaceEntry {
   constructor(r: RaceEntry) {
     Object.assign(this, r);
   }
+
+  get raceDisplayName() {
+    const races = event2023.races.filter((r) => r.name === this.race);
+    if (races.length === 1) return races[0].description;
+    return "";
+  }
+
   get displayName() {
     return `${this.firstName} ${this.lastName}`;
   }
+
   get entryFee() {
     const races = event2023.races.filter((r) => r.name === this.race);
     if (races.length === 1) return races[0].entryFee;

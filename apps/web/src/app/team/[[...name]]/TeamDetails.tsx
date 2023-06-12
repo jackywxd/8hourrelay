@@ -43,7 +43,7 @@ function TeamMemberList({
 
       <div className="divider" />
       <div className="flex w-full justify-between m-8">
-        <h2>Race: {team.race}</h2>
+        <h2>Race: {team.raceDisplayName}</h2>
         {team.slogan && <h2>{team.slogan}</h2>}
         <h2>Captain: {team.captainName}</h2>
       </div>
