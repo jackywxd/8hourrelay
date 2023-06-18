@@ -1,7 +1,3 @@
-@import "./normalize.css";
-@import "./variables.css";
-@import "./style.css";
-
 .hero-section {
 	padding-block: 150px;
 	background-color: white;

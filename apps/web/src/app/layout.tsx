@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.min.css";
 import Layout from "@/components/Layout";
 import "../styles/main.css";
 import "../styles/chrome-bug.css";
-import "@/styles/landing.css";
 // import "focus-visible";
 import Loader from "@/components/Loader";
 import Head from "next/head";
