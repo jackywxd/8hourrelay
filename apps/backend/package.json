@@ -1,5 +1,6 @@
 {
   "name": "@8hourrelay/backend",
+  "version": "1.0.0",
   "scripts": {
     "webpack": "yarn webpack-cli"
   },
