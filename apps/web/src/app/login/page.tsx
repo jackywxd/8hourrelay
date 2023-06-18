@@ -1,6 +1,5 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LoginWithEmailScreen } from "@8hourrelay/login";
 import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "yarn env-cmd -f .env.development next dev",
-    "build": "env-cmd -f .env.production next build",
+    "build": "next build",
     "build:staging": "rm -rf ./out && env-cmd -f .env.staging next build",
     "build:prod": "env-cmd -f .env.production next build",
     "start": "next start",
