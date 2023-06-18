@@ -1,8 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 @import "./normalize.css";
 @import "./variables.css";
 @import "./style.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @font-face { font-family: MaterialCommunityIcons; src: url('../../../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf'); }
