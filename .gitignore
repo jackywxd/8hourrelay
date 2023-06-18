@@ -15,7 +15,6 @@ coverage
 .swc/
 out/
 build
-public
 
 # expo
 .expo
