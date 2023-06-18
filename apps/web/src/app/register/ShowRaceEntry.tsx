@@ -19,7 +19,7 @@ const data = {
 function ShowRaceEntry({ raceEntry }: { raceEntry: RaceEntry }) {
   return (
     <div className="w-full p-2">
-      <div>Registered Race: {raceEntry.race}</div>
+      <div>Registered Race: {raceEntry.raceDisplayName}</div>
       <div>Entry Fee: {raceEntry.entryFee}</div>
       <div className="divider">Race Entry Info</div>
 

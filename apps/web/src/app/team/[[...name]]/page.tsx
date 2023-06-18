@@ -3,6 +3,7 @@ import TeamMemberList from "./TeamDetails";
 import { getTeam } from "@/firebase/serverApi";
 import { Suspense } from "react";
 import Loader from "@/components/Loader";
+import "@/styles/teams.css";
 
 export default async function TeamPage({ params }: any) {
   // not team name, just redirect to teams

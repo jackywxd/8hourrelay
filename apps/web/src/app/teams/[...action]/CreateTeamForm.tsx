@@ -1,15 +1,14 @@
-import { useRouter } from "next/navigation";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
+import Link from "next/link";
 import * as Yup from "yup";
-import { Input, Button } from "@material-tailwind/react";
+import { observer } from "mobx-react-lite";
 
 import SelectComponent from "@/components/SelecComponent";
-import { observer } from "mobx-react-lite";
 import { teamStore } from "@8hourrelay/store/src/UIStore";
+import { FieldItem } from "@/components/CustomFiled";
 
 function CreateTeamForm() {
   const initialValues = teamStore.initialTeamForm();
-  const router = useRouter();
   const SignupSchema = Yup.object().shape({
     name: Yup.string().max(50, "Too Long!").required("Required"),
     captainName: Yup.string().max(50, "Too Long!").required("Required"),
@@ -22,10 +21,6 @@ function CreateTeamForm() {
     console.log(`Submitting team form`, { values });
     teamStore.setForm(values);
     teamStore.setState("CONFIRM");
-  };
-
-  const onCancel = () => {
-    router.push("/teams");
   };
 
   const raceOptions = teamStore.event.races.map((race) => ({
@@ -58,11 +53,11 @@ function CreateTeamForm() {
               <FieldItem label="Slogan" fieldName="slogan" />
 
               <div className="flex flex-row w-full justify-between">
-                <button className="btn" onClick={onCancel}>
-                  cancel
-                </button>
+                <Link href="/teams">
+                  <button className="btn">cancel</button>
+                </Link>
                 <button type="submit" className="btn btn-primary">
-                  create
+                  Next
                 </button>
               </div>
             </Form>
@@ -74,28 +69,3 @@ function CreateTeamForm() {
 }
 
 export default observer(CreateTeamForm);
-
-export const FieldItem = ({ label, fieldName, ...props }) => {
-  return (
-    <>
-      <Field
-        as={CustomInputComponent}
-        id={fieldName}
-        name={fieldName}
-        label={label}
-        {...props}
-      />
-      <ErrorMessage component="a" name={fieldName} />
-    </>
-  );
-};
-
-const CustomInputComponent = (props) => (
-  <div className="flex flex-col w-72 items-end gap-6">
-    <Input
-      type="text"
-      className="input input-primary w-full max-w-xs"
-      {...props}
-    />
-  </div>
-);

@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Select, Option } from "@material-tailwind/react";
+import { Listbox } from "@headlessui/react";
 import { useField } from "formik";
 import { registerStore } from "@8hourrelay/store";
 import { observer } from "mobx-react-lite";
+import SelectComponent from "@/components/SelecComponent";
 
 // props.team is the selected team
-function SelectComponent(props) {
+function SelectTeam(props) {
   const teams = registerStore.teams;
-  const [field, meta, helpers] = useField(props);
 
   useEffect(() => {
     if (!registerStore.allTeams) {
@@ -18,35 +18,20 @@ function SelectComponent(props) {
 
   if (!props.team && !teams) return null;
 
+  const teamOptions = teams.map((t) => ({
+    value: t.name,
+    label: t.displayName,
+  }));
+  console.log(`teamOptions`, teamOptions);
   return (
     <div className="w-72 pt-2">
-      <Select
-        {...field}
-        animate={{
-          mount: { y: 0 },
-          unmount: { y: 25 },
-        }}
+      <SelectComponent
+        {...props}
+        options={teamOptions}
+        defaultValue={props.team ? props.team : undefined}
         disabled={props.team ? true : false}
-        // defaultValue={props.team ? props.team : undefined}
-        selected={() => (props.team ? props.team : field.value)}
-        onChange={helpers.setValue}
-        label="Select Team*"
-        error={meta.touched && meta.error ? true : false}
-      >
-        {teams?.map((team) => {
-          return (
-            <Option key={team.id} value={team.displayName}>
-              {team.displayName}
-            </Option>
-          );
-        })}
-      </Select>
-      {meta.touched && meta.error ? (
-        <p className="mt-2 text-sm text-red-600" id="error">
-          {meta.error}
-        </p>
-      ) : null}
+      />
     </div>
   );
 }
-export default observer(SelectComponent);
+export default observer(SelectTeam);

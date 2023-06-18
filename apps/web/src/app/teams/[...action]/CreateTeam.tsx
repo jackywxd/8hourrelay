@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { teamStore } from "@8hourrelay/store/src/UIStore";
 import CreateTeamForm from "./CreateTeamForm";
 import ConfirmForm from "./ConfirmForm";
+import Link from "next/link";
 
 function CreateTeam() {
   const { store } = useAuth();
@@ -15,20 +16,20 @@ function CreateTeam() {
 
   // if the current user is already a created a team, return null
   // one user can only create one team
-  if (teamStore.state === "INIT" && store.userStore.pendingTeamRequest) {
+  if (teamStore.state === "INIT" && !store.userStore.pendingTeamRequest) {
     return (
-      <div className="flex flex-col w-full max-w-lg">
-        <div className="flex flex-wrap min-w-full -mx-3 m-6 justify-center ">
-          Only one team can be created!
+      <div className="page-header mt-10">
+        <div className="page-title-group">
+          <p className="-mx-3 m-6 page-description">
+            You already created one team. Only one team can be created by one
+            account.
+          </p>
         </div>
-        <button
-          className="btn-primary btn-md rounded-lg justify-center"
-          onClick={() => {
-            router.push("/teams");
-          }}
-        >
-          OK
-        </button>
+        <div className="mt-10">
+          <button className="btn btn-primary blue">
+            <Link href="/teams">OK</Link>
+          </button>
+        </div>
       </div>
     );
   }

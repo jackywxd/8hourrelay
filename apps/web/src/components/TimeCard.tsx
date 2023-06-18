@@ -54,7 +54,7 @@ const useTimer = () => {
   return { days, hours, minutes, seconds };
 };
 
-export default function Web() {
+export default function CountDownComponent() {
   const { days, hours, minutes, seconds } = useTimer();
 
   return (

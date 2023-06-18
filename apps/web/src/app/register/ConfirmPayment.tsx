@@ -2,7 +2,6 @@
 import { observer } from "mobx-react-lite";
 import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
-import { Button } from "@material-tailwind/react";
 import ShowRaceEntry from "./ShowRaceEntry";
 import { registerStore } from "@8hourrelay/store";
 import { RaceEntry } from "@8hourrelay/models";
@@ -32,15 +31,19 @@ function ConfirmForm() {
   return (
     <div className="w-full p-2">
       <p>
-        Please review your registration information carefully and confirm. Race
-        entry cannot be change after submitted
+        Please review your registration information carefully and accept race
+        polices. Race entry cannot be change after submitted
       </p>
-      <div className="divider">Race Entry Info</div>
+      <div className="divider">Race Entry</div>
       <ShowRaceEntry raceEntry={raceEntry} />
-      <div className="flex flex-wrap">
+      <div className="flex flex-col mt-5">
+        <div className="divider">Race Policies</div>
+        <div>
+          Entry fees are non-refundable, non-deferrable, and non-transferable.
+        </div>
         <div className="form-control mt-3">
           <label className="label cursor-pointer gap-3">
-            <span className="label-text">CONFIRM</span>
+            <span className="">ACCEPT</span>
             <input
               type="checkbox"
               checked={confirm}
@@ -51,27 +54,25 @@ function ConfirmForm() {
             />
           </label>
         </div>
-        <div className="flex gap-10 justify-between w-full mt-10">
-          <Button
-            disabled={!confirm || registerStore.isLoading}
-            fullWidth
-            type="submit"
-            onClick={onSubmit}
-            className="!btn-primary"
-          >
-            Payment
-          </Button>
-          <Button
-            fullWidth
-            onClick={() => {
-              registerStore.setTeamValidated(false);
-              registerStore.setState("RE_EDIT");
-            }}
-            className="!btn-secondary"
-          >
-            EDIT
-          </Button>
-        </div>
+      </div>
+      <div className="flex gap-10 justify-between w-full mt-10">
+        <button
+          disabled={!confirm || registerStore.isLoading}
+          type="submit"
+          onClick={onSubmit}
+          className="btn btn-primary"
+        >
+          Payment
+        </button>
+        <button
+          onClick={() => {
+            registerStore.setTeamValidated(false);
+            registerStore.setState("RE_EDIT");
+          }}
+          className="btn btn-secondary"
+        >
+          EDIT
+        </button>
       </div>
     </div>
   );

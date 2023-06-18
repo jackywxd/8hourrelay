@@ -1,21 +1,15 @@
 const path = require("path");
 const defaultTheme = require("tailwindcss/defaultTheme");
-const withMT = require("@material-tailwind/react/utils/withMT");
 
 /** @type {import('tailwindcss').Config} */
-module.exports = withMT({
+module.exports = {
   darkMode: "class",
-  daisyui: {
-    themes: ["coffee"],
-  },
   content: [
     path.join(__dirname, "./pages/**/*.{js,ts,jsx,tsx}"),
     path.join(__dirname, "./src/**/*.{js,ts,jsx,tsx,mdx}"),
     "./src/components/**/*.{ts,tsx}",
     "./src/pages/**/*.{ts,tsx}",
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../node_modules/@material-tailwind/react/components/**/*.{js,ts,jsx,tsx}",
-    "../../node_modules/@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     fontSize: {
@@ -47,9 +41,5 @@ module.exports = withMT({
       },
     },
   },
-  plugins: [
-    require("@tailwindcss/typography"),
-    require("daisyui"),
-    require("@tailwindcss/forms"),
-  ],
-});
+  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms")],
+};

@@ -18,15 +18,10 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
   const { store } = useAuth();
 
   useEffect(() => {
-    if (action === "create") {
-      registerStore.reset();
+    if (team) {
       registerStore.setState("EDIT");
     } else {
-      if (team) {
-        registerStore.setState("EDIT");
-      } else {
-        registerStore.setState("INIT");
-      }
+      registerStore.setState("INIT");
     }
 
     registerStore.setTeamValidated(false);
@@ -57,7 +52,11 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
     );
   }
 
-  if (registerStore.state === "EDIT" || registerStore.state === "RE_EDIT") {
+  if (
+    action === "create" ||
+    action === "join" ||
+    registerStore.state === "RE_EDIT"
+  ) {
     return (
       <Suspense fallback={Loader}>
         <RegisterForm team={team ? new Team(team) : undefined} />

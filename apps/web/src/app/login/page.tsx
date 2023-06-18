@@ -3,8 +3,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import { Spinner } from "@material-tailwind/react";
 import Login from "./Login";
+import Loader from "@/components/Loader";
 
 function LoginPage() {
   const router = useRouter();
@@ -53,7 +53,7 @@ function LoginPage() {
   }, [authStore.isAuthenticated, nextPath, race]);
 
   return (
-    <div className="flex flex-col p-2 w-full md:max-w-[800px] flex-1 justify-center ">
+    <section>
       {authStore.state === "INIT" ? (
         <div className="flex flex-col min-h-full">
           <div className="flex text-center my-8 justify-center">
@@ -83,7 +83,7 @@ function LoginPage() {
               login. This URL is only valid for one hour. Please check your
               email in time.
             </h2>
-            <h2>Email address: {authStore.email}</h2>
+            <div className="text-xl">Email address: {authStore.email}</div>
           </div>
 
           <div className="flex flex-row w-full justify-between items-center">
@@ -119,11 +119,9 @@ function LoginPage() {
           />
         </div>
       ) : (
-        <div className="flex items-end gap-8">
-          <Spinner className="h-12 w-12" />
-        </div>
+        <div className="flex items-end gap-8">{Loader}</div>
       )}
-    </div>
+    </section>
   );
 }
 

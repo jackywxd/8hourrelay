@@ -9,7 +9,8 @@ import { Switch } from "@headlessui/react";
 import { toast } from "react-toastify";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { FieldItem } from "../register/RegisterForm";
+import { FieldItem } from "@/components/CustomFiled";
+
 const TABLE_HEAD = ["Name", "Email", ""];
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

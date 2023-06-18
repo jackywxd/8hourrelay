@@ -70,6 +70,7 @@ export class RegistrationStore extends BaseStore {
     label: race.description,
     entryFee: race.entryFee,
   }));
+
   constructor() {
     super();
     makeObservable(this, {
@@ -124,8 +125,9 @@ export class RegistrationStore extends BaseStore {
   }
 
   get existingEntries() {
-    if (this.userStore?.raceEntries) {
+    if (this.userStore && this.userStore.raceEntries) {
       return this.userStore.raceEntries
+        .filter((r) => r)
         .filter((r) => r.isPaid)
         .map((r) => `${r.email}${r.firstName}${r.lastName}`.toLowerCase());
     }

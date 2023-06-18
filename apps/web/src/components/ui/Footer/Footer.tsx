@@ -211,93 +211,15 @@ import s from "./Footer.module.css";
 
 export default function Footer() {
   return (
-    <footer className="flex flex-col p-1 w-full md:w-[800px]">
-      {/* <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b py-12 text-white transition-colors duration-150">
-        <div className="col-span-1 lg:col-span-2">
-          <ul className="flex flex-initial flex-col md:flex-1">
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white hover:text-zinc-200 transition ease-in-out duration-150"
-              >
-                Home
-              </Link>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white hover:text-zinc-200 transition ease-in-out duration-150"
-              >
-                Event
-              </Link>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white hover:text-zinc-200 transition ease-in-out duration-150"
-              >
-                Sponsors
-              </Link>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white hover:text-zinc-200 transition ease-in-out duration-150"
-              >
-                Volunteers
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="col-span-1 lg:col-span-2">
-          <ul className="flex flex-initial flex-col md:flex-1">
-            <li className="py-3 md:py-0 md:pb-4">
-              <p className="text-white font-bold hover:text-zinc-200 transition ease-in-out duration-150">
-                Event
-              </p>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white hover:text-zinc-200 transition ease-in-out duration-150"
-              >
-                Race Guide
-              </Link>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white hover:text-zinc-200 transition ease-in-out duration-150"
-              >
-                Race Rules
-              </Link>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white hover:text-zinc-200 transition ease-in-out duration-150"
-              >
-                Race Results
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div> */}
-      <div className="mt-16 border-t border-gray-900/10 dark:border-gray-100 pt-8 sm:mt-20 lg:mt-24"></div>
-      <div className="py-1 flex flex-col md:flex-row justify-between items-center space-y-4">
-        <div>
-          <span>&copy; 2023 8HourRelay</span>
-        </div>
-        <div className="flex">
-          <span className="text mr-2">Crafted by</span>
-          <a
-            className="link link-primary"
-            href="https://heidi.cloud"
-            aria-label="heidi.cloud Link"
-          >
-            Heidi Technology
-          </a>
-        </div>
+    <footer className="flex w-full justify-between px-5 lg:px-10">
+      <div className="copyright">
+        <span>© 8-Hour Relay 2023</span>
+      </div>
+      <div className="flex">
+        <span className="text mr-2">Crafted by</span>
+        <Link href="https://heidi.cloud">
+          <span className="text-white">Heidi Technology</span>
+        </Link>
       </div>
     </footer>
   );

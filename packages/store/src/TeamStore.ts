@@ -2,15 +2,10 @@ import { makeObservable, observable, action, computed, flow } from "mobx";
 import { BaseStore } from "./UIBaseStore";
 import { UserStore } from "./UserStore";
 import { event2023, RaceEntry } from "@8hourrelay/models";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setDoc, doc, deleteDoc, getFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import { toast } from "react-toastify";
 
-import {
-  getFunctions,
-  httpsCallable,
-  HttpsCallableResult,
-} from "firebase/functions";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 import { getApp } from "firebase/app";
 
@@ -41,6 +36,7 @@ export class TeamStore extends BaseStore {
     makeObservable(this, {
       state: observable,
       form: observable,
+      raceDisplayName: computed,
       db: false,
       event: false,
       setForm: action,
@@ -48,6 +44,13 @@ export class TeamStore extends BaseStore {
       setTeamValidated: action,
       createTeam: flow,
     });
+  }
+
+  get raceDisplayName() {
+    if (this.form)
+      return event2023.races.filter((r) => r.name === this.form?.race)[0]
+        ?.description;
+    return "";
   }
 
   setTeamValidated(status: boolean) {

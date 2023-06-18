@@ -28,7 +28,7 @@ function TeamMemberList({
   return (
     <div className="flex flex-col overflow-x-auto w-full items-center">
       <div>
-        <h1>Team: {team.displayName}</h1>
+        <h2>Team: {team.displayName}</h2>
       </div>
       {team.isOpen && (
         <div className="self-end">
@@ -36,7 +36,7 @@ function TeamMemberList({
             className="link link-primary"
             href={`/register/join/${team.name}`}
           >
-            JOIN
+            <button className="btn btn-primary btn-large">JOIN</button>
           </Link>
         </div>
       )}
@@ -48,7 +48,7 @@ function TeamMemberList({
         <h2>Captain: {team.captainName}</h2>
       </div>
       {!membersData || membersData.length === 0 ? (
-        <h1>Team {team.name} has no team members yet</h1>
+        <p>Team {team.name} has no team members yet</p>
       ) : (
         isMember && (
           <>

@@ -1,6 +1,6 @@
 import CreateTeam from "./CreateTeam";
 import { redirect } from "next/navigation";
-
+import "@/styles/teams.css";
 export default async function TeamPage({ params }: any) {
   const [action, target] = params.action;
 

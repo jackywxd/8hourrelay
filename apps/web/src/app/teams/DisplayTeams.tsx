@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { Team } from "@8hourrelay/models";
 
-const TABLE_HEAD = ["Name", "Race", ""];
-
 function DisplayTeams({
   teams,
   raceEntryId,
@@ -17,50 +15,38 @@ function DisplayTeams({
   }
 
   return (
-    <div className="overflow-x-auto w-full">
-      <table className="table w-full">
-        {/* head */}
-        <thead>
-          <tr>
-            {TABLE_HEAD.map((head) => (
-              <th key={head}>{head}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {teams.map((team, index) => {
-            const {
-              displayName: name,
-              isOpen,
-              raceDisplayName,
-            } = new Team(team);
-            return (
-              <tr key={`${name}-${index}`}>
-                <td>
-                  <div>
-                    <Link href={`/team/${name}`}>
-                      <div className="link link-accent font-bold">{name}</div>
-                    </Link>
-                  </div>
-                </td>
-                <td>{raceDisplayName}</td>
-                <td className="flex">
-                  {isOpen ? (
-                    <Link
-                      className="link link-primary"
-                      href={`/register/join/${name}`}
-                    >
-                      Join this team
-                    </Link>
-                  ) : (
-                    <div>Closed</div>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <div className="grid">
+      {teams.map((team) => {
+        const { displayName: name, isOpen, race, slogan } = new Team(team);
+        return (
+          <div key={name} className={`grid-item`}>
+            <div className="icon-container">
+              <Link href={`/team/${name}`}>
+                <img
+                  src={
+                    race === "Adult Race"
+                      ? "/img/icon_adult.svg"
+                      : "/img/icon_youth.svg"
+                  }
+                />
+              </Link>
+            </div>
+            <div className="text-container">
+              <div className="team-name">{name}</div>
+              <div className="team-description">{slogan ? slogan : ""}</div>
+            </div>
+            {isOpen ? (
+              <Link href={`/register/join/${name}`}>
+                <button className="btn btn-round btn-small btn-light">
+                  Join
+                </button>
+              </Link>
+            ) : (
+              <div className="text-center text-red-700">Closed</div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

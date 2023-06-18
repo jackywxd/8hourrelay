@@ -52,7 +52,7 @@ const authOnCreate = functions.auth.user().onCreate(async (user, _context) => {
       u.customerId = newCustomer.id;
       await Promise.all([
         db.collection("Users").doc(user.uid).set(u, { merge: true }),
-        slackSendText(`New user ${user.uid} registered!`),
+        slackSendText(`New user ${user.email} registered!`),
       ]);
       return null;
     }

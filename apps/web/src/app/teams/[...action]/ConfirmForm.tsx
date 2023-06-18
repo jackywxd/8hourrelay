@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Field, ErrorMessage } from "formik";
-import { Input } from "@material-tailwind/react";
 
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -29,7 +28,7 @@ function ConfirmForm() {
         </div>
         <div className="flex w-full justify-between">
           <div>Race:</div>
-          <div>{team.race}</div>
+          <div>{teamStore.raceDisplayName}</div>
         </div>
         <div className="flex w-full justify-between">
           <div>Name:</div>
@@ -81,28 +80,3 @@ function ConfirmForm() {
 }
 
 export default observer(ConfirmForm);
-
-export const FieldItem = ({ label, fieldName, ...props }) => {
-  return (
-    <>
-      <Field
-        as={CustomInputComponent}
-        id={fieldName}
-        name={fieldName}
-        label={label}
-        {...props}
-      />
-      <ErrorMessage component="a" name={fieldName} />
-    </>
-  );
-};
-
-const CustomInputComponent = (props) => (
-  <div className="flex flex-col w-72 items-end gap-6">
-    <Input
-      type="text"
-      className="input input-primary w-full max-w-xs"
-      {...props}
-    />
-  </div>
-);

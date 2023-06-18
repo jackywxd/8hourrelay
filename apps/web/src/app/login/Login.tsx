@@ -1,6 +1,5 @@
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Input, Button } from "@material-tailwind/react";
 
 function Login({ initEmail, mode, onSubmit }) {
   const emailSchema = Yup.object().shape({
@@ -19,17 +18,16 @@ function Login({ initEmail, mode, onSubmit }) {
         <Form className="flex w-full justify-center">
           <div className="flex flex-col w-96 gap-10">
             <Field
-              as={Input}
               label="Email"
               id="email"
               name="email"
-              className="!input-primary !input-lg"
+              className="input input-primary"
             />
             <ErrorMessage component="a" name="email" />
             <div className="flex flex-row w-full justify-around mt-8">
-              <Button type="submit" className="!btn-primary w-full">
+              <button type="submit" className="btn btn-primary w-full">
                 {mode === "confirm" ? `Confirm` : `Next`}
-              </Button>
+              </button>
             </div>
           </div>
         </Form>

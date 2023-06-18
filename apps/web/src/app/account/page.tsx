@@ -6,11 +6,11 @@ import AccountPage from "./AccountPage";
 const ProtectedPage = async () => {
   // user logged in and authStore has been fullfilled with user data
   return (
-    <div className="flex pt-5 items-center">
+    <section>
       <Suspense fallback={Loader}>
         <AccountPage />
       </Suspense>
-    </div>
+    </section>
   );
 };
 
