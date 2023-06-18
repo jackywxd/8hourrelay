@@ -20,7 +20,6 @@ const nextConfig = {
   // },
   transpilePackages: [
     "ui",
-    "@8hourrelay/login",
     "@8hourrelay/store",
     "@material-tailwind",
     "react-native-async-storage",
