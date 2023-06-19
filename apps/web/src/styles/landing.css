@@ -187,7 +187,7 @@
 	margin-bottom: 10px;
 }
 
-.gallery h2 {
+.gallery .landing-section-title {
 	font-weight: 400 !important;
 }
 
@@ -275,7 +275,7 @@
 	font-size: clamp(0.75rem, calc(2.5vw + 0.25rem), 1rem);
 }
 
-.our-mission h2 {
+.our-mission .landing-section-title {
 	color: var(--clr-accent-secondary);
 }
 

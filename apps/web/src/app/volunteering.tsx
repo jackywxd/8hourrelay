@@ -10,7 +10,7 @@ export default function VolunteeringSection() {
 			}}>
 			<section className="volunteering" id="volunteering">
 				<div className="content-container">
-					<h2>Volunteering</h2>
+					<div className="landing-section-title">Volunteering</div>
 					<h3 className="tight">
 						Experience the power of community and wellness at the
 						Vancouver 8 Hour Relay!
@@ -31,7 +31,7 @@ export default function VolunteeringSection() {
 			</section>
 			<section className="sponsorship" id="sponsorship">
 				<div className="content-container large">
-					<h2>Sponsorship</h2>
+					<div className="landing-section-title">Sponsorship</div>
 					<h3 className="tight">
 						Support the Vancouver 8 Hour Relay - Unite for health
 						and unity!

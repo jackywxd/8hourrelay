@@ -9,10 +9,10 @@ const images = [
 export default function GallerySection() {
 	return (
 		<section className="gallery">
-			<h2>
+			<div className="landing-section-title">
 				<b>Gallery</b> <span className="from">from</span> the past
 				events
-			</h2>
+			</div>
 			<div className="content-container xlarge">
 				{images.map((img) => (
 					<div className="img-container transition ease-in-out delay-150 hover:transition-all">

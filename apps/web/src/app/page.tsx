@@ -24,7 +24,7 @@ export default function Web() {
 			<VolunteeringSection />
 			<GallerySection />
 			<section className="keep-in-touch">
-				<h2>Keep in touch</h2>
+				<div className="landing-section-title">Keep in touch</div>
 				<Suspense>
 					<MessageForm />
 				</Suspense>
