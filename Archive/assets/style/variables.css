@@ -14,7 +14,8 @@
 	--text-on-dark: #c0c0c3;
 	--text-secondary: #b1b7c3;
 	--text-muted: #8e9faf;
-	--border-color: #d9e1ed;
+	--border-color-lightbg: #d9e1ed;
+	--border-color: #125498;
 	--ff-header: "Noto Serif Display", serif;
 	--ff-hero-header: "Bebas Neue", sans-serif;
 	--ff-subheader: "Barlow", sans-serif;
