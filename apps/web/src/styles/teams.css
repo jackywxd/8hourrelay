@@ -6,7 +6,7 @@ header {
 	background-color: rgba(255, 255, 255, 0.15);
 }
 
-.content-container {
+.teams.content-container {
 	padding-block: 10vw;
 }
 
@@ -114,7 +114,7 @@ header {
 	opacity: 0.5;
 }
 
-.text-container {
+.team-text-container {
 	color: var(--text-on-dark);
 }
 
@@ -152,21 +152,6 @@ header {
 	text-align: left;
 }
 
-.modal-content form {
-	display: grid;
-	grid-gap: 15px;
-}
-
-.modal-content form label {
-	display: grid;
-	grid-gap: 5px;
-}
-
-.modal-content input {
-	height: var(--input-height);
-	accent-color: var(--clr-accent);
-}
-
 .modal .close-button {
 	position: absolute;
 	top: 0;
@@ -180,58 +165,6 @@ header {
 .modal .close-button span {
 	font-size: 2rem;
 	color: var(--text-muted);
-}
-
-.form-container {
-	display: grid;
-	gap: 20px;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-}
-
-input {
-	border: none;
-	border-radius: 0;
-	height: var(--input-height);
-}
-
-.input-container {
-	border: 1px solid var(--border-color);
-	position: relative;
-}
-
-.input-container input {
-	width: 100%;
-	padding-left: 12px;
-}
-
-.input-container input:focus {
-	outline: none;
-	border-radius: 0;
-}
-
-.input-container:focus-within {
-	border-color: var(--clr-accent-secondary);
-}
-
-.input-container:focus-within span,
-.input-container.has-value span {
-	bottom: 28px;
-}
-
-.input-container:focus-within input,
-.input-container.has-value input {
-	padding-top: 10px;
-	font-size: 1.1rem;
-	color: var(--bg-darkblue);
-	font-weight: 600;
-}
-
-.input-container span {
-	color: var(--text-muted);
-	position: absolute;
-	font-size: 13px;
-	bottom: 15px;
-	left: 12px;
 }
 
 @media only screen and (max-width: 959px) {
