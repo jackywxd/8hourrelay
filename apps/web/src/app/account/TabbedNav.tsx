@@ -5,29 +5,27 @@ import { profileStore } from "./ProfileStore";
 import { observer } from "mobx-react-lite";
 
 function TabMenu({
-  children, // will be a page or nested layout
+	children // will be a page or nested layout
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <div className="flex flex-col flex-1 w-full items-center">
-      <div className="flex w-full">
-        {Tabs.map((tab, index) => (
-          <a
-            key={tab.label}
-            className={`tab tab-bordered basis-1/2 ${
-              index === profileStore.active ? "tab-active" : undefined
-            }`}
-            onClick={() => profileStore.setActive(index)}
-          >
-            {tab.icon()}
-            <span className="p-1 btm-nav-label">{tab.label}</span>
-          </a>
-        ))}
-      </div>
-      <div className="w-full flex-1">{children}</div>
-    </div>
-  );
+	return (
+		<div className="content-container large padding-large">
+			<div className="tab-container">
+				{Tabs.map((tab, index) => (
+					<a
+						key={tab.label}
+						className={`tab ${
+							index === profileStore.active ? "active" : undefined
+						}`}
+						onClick={() => profileStore.setActive(index)}>
+						<span>{tab.label}</span>
+					</a>
+				))}
+			</div>
+			<div>{children}</div>
+		</div>
+	);
 }
 
 export default observer(TabMenu);

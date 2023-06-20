@@ -44,30 +44,33 @@ function MessageForm() {
         </p>
       </div>
 
-      <Formik
-        initialValues={initialValues}
-        validationSchema={MessageSchema}
-        enableReinitialize
-        onSubmit={onSubmit}
-      >
-        {(props) => (
-          <Form>
-            <div className="form-container">
-              <div className="input-container">
-                <label htmlFor="first-name">
-                  <span>Name</span>
-                </label>
-                <input
-                  value={props.values.name}
-                  onChange={props.handleChange}
-                  type="text"
-                  name="name"
-                  id="first-name"
-                />
-                <ErrorMessage name="name">
-                  {(msg) => <p className="ml-2 text-sm text-red-600">{msg}</p>}
-                </ErrorMessage>
-              </div>
+			<Formik
+				initialValues={initialValues}
+				validationSchema={MessageSchema}
+				enableReinitialize
+				onSubmit={onSubmit}>
+				{(props) => (
+					<Form>
+						<div className="form-container">
+							<div className="input-container">
+								<label htmlFor="first-name">
+									<span>Name</span>
+								</label>
+								<input
+									value={props.values.name}
+									onChange={props.handleChange}
+									type="text"
+									name="name"
+									id="first-name"
+								/>
+								<ErrorMessage name="name">
+									{(msg) => (
+										<div className="ml-2 text-sm text-red-400 error-msg">
+											{msg}
+										</div>
+									)}
+								</ErrorMessage>
+							</div>
 
               <div className="input-container">
                 <label htmlFor="email">
@@ -82,10 +85,14 @@ function MessageForm() {
                   id="email"
                 />
 
-                <ErrorMessage name="email">
-                  {(msg) => <p className="ml-2 text-sm text-red-600">{msg}</p>}
-                </ErrorMessage>
-              </div>
+								<ErrorMessage name="email">
+									{(msg) => (
+										<div className="ml-2 text-sm text-red-400 error-msg">
+											{msg}
+										</div>
+									)}
+								</ErrorMessage>
+							</div>
 
               <div className="input-container textarea span-2">
                 <label htmlFor="messages">
@@ -98,31 +105,35 @@ function MessageForm() {
                   name="messages"
                 />
 
-                <ErrorMessage name="messages">
-                  {(msg) => <p className="ml-2 text-sm text-red-600">{msg}</p>}
-                </ErrorMessage>
-              </div>
-            </div>
+								<ErrorMessage name="messages">
+									{(msg) => (
+										<div className="ml-2 text-sm text-red-400 error-msg">
+											{msg}
+										</div>
+									)}
+								</ErrorMessage>
+							</div>
+						</div>
 
-            <div className="button-container mt-2 mb-20">
-              <button className="btn btn-large btn-primary blue w-full">
-                {pending ? (
-                  <div className="flex gap-1 items-center">
-                    <Loading />
-                    <span>Sending</span>
-                  </div>
-                ) : success ? (
-                  `Sent successfully`
-                ) : (
-                  `Send`
-                )}
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </div>
-  );
+						<div className="button-container mt-5 mb-20">
+							<button className="btn btn-large btn-primary blue">
+                            {pending ? (
+                              <div className="flex gap-1 items-center">
+                                <Loading />
+                                <span>Sending</span>
+                              </div>
+                            ) : success ? (
+									`Sent successfully`
+								) : (
+									`Send`
+								)}
+							</button>
+						</div>
+					</Form>
+				)}
+			</Formik>
+		</div>
+	);
 }
 
 export default MessageForm;

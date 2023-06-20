@@ -3,15 +3,16 @@ form {
 	grid-gap: 15px;
 }
 
-form label {
-	display: grid;
-	grid-gap: 5px;
-	color: var(--text-label);
+form label span {
+	color: var(--text-muted);
+	font-size: 13px;
+	display: inline-block;
+	width: max-content;
 }
 
 .form-container {
 	display: grid;
-	gap: 20px;
+	gap: 30px;
 	grid-template-columns: repeat(2, 1fr);
 }
 
@@ -19,12 +20,8 @@ input,
 textarea {
 	border: none;
 	border-radius: 0;
-	accent-color: var(--clr-accent);
-}
-
-input,
-textarea {
 	background: none !important;
+	color: white;
 }
 
 .input-container,
@@ -32,6 +29,25 @@ textarea {
 	border: 1px solid var(--border-color-darkbg);
 	position: relative;
 	height: var(--input-height);
+}
+
+.input-container.textarea.read-only {
+	border: none;
+}
+
+.input-container.required label span {
+	position: relative;
+	padding-left: 12px;
+}
+
+.input-container.required label span::after {
+	position: absolute;
+	content: "*";
+	color: var(--clr-accent-secondary);
+	font-size: 24px;
+	left: 0;
+	top: -2px;
+	display: inline-block;
 }
 
 .textarea.input-container {
@@ -56,8 +72,8 @@ textarea {
 	border-color: var(--clr-accent-secondary);
 }
 
-.input-container:not(.textarea):focus-within span,
-.input-container:not(.textarea).has-value span {
+.input-container:not(.textarea):focus-within label,
+.input-container:not(.textarea).has-value label {
 	top: 2px;
 }
 
@@ -69,16 +85,30 @@ textarea {
 	font-weight: 400;
 }
 
+.input-container.read-only {
+	display: flex;
+	gap: 0;
+	flex-direction: column;
+	align-items: flex-start;
+	padding-left: 12px;
+	background: #124a83;
+}
+
+.input-container.read-only .value {
+	font-size: 1rem;
+	color: white;
+	font-weight: 400;
+	margin-top: -4px;
+}
+
 .input-container.textarea:focus-within input,
 .input-container.textarea.has-value input {
 	padding-top: 25px;
 }
 
-.input-container span {
-	color: var(--text-muted);
+.input-container:not(.read-only) label {
 	position: absolute;
-	font-size: 13px;
-	top: 15px;
+	top: 13px;
 	left: 15px;
 }
 
@@ -99,7 +129,7 @@ form.lightbg .input-container.has-value textarea {
 	color: var(--bg-darkblue);
 }
 
-form.lightbg .input-container span {
+form.lightbg .input-container label span {
 	color: var(--text-muted);
 }
 

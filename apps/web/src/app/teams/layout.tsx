@@ -4,7 +4,9 @@ function TeamsLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<section className="teams content-container large">{children}</section>
+		<section className="padding-large content-container large">
+			{children}
+		</section>
 	);
 }
 

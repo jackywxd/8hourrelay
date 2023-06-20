@@ -210,17 +210,17 @@ import s from "./Footer.module.css";
 // }
 
 export default function Footer() {
-  return (
-    <footer className="flex w-full justify-between px-5 lg:px-10">
-      <div className="copyright">
-        <span>© 8-Hour Relay 2023</span>
-      </div>
-      <div className="flex">
-        <span className="text mr-2">Crafted by</span>
-        <Link href="https://heidi.cloud">
-          <span className="text-white">Heidi Technology</span>
-        </Link>
-      </div>
-    </footer>
-  );
+	return (
+		<footer>
+			<div className="copyright">
+				<span>© 8-Hour Relay 2023</span>
+			</div>
+			{/* <div className="flex">
+				<span className="text mr-2">Crafted by</span>
+				<Link href="https://heidi.cloud">
+					<span className="text-white">Heidi Technology</span>
+				</Link>
+			</div> */}
+		</footer>
+	);
 }
