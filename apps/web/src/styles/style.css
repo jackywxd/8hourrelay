@@ -53,17 +53,18 @@ body {
 		justify-content: center;
 		align-items: center;
 		padding: 10px var(--padding);
-		position: fixed;
+		position: absolute;
+		top: 0;
+		left: 0;
 		width: 100%;
 		z-index: 9999;
-		background: rgba(255, 255, 255, 0.025);
 	}
 
-	header.scrolling {
+	/* header.scrolling {
 		box-shadow: 3px 3px 5px var(--shadow-color);
 		position: fixed;
 		width: 100%;
-	}
+	} */
 
 	main {
 		margin-inline: auto;
@@ -553,7 +554,6 @@ footer {
 @media only screen and (max-width: 959px) {
 	header {
 		align-items: flex-start;
-		background: rgba(255, 255, 255, 0.25);
 	}
 
 	.logo {
