@@ -63,9 +63,9 @@ function MessageForm() {
 								/>
 								<ErrorMessage name="name">
 									{(msg) => (
-										<p className="ml-2 text-sm text-red-600">
+										<div className="ml-2 text-sm text-red-400 error-msg">
 											{msg}
-										</p>
+										</div>
 									)}
 								</ErrorMessage>
 							</div>
@@ -85,9 +85,9 @@ function MessageForm() {
 
 								<ErrorMessage name="email">
 									{(msg) => (
-										<p className="ml-2 text-sm text-red-600">
+										<div className="ml-2 text-sm text-red-400 error-msg">
 											{msg}
-										</p>
+										</div>
 									)}
 								</ErrorMessage>
 							</div>
@@ -105,15 +105,15 @@ function MessageForm() {
 
 								<ErrorMessage name="messages">
 									{(msg) => (
-										<p className="ml-2 text-sm text-red-600">
+										<div className="ml-2 text-sm text-red-400 error-msg">
 											{msg}
-										</p>
+										</div>
 									)}
 								</ErrorMessage>
 							</div>
 						</div>
 
-						<div className="button-container mt-2 mb-20">
+						<div className="button-container mt-5 mb-20">
 							<button className="btn btn-large btn-primary blue">
 								{pending ? (
 									<span className="loading loading-ring loading-md"></span>

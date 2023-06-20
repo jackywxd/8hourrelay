@@ -49,7 +49,7 @@ function DisplayTeams({
 								</button>
 							</Link>
 						) : (
-							<div className="text-center text-red-700">
+							<div className="text-center text-red-400">
 								Closed
 							</div>
 						)}

@@ -9,32 +9,28 @@ import { Suspense } from "react";
 import Loader from "@/components/Loader";
 
 const ProtectedPage = () => {
-  const { store } = useAuth();
+	const { store } = useAuth();
 
-  if (!store.authStore.isAuthenticated) return null;
-  if (profileStore.active === 0)
-    return (
-      <div className="flex flex-col w-full justify-center items-center">
-        <Suspense fallback={Loader}>
-          <ProfileForm />
-        </Suspense>
-      </div>
-    );
-  if (profileStore.active === 1)
-    return (
-      <div className="flex flex-col w-full min-h-full">
-        <Suspense fallback={Loader}>
-          <DisplayPage />
-        </Suspense>
-      </div>
-    );
-  if (profileStore.active === 2)
-    return (
-      <Suspense fallback={Loader}>
-        <MyTeam />
-      </Suspense>
-    );
-  return null;
+	if (!store.authStore.isAuthenticated) return null;
+	if (profileStore.active === 0)
+		return (
+			<Suspense fallback={Loader}>
+				<ProfileForm />
+			</Suspense>
+		);
+	if (profileStore.active === 1)
+		return (
+			<Suspense fallback={Loader}>
+				<DisplayPage />
+			</Suspense>
+		);
+	if (profileStore.active === 2)
+		return (
+			<Suspense fallback={Loader}>
+				<MyTeam />
+			</Suspense>
+		);
+	return null;
 };
 
 export default observer(ProtectedPage);

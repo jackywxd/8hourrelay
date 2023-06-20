@@ -45,15 +45,13 @@ export default function RootLayout({
 			</Head>
 			<Suspense fallback={Loader}>
 				<AuthProvider>
-					<body className="flex flex-col min-h-screen w-full items-center">
-						<div className="w-full">
-							<Navbar />
-						</div>
-						<div className="flex flex-col w-full flex-1">
-							<div className="flex flex-col flex-1 w-full flex-grow">
+					<body className="">
+						<Navbar />
+						<div>
+							<div>
 								<Layout>{children}</Layout>
 							</div>
-							<div className="flex flex-col self-end w-full">
+							<div>
 								<Footer />
 							</div>
 						</div>

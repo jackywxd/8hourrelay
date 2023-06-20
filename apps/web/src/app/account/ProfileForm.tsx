@@ -36,12 +36,9 @@ function ProfileForm() {
 	console.log(`isLoading value`, store.userStore.isLoading);
 	return (
 		<>
-			<div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+			<div>
 				<div>
-					<h2 className="text-base font-semibold leading-7 ">
-						Personal Information
-					</h2>
-					<p className="mt-1 text-sm leading-6 text-gray-400"></p>
+					<h2>Personal Information</h2>
 				</div>
 				<Formik
 					initialValues={initialValues}
@@ -55,146 +52,131 @@ function ProfileForm() {
 					}}
 					onSubmit={onSubmit}>
 					{(props) => (
-						<Form className="md:col-span-2">
-							<div className="flex w-full justify-between mb-5">
-								<div>Email:</div>
-								<div>{store.userStore.user?.email}</div>
-							</div>
-							<div className="divider"></div>
-							<div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
-								<div className="sm:col-span-3">
-									<label
-										htmlFor="first-name"
-										className="block text-sm font-medium leading-6 ">
-										First name
+						<Form>
+							<div className="form-container">
+								<div className="input-container read-only">
+									<label>
+										{" "}
+										<span>Email</span>
 									</label>
-									<div className="mt-2">
-										<input
-											value={props.values.firstName}
-											onChange={props.handleChange}
-											type="text"
-											name="firstName"
-											id="first-name"
-											autoComplete="given-name"
-											className="block w-full rounded-md border-0 bg-white/5 py-1.5  shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-										/>
+									<div className="value">
+										{store.userStore.user?.email}
 									</div>
+								</div>
+								<div className="input-container required">
+									<label htmlFor="first-name">
+										<span>First name</span>
+									</label>
+									<input
+										value={props.values.firstName}
+										onChange={props.handleChange}
+										type="text"
+										name="firstName"
+										id="first-name"
+										autoComplete="given-name"
+									/>
 									<ErrorMessage name="firstName">
 										{(msg) => (
-											<p className="mt-2 text-sm text-red-600">
+											<div className="text-sm text-red-400 error-msg">
 												{msg}
-											</p>
+											</div>
 										)}
 									</ErrorMessage>
 								</div>
 
-								<div className="sm:col-span-3">
-									<label
-										htmlFor="last-name"
-										className="block text-sm font-medium leading-6 ">
-										Last name
+								<div className="input-container required">
+									<label htmlFor="last-name">
+										<span>Last name</span>
 									</label>
-									<div className="mt-2">
-										<input
-											value={props.values.lastName}
-											onChange={props.handleChange}
-											type="text"
-											name="lastName"
-											id="last-name"
-											autoComplete="family-name"
-											className="block w-full rounded-md border-0 bg-white/5 py-1.5  shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-										/>
-									</div>
+									<input
+										value={props.values.lastName}
+										onChange={props.handleChange}
+										type="text"
+										name="lastName"
+										id="last-name"
+										autoComplete="family-name"
+									/>
 									<ErrorMessage name="lastName">
 										{(msg) => (
-											<p className="mt-2 text-sm text-red-600">
+											<div className="text-sm text-red-400 error-msg">
 												{msg}
-											</p>
+											</div>
 										)}
 									</ErrorMessage>
 								</div>
 
-								<div className="col-span-full">
-									<label
-										htmlFor="phone"
-										className="block text-sm font-medium leading-6 ">
-										Phone
+								<div className="input-container">
+									<label htmlFor="phone">
+										<span>Phone</span>
 									</label>
-									<div className="mt-2">
-										<input
-											value={props.values.phone}
-											onChange={props.handleChange}
-											id="phone"
-											name="phone"
-											type="text"
-											autoComplete="email"
-											className="block w-full rounded-md border-0 bg-white/5 py-1.5  shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-										/>
-									</div>
+
+									<input
+										value={props.values.phone}
+										onChange={props.handleChange}
+										id="phone"
+										name="phone"
+										type="text"
+										autoComplete="email"
+									/>
+
 									<ErrorMessage name="phone">
 										{(msg) => (
-											<p className="mt-2 text-sm text-red-600">
+											<div className="text-sm text-red-400 error-msg">
 												{msg}
-											</p>
+											</div>
 										)}
 									</ErrorMessage>
 								</div>
 
-								<div className="col-span-full">
-									<label
-										htmlFor="preferName"
-										className="block text-sm font-medium leading-6 ">
-										Prefer Name
+								<div className="input-container">
+									<label htmlFor="preferName">
+										<span>Preferred Name</span>
 									</label>
-									<div className="mt-2">
-										<div className="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
-											<input
-												value={props.values.preferName}
-												onChange={props.handleChange}
-												type="text"
-												name="preferName"
-												id="preferName"
-												autoComplete="username"
-												className="flex-1 border-0 bg-transparent py-1.5 pl-1  focus:ring-0 sm:text-sm sm:leading-6"
-											/>
-										</div>
-									</div>
+									<input
+										value={props.values.preferName}
+										onChange={props.handleChange}
+										type="text"
+										name="preferName"
+										id="preferName"
+										autoComplete="username"
+									/>
 								</div>
-								<div className="col-span-full">
-									<label
-										htmlFor="birthYear"
-										className="block text-sm font-medium leading-6 ">
-										Year of Birth
+								<div className="input-container required">
+									<label htmlFor="birthYear">
+										<span>Year of Birth</span>
 									</label>
-									<div className="mt-2">
-										<div className="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
-											<input
-												value={props.values.birthYear}
-												onChange={props.handleChange}
-												type="text"
-												name="birthYear"
-												id="birthYear"
-												autoComplete="username"
-												className="flex-1 border-0 bg-transparent py-1.5 pl-1  focus:ring-0 sm:text-sm sm:leading-6"
-											/>
-										</div>
-										<ErrorMessage name="birthYear">
-											{(msg) => (
-												<p className="mt-2 text-sm text-red-600">
-													{msg}
-												</p>
-											)}
-										</ErrorMessage>
-									</div>
+									<input
+										value={props.values.birthYear}
+										onChange={props.handleChange}
+										type="text"
+										name="birthYear"
+										id="birthYear"
+										autoComplete="username"
+									/>
+									<ErrorMessage name="birthYear">
+										{(msg) => (
+											<div className="text-sm text-red-400 error-msg">
+												{msg}
+											</div>
+										)}
+									</ErrorMessage>
 								</div>
-								<div className="col-span-full"></div>
 							</div>
 
-							<div className="mt-8 flex">
+							<div className="button-container mt-10 mb-20">
+								<button
+									type="submit"
+									onClick={() => {
+										store.authStore.logout();
+										router.push("/");
+									}}
+									className="btn btn-large btn-light-darkbg">
+									Log Out
+								</button>
 								<button
 									disabled={loading ? true : false}
 									type="submit"
-									className="rounded-full w-full bg-indigo-500 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+									className="btn btn-large btn-primary blue">
 									{loading ? (
 										<span className="loading loading-spinner"></span>
 									) : (
@@ -206,30 +188,7 @@ function ProfileForm() {
 					)}
 				</Formik>
 			</div>
-			<div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
-				<div>
-					<h2 className="text-base font-semibold leading-7 ">
-						Log Out
-					</h2>
-					<p className="mt-1 text-sm leading-6 text-gray-400">
-						Clean current session and log out your account
-					</p>
-				</div>
 
-				<form className="md:col-span-2">
-					<div className="mt-8 flex">
-						<button
-							type="submit"
-							className="rounded-full w-full bg-indigo-500 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-							onClick={() => {
-								store.authStore.logout();
-								router.push("/");
-							}}>
-							Log Out
-						</button>
-					</div>
-				</form>
-			</div>
 			{/* <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
           <h2 className="text-base font-semibold leading-7 ">Delete account</h2>
