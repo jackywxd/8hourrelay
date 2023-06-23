@@ -9,4 +9,5 @@ if (admin.apps.length === 0)
 
 const firebaseDb = admin.firestore();
 
-export { firebaseDb };
+const serviceAccountJson = JSON.parse(serviceAccount);
+export { firebaseDb, serviceAccountJson };

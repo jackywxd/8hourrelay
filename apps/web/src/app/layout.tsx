@@ -1,64 +1,84 @@
-"use client";
-import { AuthProvider } from "@/context/AuthContext";
-import React, { Suspense } from "react";
+import { Inter as FontSans } from "next/font/google";
+import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 
-import Layout from "@/components/Layout";
-import "../styles/main.css";
-import "../styles/chrome-bug.css";
-// import "focus-visible";
-import Loader from "@/components/Loader";
-import Head from "next/head";
-import Navbar from "@/components/ui/Navbar";
-import Footer from "@/components/ui/Footer";
+import "@/styles/globals.css";
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
+import { Analytics } from "@/components/analytics";
+import { TailwindIndicator } from "@/components/tailwind-indicator";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/context/AuthContext";
 
-export default function RootLayout({
-	// Layouts must accept a children prop.
-	// This will be populated with nested layouts or pages
-	children
-}: {
-	children: React.ReactNode;
-}) {
-	const meta = {
-		title: "8 Hour Relay Race",
-		description: "Vancouver 8 hour relay offical website"
-		// cardImage: "/og.png",
-	};
-	return (
-		<html id="root" lang="en">
-			<Head>
-				<title>{meta.title}</title>
-				<meta name="robots" content="follow, index" />
-				<link href="/favicon.ico" rel="shortcut icon" />
-				<meta content={meta.description} name="description" />
-				<meta property="og:type" content="website" />
-				<meta property="og:site_name" content={meta.title} />
-				<meta property="og:description" content={meta.description} />
-				<meta property="og:title" content={meta.title} />
-				{/* <meta property="og:image" content={meta.cardImage} /> */}
-				<meta name="twitter:card" content="summary_large_image" />
-				<meta name="twitter:site" content="@vercel" />
-				<meta name="twitter:title" content={meta.title} />
-				<meta name="twitter:description" content={meta.description} />
-				{/* <meta name="twitter:image" content={meta.cardImage} /> */}
-			</Head>
-			<Suspense fallback={Loader}>
-				<AuthProvider>
-					<body className="">
-						<Navbar />
-						<div>
-							<div>
-								<Layout>{children}</Layout>
-							</div>
-							<div>
-								<Footer />
-							</div>
-						</div>
-						<ToastContainer />
-					</body>
-				</AuthProvider>
-			</Suspense>
-		</html>
-	);
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+// Font files can be colocated inside of `pages`
+const fontHeading = localFont({
+  src: "../assets/fonts/CalSans-SemiBold.woff2",
+  variable: "--font-heading",
+});
+
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
+export const metadata = {
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  keywords: ["8hourrelay", "Vancouver", "8 hour relay", "Running race"],
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [`${siteConfig.url}/og.jpg`],
+    creator: "@shadcn",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: `${siteConfig.url}/site.webmanifest`,
+};
+
+export default function RootLayout({ children }: RootLayoutProps) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
+          fontHeading.variable
+        )}
+      >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AuthProvider>{children}</AuthProvider>
+          <Analytics />
+          {/* <Toaster /> */}
+          <TailwindIndicator />
+          <ToastContainer />
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }

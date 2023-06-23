@@ -16,14 +16,6 @@ form label span {
 	grid-template-columns: repeat(2, 1fr);
 }
 
-input,
-textarea {
-	border: none;
-	border-radius: 0;
-	background: none !important;
-	color: white;
-}
-
 .input-container,
 .select.input-container {
 	border: 1px solid var(--border-color-darkbg);
@@ -46,7 +38,7 @@ textarea {
 	color: var(--clr-accent-secondary);
 	font-size: 24px;
 	left: 0;
-	top: -2px;
+	top: 0.5rem;
 	display: inline-block;
 }
 
@@ -60,25 +52,31 @@ textarea {
 	width: 100%;
 	padding-left: 12px;
 	height: 100%;
+	border: none;
+	border-radius: 0;
+	background: none;
+	color: white;
 }
 
 .input-container input:focus,
 .input-container textarea:focus {
 	outline: none;
-	border-radius: 0;
+	border-radius: 10;
+
 }
 
 .input-container:focus-within {
 	border-color: var(--clr-accent-secondary);
 }
 
-.input-container:not(.textarea):focus-within label,
-.input-container:not(.textarea).has-value label {
-	top: 2px;
+.input-container:not(.textarea1):focus-within label,
+.input-container:not(.textarea1).has-value label {
+	top: -1.3rem;
 }
 
 .input-container:focus-within input,
-.input-container.has-value input {
+.input-container:focus-within textarea,
+.input-container.has-value input textarea {
 	padding-top: 18px;
 	font-size: 1rem;
 	color: white;

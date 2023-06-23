@@ -1,3 +1,4 @@
+"use client";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 
@@ -18,7 +19,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header>
+    <header className="fixed">
       <div className="logo">
         <a href="/">
           <span className="sr-only">8 Hour Relay</span>

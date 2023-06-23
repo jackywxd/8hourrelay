@@ -13,7 +13,7 @@ export class User {
   wechatId?: string;
   birthYear?: string;
   personalBest?: string;
-  photoUrl?: string;
+  image?: string;
   emergencyName?: string;
   emergencyPhone?: string;
   customerId?: string;
@@ -26,6 +26,17 @@ export class User {
     Object.assign(this, u);
   }
   get displayName() {
+    return this.preferName
+      ? this.preferName
+      : this.firstName && this.lastName
+      ? `${this.firstName} ${this.lastName}`
+      : this.firstName
+      ? this.firstName
+      : this.lastName
+      ? this.lastName
+      : "";
+  }
+  get name() {
     return this.preferName
       ? this.preferName
       : this.firstName && this.lastName

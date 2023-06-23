@@ -50,3 +50,21 @@ export const onTeamUpdate = functions.firestore
       logger.error(`Failed to onUpdateTeam`, { err });
     }
   });
+
+export const onTeamDelete = functions.firestore
+  .document("Race/{year}/Teams/{teamId}")
+  .onDelete(async (snapshot, _) => {
+    const deletedTeam = snapshot.data() as Team;
+
+    logger.debug("Team Data deleted", { deletedTeam });
+    try {
+      // revalidate page to show the new team
+      await Promise.all([
+        revalidate("/teams"),
+        revalidate("/register"),
+        revalidate(encodeURI(`/team/${deletedTeam.name}`)),
+      ]);
+    } catch (err) {
+      logger.error(`Failed to onUpdateTeam`, { err });
+    }
+  });
