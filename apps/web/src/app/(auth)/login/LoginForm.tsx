@@ -59,7 +59,9 @@ function LoginForm() {
             <div className="mx-auto w-32 ">
               <Logo fill={theme === "light" ? `#000` : "#fff"} />
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight">Welcome!</h1>
+            <div className="text-2xl font-semibold tracking-tight">
+              Welcome!
+            </div>
             <p className="text-sm text-muted-foreground">
               Enter your email to sign in to your account
             </p>

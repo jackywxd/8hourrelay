@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = observer(
 
     useEffect(() => {
       if (!store.authStore.isAuthenticated) {
-        router.push("/");
+        router.push("/login");
       }
     }, [store.authStore.isAuthenticated]);
 

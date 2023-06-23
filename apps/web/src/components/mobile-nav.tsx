@@ -2,7 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
-import { MainNavItem } from "types";
+import { MainNavItem } from "@/types/index";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { useLockBody } from "@/hooks/use-lock-body";
