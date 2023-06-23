@@ -1,4 +1,4 @@
-import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "@/context/AuthContext";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -6,8 +6,8 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <div className="min-h-screen">{children}</div>;
-    </ThemeProvider>
+    <AuthProvider>
+      <div className="min-h-screen">{children}</div>
+    </AuthProvider>
   );
 }

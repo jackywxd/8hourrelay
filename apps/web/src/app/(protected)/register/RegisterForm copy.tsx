@@ -15,14 +15,6 @@ import { FieldCheckBox } from "@/components/CustomFiled";
 import { FieldItem } from "@/components/CustomFiled";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 function RegisterForm({ team }: { team?: Team }) {
   const router = useRouter();
@@ -90,54 +82,46 @@ function RegisterForm({ team }: { team?: Team }) {
         >
           {(props) => (
             <Form className="flex flex-col w-full justify-center gap-8 items-center">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Select Race</CardTitle>
-                  <CardDescription>
-                    Select the race you would like to register
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-6">
-                  <SelectComponent
-                    {...props}
-                    disabled={
-                      team || registerStore.editIndex !== null ? true : false
-                    }
-                    validate={(value) => {
-                      console.log(`race value`, value);
-                      if (value && registerStore.teamFilter !== value) {
-                        registerStore.setTeamFilter(value);
-                        props.values.team = "";
-                      }
-                    }}
-                    options={registerStore.raceOptions}
-                    label="Select Race"
-                    required
-                    name="race"
-                  />
-                </CardContent>
-                <CardHeader>
-                  <CardTitle>Basic Information</CardTitle>
-                  <CardDescription>
+              <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+                <div className="sm:col-span-3 gap-5">
+                  <h2 className="text-base font-semibold leading-7 ">
+                    Personal Info
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-gray-400">
                     Select the race you would like to register and provide your
                     personal data, * fields are required.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-6">
-                  <div className="grid gap-2">
+                  </p>
+                </div>
+                <div className="sm:col-span-3">
+                  <div className="flex flex-col items-center">
+                    <SelectComponent
+                      {...props}
+                      disabled={
+                        team || registerStore.editIndex !== null ? true : false
+                      }
+                      validate={(value) => {
+                        console.log(`race value`, value);
+                        if (value && registerStore.teamFilter !== value) {
+                          registerStore.setTeamFilter(value);
+                          props.values.team = "";
+                        }
+                      }}
+                      options={registerStore.raceOptions}
+                      label="Select Race"
+                      required
+                      name="race"
+                    />
                     <FieldItem label="Email" required fieldName="email" />
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <FieldItem
-                        label="First Name"
-                        required
-                        fieldName="firstName"
-                      />
-                      <FieldItem
-                        label="Last Name"
-                        required
-                        fieldName="lastName"
-                      />
-                    </div>
+                    <FieldItem
+                      label="First Name"
+                      required
+                      fieldName="firstName"
+                    />
+                    <FieldItem
+                      label="Last Name"
+                      required
+                      fieldName="lastName"
+                    />
                     <FieldItem label="Prefer Name" fieldName="preferName" />
                     <SelectComponent
                       {...props}
@@ -152,7 +136,6 @@ function RegisterForm({ team }: { team?: Team }) {
                       required
                       fieldName="birthYear"
                     />
-
                     <FieldItem
                       label="Personal Best Time"
                       fieldName="personalBest"
@@ -164,15 +147,19 @@ function RegisterForm({ team }: { team?: Team }) {
                       name="size"
                     />
                   </div>
-                </CardContent>
-                <CardHeader>
-                  <CardTitle> Emergency Contact</CardTitle>
-                  <CardDescription>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+                <div className="sm:col-span-3 gap-3">
+                  <h2 className="text-base font-semibold leading-7 ">
+                    Emergency Contact
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-gray-400">
                     Emergency contact name and mobile phone number
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4">
+                  </p>
+                </div>
+                <div className="sm:col-span-3">
+                  <div className="flex flex-col items-center">
                     <div>
                       <FieldItem
                         label="Name"
@@ -186,21 +173,24 @@ function RegisterForm({ team }: { team?: Team }) {
                       required
                     />
                   </div>
-                </CardContent>
-                {registerStore.teamFilter ? (
-                  <>
-                    <CardHeader>
-                      <CardTitle>Team Info</CardTitle>
-                      <CardDescription>
-                        Please select team and team password. If you don't know
-                        the team password, contact team captain. You can create
-                        your own team.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                </div>
+              </div>
+              {registerStore.teamFilter ? (
+                <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
+                  <div className="sm:col-span-3 gap-3">
+                    <h2 className="text-base font-semibold leading-7 ">
+                      Team Info
+                    </h2>
+                    <p className="mt-1 text-sm leading-6 text-gray-400">
+                      Please select team and team password. If you don't know
+                      the team password, contact team captain. You can create
+                      your own team.
+                    </p>
+                  </div>
+                  <div className="sm:col-span-3">
+                    <div className="flex flex-col items-center">
                       <Suspense fallback={Loader}>
                         <SelectTeam
-                          required
                           name="team"
                           label="Select team*"
                           team={team?.displayName}
@@ -211,51 +201,52 @@ function RegisterForm({ team }: { team?: Team }) {
                         fieldName="teamPassword"
                         required
                       />
-                    </CardContent>
-                  </>
-                ) : null}
-                <CardContent>
-                  <div className="flex w-full justify-between items-center">
-                    <div>
-                      Accept{" "}
-                      <Link className="link" href="/waiver">
-                        race waiver
-                      </Link>
-                    </div>
-                    <div>
-                      <FieldCheckBox label="" fieldName="accepted" />
                     </div>
                   </div>
-                </CardContent>
-                <CardFooter className="justify-between space-x-2">
-                  <Button
-                    type="submit"
-                    disabled={
-                      props.values.accepted === false || registerStore.isLoading
-                        ? true
-                        : false
-                    }
-                  >
-                    Next
-                  </Button>
+                </div>
+              ) : null}
+              <div className="divider"></div>
+              <div className="flex w-full justify-between items-center">
+                <div>
+                  Accept{" "}
+                  <Link className="link" href="/waiver">
+                    race waiver
+                  </Link>
+                </div>
+                <div>
+                  <FieldCheckBox label="" fieldName="accepted" />
+                </div>
+              </div>
+              <div className="flex w-full justify-between gap-2">
+                <Button
+                  className="!btn-primary"
+                  type="submit"
+                  disabled={
+                    props.values.accepted === false || registerStore.isLoading
+                      ? true
+                      : false
+                  }
+                >
+                  Next
+                </Button>
 
-                  <Button
-                    onClick={onCancel}
-                    disabled={registerStore.isLoading ? true : false}
-                  >
-                    Return
-                  </Button>
-                  {registerStore.editIndex !== null && // edit current race entry is not paid yet, user can delete it
-                    !registerStore.raceEntry?.isPaid && (
-                      <Button
-                        onClick={onDelete}
-                        disabled={registerStore.isLoading ? true : false}
-                      >
-                        Delete
-                      </Button>
-                    )}
-                </CardFooter>
-              </Card>
+                <Button
+                  onClick={onCancel}
+                  disabled={registerStore.isLoading ? true : false}
+                >
+                  return
+                </Button>
+                {registerStore.editIndex !== null && // edit current race entry is not paid yet, user can delete it
+                  !registerStore.raceEntry?.isPaid && (
+                    <Button
+                      onClick={onDelete}
+                      disabled={registerStore.isLoading ? true : false}
+                    >
+                      delete
+                    </Button>
+                  )}
+              </div>
+
               {/* <AutoSubmitToken /> */}
             </Form>
           )}

@@ -3,32 +3,28 @@ import { DashboardConfig } from "types";
 export const dashboardConfig: DashboardConfig = {
   mainNav: [
     {
-      title: "Profile",
+      title: "Account",
       href: "/account",
     },
     {
-      title: "My Races",
-      href: "/account/myrace",
-    },
-    {
-      title: "My Team",
-      href: "/account/myteam",
+      title: "Registration",
+      href: "/register",
     },
   ],
   sidebarNav: [
     {
-      title: "Race Entry",
-      href: "/race",
-      icon: "post",
+      title: "Profile",
+      href: "/account",
+      icon: "settings",
     },
     {
-      title: "Team",
-      href: "/team",
+      title: "My Race",
+      href: "/register",
       icon: "billing",
     },
     {
-      title: "Settings",
-      href: "/dashboard/settings",
+      title: "My Team",
+      href: "/account/myteam",
       icon: "settings",
     },
   ],

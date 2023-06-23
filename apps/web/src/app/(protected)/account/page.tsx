@@ -1,4 +1,3 @@
-import "@/styles/form.css";
 import ProfileForm from "./ProfileForm";
 import { DashboardHeader } from "@/components/header";
 import { DashboardShell } from "@/components/shell";

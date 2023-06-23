@@ -1,9 +1,6 @@
-"use client";
-import { Suspense, useState } from "react";
 import Link from "next/link";
 
 import AccountButton from "./AccountButton";
-import Loader from "@/components/Loader";
 
 const navigation = [
   { name: "The Event", href: "/#root" },
@@ -15,9 +12,6 @@ const navigation = [
 ];
 
 const Navbar = () => {
-  const [navbar, setNavbar] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
     <header className="fixed">
       <div className="logo">
@@ -50,9 +44,7 @@ const Navbar = () => {
               <Link href={item.href}>{item.name}</Link>
             </li>
           ))}
-          <Suspense fallback={Loader}>
-            <AccountButton />
-          </Suspense>
+          <AccountButton />
         </ul>
       </nav>
     </header>

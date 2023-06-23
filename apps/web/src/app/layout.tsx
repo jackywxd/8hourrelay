@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { Analytics } from "@/components/analytics";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
-import { AuthProvider } from "@/context/AuthContext";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -72,7 +71,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AuthProvider>{children}</AuthProvider>
+          {children}
           <Analytics />
           {/* <Toaster /> */}
           <TailwindIndicator />

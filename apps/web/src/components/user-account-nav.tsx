@@ -1,9 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { User } from "next-auth";
-import { signOut } from "next-auth/react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,14 +11,17 @@ import {
 import { UserAvatar } from "@/components/user-avatar";
 import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
-
-interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: Pick<User, "name" | "image" | "email">;
-}
+import { useRouter } from "next/navigation";
 
 export const UserAccountNav = observer(() => {
   const { store } = useAuth();
+  const router = useRouter();
   const user = store.userStore?.user;
+  const onSignOut = async () => {
+    await store.authStore.logout();
+    router.push("/");
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -46,21 +46,13 @@ export const UserAccountNav = observer(() => {
           <Link href="/account">Account</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/account/myrace">My Race</Link>
+          <Link href="/register">My Race</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/account/myteam">My Team</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onSelect={(event) => {
-            event.preventDefault();
-            signOut({
-              callbackUrl: `${window.location.origin}/login`,
-            });
-          }}
-        >
+        <DropdownMenuItem className="cursor-pointer" onSelect={onSignOut}>
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

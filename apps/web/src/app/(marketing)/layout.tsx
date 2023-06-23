@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import React from "react";
 
 import Layout from "@/components/Layout";
-import "@/styles/main.css";
+import "@/styles/landing.css";
 import "@/styles/chrome-bug.css";
 // import "focus-visible";
 import Navbar from "@/components/ui/Navbar";
@@ -22,16 +22,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <Navbar />
-      <div>
-        <div>
+    <div className="flex flex-col min-h-screen w-full items-center">
+      <div className="w-full bg-red-600 z-30">
+        <Navbar />
+      </div>
+      <div className="flex flex-col w-full flex-1">
+        <div className="flex flex-col p-2 flex-1 w-full flex-grow">
           <Layout>{children}</Layout>
         </div>
-        <div>
-          <Footer />
+        <div className="flex flex-col self-end w-full">
+          <div className="container mx-auto">
+            <Footer />
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

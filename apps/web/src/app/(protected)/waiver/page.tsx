@@ -1,7 +1,7 @@
-import Wavier from "../../content/wavier.mdx";
+import Wavier from "@/content/wavier.mdx";
 export default function Page() {
   return (
-    <div className="prose m-2">
+    <div className="m-2">
       <Wavier />
     </div>
   );

@@ -47,13 +47,7 @@ function LoginForm() {
 
   useEffect(() => {
     if (authStore.isAuthenticated) {
-      if (nextPath && race) {
-        router.push(`/register?race=${race}`);
-      } else if (nextPath) {
-        router.push(`/${nextPath}`);
-      } else {
-        router.push("/");
-      }
+      router.push("/account");
     }
   }, [authStore.isAuthenticated, nextPath, race]);
 

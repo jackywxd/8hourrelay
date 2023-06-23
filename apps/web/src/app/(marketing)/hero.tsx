@@ -1,13 +1,20 @@
-import { Suspense } from "react";
+"use client";
+import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 import TimeCard from "@/components/TimeCard";
 import Loader from "@/components/Loader";
+import { useInView } from "react-intersection-observer";
 
 export default function HeroSection() {
+  const { ref, inView, entry } = useInView({
+    /* Optional options */
+    threshold: 0,
+  });
+  useEffect(() => console.log(inView, entry));
   return (
-    <div className="hero-section relative">
+    <div className="hero-section relative" ref={ref}>
       <Image
         className="object-cover w-full h-full"
         src="/img/hero.jpg"
