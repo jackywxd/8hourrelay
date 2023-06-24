@@ -11,7 +11,7 @@ import Navbar from "./Navbar";
 export default function HeroSection() {
   const { ref, inView, entry } = useInView({
     /* Optional options */
-    threshold: 0.1,
+    threshold: 0.3,
   });
   useEffect(() => {
     console.log(`inView`, { inView });
@@ -48,7 +48,7 @@ export default function HeroSection() {
       </div>
       {!inView && (
         <div className="nav-link top transition-opacity duration-900 ">
-          <a href="#root">
+          <Link href="#root">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -63,7 +63,7 @@ export default function HeroSection() {
                 d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       )}
     </>
