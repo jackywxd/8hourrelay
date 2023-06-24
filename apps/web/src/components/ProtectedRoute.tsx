@@ -20,11 +20,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = observer(
 
     console.log(`this is protected route!!`);
 
-    useEffect(() => {
-      if (!store.authStore.isAuthenticated) {
-        router.push("/login");
-      }
-    }, [store.authStore.isAuthenticated]);
+    // useEffect(() => {
+    //   if (!store.authStore.isAuthenticated) {
+    //     router.push("/login");
+    //   }
+    // }, [store.authStore.isAuthenticated]);
 
     return store.authStore.isAuthenticated ? (
       <>{children}</>

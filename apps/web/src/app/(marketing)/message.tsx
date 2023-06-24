@@ -52,7 +52,7 @@ function MessageForm() {
         onSubmit={onSubmit}
       >
         {(props) => (
-          <Form>
+          <Form className="form">
             <div className="form-container">
               <div
                 className={cn(

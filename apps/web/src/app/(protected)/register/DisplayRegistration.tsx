@@ -8,7 +8,7 @@ const TABLE_HEAD = ["Name", "Race", "Bib", "Team", ""];
 
 function DisplayRegistration() {
   return (
-    <div className="content-center rules">
+    <div className="content-center">
       <div>
         <div className="table-name">Manage race entry</div>
       </div>
@@ -39,7 +39,7 @@ const RegistrationTable = observer(() => {
         <thead>
           <tr className="">
             {TABLE_HEAD.map((head, index) => (
-              <th className="rules table-header" key={`${head}-${index}`}>
+              <th className="table-header" key={`${head}-${index}`}>
                 {head}
               </th>
             ))}

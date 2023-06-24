@@ -1,6 +1,5 @@
+import { cn } from "@/lib/utils";
 import Link from "next/link";
-
-import AccountButton from "./AccountButton";
 
 const navigation = [
   { name: "The Event", href: "/#root" },
@@ -11,9 +10,15 @@ const navigation = [
   { name: "teams", href: "/teams" },
 ];
 
-const Navbar = () => {
+const Navbar = ({ changeBg }: { changeBg: boolean }) => {
   return (
-    <header className="fixed bg-red-600">
+    <header
+      className={cn(
+        "fixed",
+        changeBg &&
+          "opacity-90 bg-[color:var(--bg-dark)] shadow-gray-700 lg:shadow-lg transition-all duration-300"
+      )}
+    >
       <div className="logo">
         <a href="/">
           <span className="sr-only">8 Hour Relay</span>
@@ -40,11 +45,18 @@ const Navbar = () => {
         <input type="checkbox" id="show-menu" />
         <ul id="menu">
           {navigation.map((item) => (
-            <li key={item.name} className="nav-link">
+            <li
+              key={item.name}
+              className="nav-link hover:underline hover:underline-offset-4"
+            >
               <Link href={item.href}>{item.name}</Link>
             </li>
           ))}
-          <AccountButton />
+          <li className="nav-link signin hover:underline hover:underline-offset-4">
+            <a href="/login" className={changeBg ? "text-white" : undefined}>
+              Sign In
+            </a>
+          </li>
         </ul>
       </nav>
     </header>

@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Loading from "@/components/Loading";
 function ProfileForm() {
   const { store } = useAuth();
   const [loading, setLoading] = useState(store.userStore.isLoading);
@@ -182,11 +183,7 @@ function ProfileForm() {
                   type="submit"
                   className="btn btn-large btn-primary blue"
                 >
-                  {loading ? (
-                    <span className="loading loading-spinner"></span>
-                  ) : (
-                    `Save`
-                  )}
+                  {loading ? <Loading /> : `Save`}
                 </Button>
               </CardFooter>
             </Card>
