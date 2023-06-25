@@ -6,7 +6,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { RaceEntry } from "@8hourrelay/models";
-import { TeamOperations } from "@/components/team-operations";
+import Link from "next/link";
+
 export function RaceEntries({ raceEntries }: { raceEntries: RaceEntry[] }) {
   return (
     <>
@@ -14,7 +15,7 @@ export function RaceEntries({ raceEntries }: { raceEntries: RaceEntry[] }) {
         <Accordion type="single" collapsible key={raceEntry.paymentId}>
           <AccordionItem value="item-1">
             <AccordionTrigger>
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between gap-4">
                 <Avatar className="h-9 w-9">
                   <AvatarImage
                     src={
@@ -26,7 +27,7 @@ export function RaceEntries({ raceEntries }: { raceEntries: RaceEntry[] }) {
                   />
                   <AvatarFallback>{raceEntry.raceDisplayName}</AvatarFallback>
                 </Avatar>
-                {raceEntry.team}
+                <div> {raceEntry.displayName}</div>
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -34,13 +35,17 @@ export function RaceEntries({ raceEntries }: { raceEntries: RaceEntry[] }) {
                 <div className="grid gap-1">
                   <div className="ml-4 space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {raceEntry.displayName}
+                      <Link href={`/team/${raceEntry.team}`}>
+                        Team: {raceEntry.team}
+                      </Link>
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {raceEntry.email}
+                      Email: {raceEntry.email}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Bib: {raceEntry.bib ? raceEntry.bib : "TBD"}{" "}
                     </p>
                   </div>
-                  <div className="ml-auto font-medium">{raceEntry.bib}</div>
                 </div>
               </div>
             </AccordionContent>

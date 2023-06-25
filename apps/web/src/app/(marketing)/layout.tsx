@@ -1,10 +1,7 @@
 import { Metadata } from "next";
-
 import React from "react";
 
 import Layout from "@/components/Layout";
-// import "focus-visible";
-import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 export const metadata: Metadata = {

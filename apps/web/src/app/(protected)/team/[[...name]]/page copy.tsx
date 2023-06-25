@@ -1,12 +1,10 @@
 import { redirect } from "next/navigation";
 import TeamMemberList from "./TeamDetails";
-import { getTeam, getTeams } from "@/firebase/serverApi";
+import { getTeam } from "@/firebase/serverApi";
 import { Suspense } from "react";
 import Loader from "@/components/Loader";
-import { Button } from "@/components/ui/button";
-import { EmptyPlaceholder } from "@/components/empty-placeholder";
-import { Team } from "@8hourrelay/models";
-import { Link } from "lucide-react";
+import "@/styles/teams.css";
+import "@/styles/form.css";
 
 export default async function TeamPage({ params }: any) {
   // not team name, just redirect to teams

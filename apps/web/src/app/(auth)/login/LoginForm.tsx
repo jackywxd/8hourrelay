@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { observer } from "mobx-react-lite";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { UserAuthForm } from "@/components/user-auth-form";
 import Logo from "@/components/icons/Logo";
@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
 import Loader from "@/components/Loader";
 import { useTheme } from "next-themes";
+import { Link } from "lucide-react";
 
 function LoginForm() {
   const { theme } = useTheme();
@@ -70,10 +71,13 @@ function LoginForm() {
         </>
       ) : authStore.state === "EMAIL_LINK_SENT" ? (
         <div className="text-center">
-          <h2 className="text-2xl font-semibold">
+          <h2 className="text-1xl ">
             Check your email {authStore.email} and click the link in the email
             to login
           </h2>
+          <Link href="/" className={cn(buttonVariants({ variant: "link" }))}>
+            Home Page
+          </Link>
         </div>
       ) : authStore.state === "MISSING_EMAIL" ? (
         <div className="text-center text-lg pt-10">

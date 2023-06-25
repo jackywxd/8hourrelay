@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { RaceEntry, Team } from "@8hourrelay/models";
 import LoginFirst from "@/components/LoginFirst";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const TABLE_HEAD = ["Name", "Email", ""];
 
@@ -16,7 +18,7 @@ function TeamMemberList({
   membersData: RaceEntry[];
 }) {
   const { store } = useAuth();
-
+  const router = useRouter();
   const isMember =
     store.userStore.user?.email &&
     membersData &&
@@ -24,6 +26,11 @@ function TeamMemberList({
 
   const team = new Team(teamData);
   const members = membersData?.map((m) => new RaceEntry(m));
+  useEffect(() => {
+    if (!store.authStore.isAuthenticated) {
+      router.push("/login");
+    }
+  }, [store.authStore.isAuthenticated]);
 
   return (
     <div className="flex flex-col overflow-x-auto w-full items-center">

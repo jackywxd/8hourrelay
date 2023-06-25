@@ -23,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Wavier } from "./ShowWavier";
 
 function RegisterForm({ team }: { team?: Team }) {
   const router = useRouter();
@@ -81,7 +82,7 @@ function RegisterForm({ team }: { team?: Team }) {
           validationSchema={SignupSchema}
           enableReinitialize
           validate={(values) => {
-            // console.log(`validating forms data`, { values });
+            console.log(`validating forms data`, { values });
             let errors = {};
             errors = registerStore.validateForm(values as RaceEntry);
             return errors;
@@ -116,6 +117,34 @@ function RegisterForm({ team }: { team?: Team }) {
                     name="race"
                   />
                 </CardContent>
+                {registerStore.teamFilter ? (
+                  <>
+                    <CardHeader>
+                      <CardTitle>Team Info</CardTitle>
+                      <CardDescription>
+                        Please select team and enter the team password. If you
+                        don't know the team password, contact team captain. You
+                        can create your own team.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Suspense fallback={Loader}>
+                        <SelectTeam
+                          {...props}
+                          required
+                          name="team"
+                          label="Select team"
+                          team={team ? team.name : undefined}
+                        />
+                      </Suspense>
+                      <FieldItem
+                        label="Team Password"
+                        fieldName="teamPassword"
+                        required
+                      />
+                    </CardContent>
+                  </>
+                ) : null}
                 <CardHeader>
                   <CardTitle>Basic Information</CardTitle>
                   <CardDescription>
@@ -187,40 +216,11 @@ function RegisterForm({ team }: { team?: Team }) {
                     />
                   </div>
                 </CardContent>
-                {registerStore.teamFilter ? (
-                  <>
-                    <CardHeader>
-                      <CardTitle>Team Info</CardTitle>
-                      <CardDescription>
-                        Please select team and team password. If you don't know
-                        the team password, contact team captain. You can create
-                        your own team.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Suspense fallback={Loader}>
-                        <SelectTeam
-                          required
-                          name="team"
-                          label="Select team*"
-                          team={team?.displayName}
-                        />
-                      </Suspense>
-                      <FieldItem
-                        label="Team Password*"
-                        fieldName="teamPassword"
-                        required
-                      />
-                    </CardContent>
-                  </>
-                ) : null}
+
                 <CardContent>
                   <div className="flex w-full justify-between items-center">
                     <div>
-                      Accept{" "}
-                      <Link className="link" href="/waiver">
-                        race waiver
-                      </Link>
+                      Accept <Wavier />
                     </div>
                     <div>
                       <FieldCheckBox label="" fieldName="accepted" />

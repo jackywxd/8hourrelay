@@ -57,7 +57,6 @@ const CustomCheckBox = (props) => {
 };
 
 const CustomInputComponent = (props) => {
-  console.log(`props`, props);
   return (
     <div className="grid gap-1">
       <Label htmlFor={props.label} className="bloack text-sm">

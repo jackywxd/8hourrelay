@@ -10,6 +10,10 @@ export const dashboardConfig: DashboardConfig = {
       title: "Registration",
       href: "/register",
     },
+    {
+      title: "Team",
+      href: "/team",
+    },
   ],
   sidebarNav: [
     {

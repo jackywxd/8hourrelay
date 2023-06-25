@@ -44,7 +44,7 @@ function MyRacePage() {
   return (
     <DashboardShell>
       {raceEntries?.length ? (
-        <div className="divide-y divide-border rounded-md border m-2">
+        <div className="divide-y divide-border rounded-md border p-2">
           <RaceEntries raceEntries={raceEntries} />
         </div>
       ) : (

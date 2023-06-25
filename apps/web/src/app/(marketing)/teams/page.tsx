@@ -40,8 +40,9 @@ export default async function TeamsPage() {
         <div className="page-title-group">
           <div className="page-title">Find your team to join</div>
           <div className="page-description">
-            All team members must have a valid entry and complete the
-            registration process before the entry deadline.
+            Must sign in to join a team. All team members must have a valid
+            entry and complete the registration process before the entry
+            deadline.
           </div>
         </div>
 

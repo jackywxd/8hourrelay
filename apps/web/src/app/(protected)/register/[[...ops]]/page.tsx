@@ -20,7 +20,7 @@ async function RegistrationPage({ params }) {
   }
   // user logged in and authStore has been fullfilled with user data
   return (
-    <div className="container content-container">
+    <div className="pt-30">
       <RegisterPage team={team?.team} action={action} />
     </div>
   );

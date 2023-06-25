@@ -1,7 +1,9 @@
+import Loading from "@/components/Loading";
+
 export default function Page() {
   return (
     <div>
-      <span className="loading loading-ring loading-md"></span>
+      <Loading />
     </div>
   );
 }

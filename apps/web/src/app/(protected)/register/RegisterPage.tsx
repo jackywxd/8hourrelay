@@ -17,21 +17,17 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
   const router = useRouter();
   const { store } = useAuth();
 
-  // useEffect(() => {
-  //   if (team) {
-  //     registerStore.setState("EDIT");
-  //   } else {
-  //     registerStore.setState("INIT");
-  //   }
+  useEffect(() => {
+    if (team) {
+      registerStore.setState("EDIT");
+    } else {
+      registerStore.setState("INIT");
+    }
 
-  //   registerStore.setTeamValidated(false);
-  // }, [team]);
+    registerStore.setTeamValidated(false);
+  }, [team]);
 
-  // if (!store.authStore.isAuthenticated) {
-  //   return <LoginFirst />;
-  // }
-
-  // registerStore.attachedUserStore(store.userStore);
+  registerStore.attachedUserStore(store.userStore);
   console.log(`action ${action} team ${team} state is ${registerStore.state}`);
 
   if (registerStore.state === "SHOW") {
@@ -62,6 +58,7 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
     return <ConfirmForm />;
   }
 
+  return <RegisterForm team={team ? new Team(team) : undefined} />;
   return (
     <div className="w-full overflow-clip">
       <DisplayRegistration />

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 export default function LoginFirst() {
   return (
@@ -6,7 +7,7 @@ export default function LoginFirst() {
       <h2 className="card-title">Login required</h2>
       <p>Please use your email to login. Click Login to login page</p>
       <Link className="link link-primary" href="/login">
-        Login
+        <Button>Login Now</Button>
       </Link>
     </div>
   );

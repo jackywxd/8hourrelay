@@ -29,6 +29,7 @@ function SelectTeam(props) {
         {...props}
         options={teamOptions}
         defaultValue={props.team ? props.team : undefined}
+        value={props.team ? props.team : undefined}
         disabled={props.team ? true : false}
       />
     </div>

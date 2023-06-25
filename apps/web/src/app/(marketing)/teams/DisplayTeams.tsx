@@ -7,11 +7,13 @@ function DisplayTeams({ teams }: { teams: Team[] | null }) {
   }
 
   return (
-    <div className="grid">
-      {teams.map((teamData) => {
-        const team = new Team(teamData);
-        return <TeamItem team={team} key={team.name} />;
-      })}
+    <div className="teams">
+      <div className="grid">
+        {teams.map((teamData) => {
+          const team = new Team(teamData);
+          return <TeamItem team={team} key={team.name} />;
+        })}
+      </div>
     </div>
   );
 }

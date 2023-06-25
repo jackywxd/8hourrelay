@@ -1,6 +1,4 @@
 import { PropsWithChildren } from "react";
-import Head from "next/head";
-
 import { PageMeta } from "../types";
 
 interface Props extends PropsWithChildren {
