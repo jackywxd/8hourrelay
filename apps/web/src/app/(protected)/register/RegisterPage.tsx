@@ -17,22 +17,21 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
   const router = useRouter();
   const { store } = useAuth();
 
-  useEffect(() => {
-    if (team) {
-      registerStore.setState("EDIT");
-    } else {
-      registerStore.setState("INIT");
-    }
+  // useEffect(() => {
+  //   if (team) {
+  //     registerStore.setState("EDIT");
+  //   } else {
+  //     registerStore.setState("INIT");
+  //   }
 
-    registerStore.setTeamValidated(false);
-  }, [team]);
+  //   registerStore.setTeamValidated(false);
+  // }, [team]);
 
-  // if no logined user yet, redirect user to login
-  if (!store.authStore.isAuthenticated) {
-    return <LoginFirst />;
-  }
+  // if (!store.authStore.isAuthenticated) {
+  //   return <LoginFirst />;
+  // }
 
-  registerStore.attachedUserStore(store.userStore);
+  // registerStore.attachedUserStore(store.userStore);
   console.log(`action ${action} team ${team} state is ${registerStore.state}`);
 
   if (registerStore.state === "SHOW") {
@@ -57,11 +56,7 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
     action === "join" ||
     registerStore.state === "RE_EDIT"
   ) {
-    return (
-      <Suspense fallback={Loader}>
-        <RegisterForm team={team ? new Team(team) : undefined} />
-      </Suspense>
-    );
+    return <RegisterForm team={team ? new Team(team) : undefined} />;
   }
   if (registerStore.state === "FORM_SUBMITTED") {
     return <ConfirmForm />;

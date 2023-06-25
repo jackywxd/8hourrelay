@@ -1,28 +1,43 @@
 import { Metadata } from "next";
-import TabbedNav from "./TabbedNav";
+import { dashboardConfig } from "@/config/dashboard";
+import { MainNav } from "@/components/main-nav";
+import { UserAccountNav } from "@/components/user-account-nav";
+import Footer from "@/components/ui/Footer/Footer";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { DashboardNav } from "@/components/nav";
+import { AuthProvider } from "@/context/AuthContext";
 
-const navItems = [
-  {
-    title: "Profile",
-    href: "/account/",
-  },
-  {
-    title: "My Reace",
-    href: "/account/myreace/",
-  },
-  {
-    title: "My Team",
-    href: "/account/myteam/",
-  },
-];
-
-function ProfileLayout({
-  children, // will be a page or nested layout
-}: {
-  children: React.ReactNode;
-}) {
-  return <div className="flex-1 w-full items-center">{children}</div>;
+interface DashboardLayoutProps {
+  children?: React.ReactNode;
 }
 
-export default ProfileLayout;
+export const metadata: Metadata = {
+  title: "Account Settings",
+  description: "Your 8 hour relay account settings",
+};
+
+export default async function DashboardLayout({
+  children,
+}: DashboardLayoutProps) {
+  return (
+    <AuthProvider>
+      <div className="container flex min-h-screen flex-col space-y-6 w-full md:w-[1024px] mx-auto">
+        <header className="sticky top-0 z-40 border-b bg-background">
+          <div className="container flex h-16 items-center justify-between py-4">
+            <MainNav items={dashboardConfig.mainNav} />
+            <UserAccountNav />
+          </div>
+        </header>
+        <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
+          <aside className="hidden w-[200px] flex-col md:flex">
+            <DashboardNav items={dashboardConfig.sidebarNav} />
+          </aside>
+          <main className="flex w-full flex-1 flex-col overflow-hidden">
+            <ProtectedRoute>{children}</ProtectedRoute>
+          </main>
+        </div>
+        <Footer className="border-t" />
+      </div>
+    </AuthProvider>
+  );
+}

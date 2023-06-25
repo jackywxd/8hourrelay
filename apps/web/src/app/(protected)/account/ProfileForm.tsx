@@ -17,6 +17,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Loading from "@/components/Loading";
+import { Icons } from "@/components/icons";
+import { Label } from "@/components/ui/label";
 function ProfileForm() {
   const { store } = useAuth();
   const [loading, setLoading] = useState(store.userStore.isLoading);
@@ -72,57 +74,51 @@ function ProfileForm() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div>
-                  <label htmlFor="first-name">
-                    <span>First name</span>
-                  </label>
-                  <Input
-                    value={props.values.firstName}
-                    onChange={props.handleChange}
-                    type="text"
-                    name="firstName"
-                    id="first-name"
-                    autoComplete="given-name"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                  />
-                  <ErrorMessage name="firstName">
-                    {(msg) => (
-                      <div className="text-sm text-red-400 error-msg">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
+                <div className="grid md:grid-cols-2 gap-2">
+                  <div>
+                    <Label htmlFor="first-name">First name</Label>
+                    <Input
+                      value={props.values.firstName}
+                      onChange={props.handleChange}
+                      type="text"
+                      name="firstName"
+                      id="first-name"
+                      autoComplete="given-name"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                    />
+                    <ErrorMessage name="firstName">
+                      {(msg) => (
+                        <div className="text-sm text-red-400 error-msg">
+                          {msg}
+                        </div>
+                      )}
+                    </ErrorMessage>
+                  </div>
+
+                  <div className="">
+                    <Label htmlFor="last-name">Last name</Label>
+                    <Input
+                      value={props.values.lastName}
+                      onChange={props.handleChange}
+                      type="text"
+                      name="lastName"
+                      id="last-name"
+                      autoComplete="family-name"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                    />
+                    <ErrorMessage name="lastName">
+                      {(msg) => (
+                        <div className="text-sm text-red-400 error-msg">
+                          {msg}
+                        </div>
+                      )}
+                    </ErrorMessage>
+                  </div>
                 </div>
-
-                <div className="">
-                  <label htmlFor="last-name">
-                    <span>Last name</span>
-                  </label>
-                  <Input
-                    value={props.values.lastName}
-                    onChange={props.handleChange}
-                    type="text"
-                    name="lastName"
-                    id="last-name"
-                    autoComplete="family-name"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                  />
-                  <ErrorMessage name="lastName">
-                    {(msg) => (
-                      <div className="text-sm text-red-400 error-msg">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
-
                 <div>
-                  <label htmlFor="phone">
-                    <span>Phone</span>
-                  </label>
-
+                  <Label htmlFor="phone">Phone</Label>
                   <Input
                     value={props.values.phone}
                     onChange={props.handleChange}
@@ -144,9 +140,7 @@ function ProfileForm() {
                 </div>
 
                 <div>
-                  <label htmlFor="preferName">
-                    <span>Preferred Name</span>
-                  </label>
+                  <Label htmlFor="preferName">Prefer name</Label>
                   <Input
                     value={props.values.preferName}
                     onChange={props.handleChange}
@@ -157,9 +151,7 @@ function ProfileForm() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="birthYear">
-                    <span>Year of Birth</span>
-                  </label>
+                  <Label htmlFor="birthYear">Year of birth</Label>
                   <Input
                     value={props.values.birthYear}
                     onChange={props.handleChange}
@@ -178,40 +170,19 @@ function ProfileForm() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button
-                  disabled={loading ? true : false}
-                  type="submit"
-                  className="btn btn-large btn-primary blue"
-                >
-                  {loading ? <Loading /> : `Save`}
+                <Button disabled={loading ? true : false} type="submit">
+                  {store.userStore.isLoading ? (
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Icons.save className="mr-2 h-4 w-4" />
+                  )}{" "}
+                  Save
                 </Button>
               </CardFooter>
             </Card>
           </Form>
         )}
       </Formik>
-
-      {/* <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
-        <div>
-          <h2 className="text-base font-semibold leading-7 ">Delete account</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-400">
-            No longer want to use our service? You can delete your account here.
-            This action is not reversible. All information related to this
-            account will be deleted permanently.
-          </p>
-        </div>
-
-        <form className="md:col-span-2">
-          <div className="mt-8 flex">
-            <button
-              type="submit"
-              className="rounded-full w-full bg-red-500 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-red-400"
-            >
-              Yes, delete my account
-            </button>
-          </div>
-        </form>
-      </div> */}
     </>
   );
 }

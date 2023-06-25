@@ -25,6 +25,9 @@ import {
   User,
   X,
   Heart,
+  Save,
+  Users,
+  Trophy,
   type Icon as LucideIcon,
 } from "lucide-react";
 
@@ -44,6 +47,9 @@ export const Icons = {
       <circle cx="12" cy="12" r="10"></circle>
     </svg>
   ),
+  users: Users,
+  trophy: Trophy,
+  save: Save,
   heart: Heart,
   close: X,
   spinner: Loader2,

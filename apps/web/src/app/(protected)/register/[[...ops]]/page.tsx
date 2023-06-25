@@ -1,7 +1,4 @@
-import { Suspense } from "react";
-
 import RegisterPage from "../RegisterPage";
-import Loader from "@/components/Loader";
 import { getTeam } from "@/firebase/serverApi";
 
 async function RegistrationPage({ params }) {
@@ -24,9 +21,7 @@ async function RegistrationPage({ params }) {
   // user logged in and authStore has been fullfilled with user data
   return (
     <div className="container content-container">
-      <Suspense fallback={Loader}>
-        <RegisterPage team={team?.team} action={action} />
-      </Suspense>
+      <RegisterPage team={team?.team} action={action} />
     </div>
   );
 }

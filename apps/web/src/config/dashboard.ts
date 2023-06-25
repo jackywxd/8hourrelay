@@ -19,13 +19,13 @@ export const dashboardConfig: DashboardConfig = {
     },
     {
       title: "My Race",
-      href: "/register",
-      icon: "billing",
+      href: "/account/myrace",
+      icon: "trophy",
     },
     {
       title: "My Team",
       href: "/account/myteam",
-      icon: "settings",
+      icon: "users",
     },
   ],
 };

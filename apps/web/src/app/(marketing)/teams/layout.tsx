@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Navbar from "../Navbar";
 
 export const metadata: Metadata = {
   title: "8 Hour Relay/Teams",
@@ -11,9 +12,10 @@ function TeamsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="padding-large content-container large m-auto">
+    <div className="flex flex-col w-full">
+      <Navbar changeBg />
       {children}
-    </section>
+    </div>
   );
 }
 

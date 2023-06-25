@@ -5,25 +5,28 @@ import { getTeams } from "@/firebase/serverApi";
 import DisplayTeams from "./DisplayTeams";
 import Loader from "@/components/Loader";
 
-import "@/styles/teams.css";
-import "@/styles/form.css";
+import "./teams.css";
+import { EmptyPlaceholder } from "@/components/empty-placeholder";
+import { RaceEntryCreateButton } from "@/components/race-create-button";
+import { Button } from "@/components/ui/button";
 export default async function TeamsPage() {
   const data = await getTeams();
 
   if (!data) {
     return (
-      <div className="page-header">
-        <div className="page-title-group">
-          <div className="page-title">All temas</div>
-          <div className="page-description">No team has been created yet</div>
-          <div className="m-10">
-            <button className="btn btn-primary btn-medium blue">
-              <Link className="link open-button" href="/teams/create">
-                Create Team Now
-              </Link>
-            </button>
-          </div>
-        </div>
+      <div className="container mx-auto pt-10">
+        <EmptyPlaceholder>
+          <EmptyPlaceholder.Icon name="users" />
+          <EmptyPlaceholder.Title>No Team avaiable yet</EmptyPlaceholder.Title>
+          <EmptyPlaceholder.Description>
+            You don&apos;t have any race entry yet.
+          </EmptyPlaceholder.Description>
+          <Button>
+            <Link className="link open-button" href="/teams/create">
+              Create Team Now
+            </Link>
+          </Button>
+        </EmptyPlaceholder>
       </div>
     );
   }
@@ -32,7 +35,7 @@ export default async function TeamsPage() {
   console.log(`all teams data`, { teams });
 
   return (
-    <>
+    <div className="container mx-auto p-3">
       <div className="page-header">
         <div className="page-title-group">
           <div className="page-title">Find your team to join</div>
@@ -51,6 +54,6 @@ export default async function TeamsPage() {
       <Suspense fallback={Loader}>
         <DisplayTeams teams={teams} />
       </Suspense>
-    </>
+    </div>
   );
 }

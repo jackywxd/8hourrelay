@@ -291,10 +291,10 @@ h5 {
   font-weight: 400;
   opacity: 0.85;
 }
-
+/* 
 header > * {
   width: max-content;
-}
+} */
 
 ::placeholder {
   color: var(--text-muted);

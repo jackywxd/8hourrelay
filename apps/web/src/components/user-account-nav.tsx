@@ -45,7 +45,7 @@ export const UserAccountNav = observer(() => {
           <Link href="/account">Account</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/register">My Race</Link>
+          <Link href="/account/myrace">My Race</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/account/myteam">My Team</Link>
