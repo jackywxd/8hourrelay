@@ -5,76 +5,149 @@ import { useState } from "react";
 import ShowRaceEntry from "./ShowRaceEntry";
 import { registerStore } from "@8hourrelay/store";
 import { RaceEntry } from "@8hourrelay/models";
-
+import { DashboardHeader } from "@/components/header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
+import { Separator } from "@/components/ui/separator";
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe(
-	process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
+const confirmFormSchema = z.object({
+  accepted: z.boolean().refine((v) => v === true, {
+    message: "You must confirm your registration",
+  }),
+});
+
+type ConfirmFormValues = z.infer<typeof confirmFormSchema>;
+
 function ConfirmForm() {
-	const [confirm, setConfirm] = useState(false);
+  const form = useForm<ConfirmFormValues>({
+    resolver: zodResolver(confirmFormSchema),
+    defaultValues: { accepted: false },
+  });
 
-	const onSubmit = async () => {
-		const [stripe, sessionId] = await Promise.all([
-			stripePromise,
-			registerStore.submitRaceForm()
-		]);
-		// redirect user to Stripe Checkout for payment
-		if (stripe && sessionId) {
-			stripe.redirectToCheckout({ sessionId: (sessionId as any).id });
-		}
-	};
+  const [confirm, setConfirm] = useState(false);
 
-	const raceEntry = new RaceEntry(registerStore.form!);
+  const onSubmit = async () => {
+    const [stripe, sessionId] = await Promise.all([
+      stripePromise,
+      registerStore.submitRaceForm(),
+    ]);
+    // redirect user to Stripe Checkout for payment
+    if (stripe && sessionId) {
+      stripe.redirectToCheckout({ sessionId: (sessionId as any).id });
+    }
+  };
 
-	return (
-		<div className="w-full">
-			<p>
-				Please review your registration information carefully and accept
-				race polices. Race entry cannot be change after submitted
-			</p>
-			<div className="divider">Race Entry</div>
-			<ShowRaceEntry raceEntry={raceEntry} />
-			<div className="flex flex-col mt-5">
-				<div className="divider">Race Policies</div>
-				<div>
-					Entry fees are non-refundable, non-deferrable, and
-					non-transferable.
-				</div>
-				<div className="form-control mt-3">
-					<label className="label cursor-pointer gap-3">
-						<span className="">ACCEPT</span>
-						<input
-							type="checkbox"
-							checked={confirm}
-							className="checkbox checkbox-md checkbox-primary"
-							onChange={() => {
-								setConfirm(!confirm);
-							}}
-						/>
-					</label>
-				</div>
-			</div>
-			<div className="flex gap-10 justify-between w-full mt-10">
-				<button
-					disabled={!confirm || registerStore.isLoading}
-					type="submit"
-					onClick={onSubmit}
-					className="btn btn-primary">
-					Payment
-				</button>
-				<button
-					onClick={() => {
-						registerStore.setTeamValidated(false);
-						registerStore.setState("RE_EDIT");
-					}}
-					className="btn btn-secondary">
-					EDIT
-				</button>
-			</div>
-		</div>
-	);
+  const raceEntry = new RaceEntry(registerStore.form!);
+
+  return (
+    <div className="w-full md:w-[800px] container mx-auto">
+      <DashboardHeader
+        heading="Confirm registration"
+        text=" Please review your registration information carefully and accept race polices. Race entry cannot be change after submitted"
+      ></DashboardHeader>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                Registered Race: {raceEntry.raceDisplayName}
+              </CardTitle>
+              <CardTitle>
+                Team: {registerStore.getTeamDisplayName(raceEntry.team!)}
+              </CardTitle>
+              <CardDescription>Entry Fee: {raceEntry.entryFee}</CardDescription>
+            </CardHeader>
+            <Separator />
+            <CardContent>
+              <ShowRaceEntry raceEntry={raceEntry} />
+            </CardContent>
+            <Separator />
+            <CardFooter className="mt-5">
+              <FormField
+                control={form.control}
+                name="accepted"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row space-x-3 space-y-0 items-center">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange as (checked) => void}
+                      />
+                    </FormControl>
+                    <div className="">
+                      <FormLabel>Accept below race policies</FormLabel>
+                      <FormDescription>
+                        Entry fees are non-refundable, non-deferrable, and
+                        non-transferable.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </CardFooter>
+          </Card>
+
+          <CardFooter className="grid grid-cols-2 gap-5">
+            <Button
+              type="submit"
+              disabled={
+                form.getValues().accepted === false || registerStore.isLoading
+                  ? true
+                  : false
+              }
+            >
+              {registerStore.isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Payment
+            </Button>
+            <Button
+              variant="outline"
+              disabled={registerStore.isLoading ? true : false}
+              onClick={() => {
+                registerStore.setTeamValidated(false);
+                registerStore.setState("RE_EDIT");
+              }}
+            >
+              Edit Registration
+            </Button>
+            {/* <Button
+              variant="destructive"
+              disabled={registerStore.isLoading ? true : false}
+            >
+              Delete
+            </Button> */}
+          </CardFooter>
+        </form>
+      </Form>
+    </div>
+  );
 }
 
 export default observer(ConfirmForm);

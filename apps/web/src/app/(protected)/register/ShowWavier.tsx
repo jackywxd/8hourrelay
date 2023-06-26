@@ -15,9 +15,7 @@ export function Wavier() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" className="underline">
-          Race Wavier
-        </Button>
+        <span className="underline hover:cursor-pointer">Race Wavier</span>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

@@ -46,16 +46,15 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
       </>
     );
   }
-
+  if (registerStore.state === "FORM_SUBMITTED") {
+    return <ConfirmForm />;
+  }
   if (
     action === "create" ||
     action === "join" ||
     registerStore.state === "RE_EDIT"
   ) {
     return <RegisterForm team={team ? new Team(team) : undefined} />;
-  }
-  if (registerStore.state === "FORM_SUBMITTED") {
-    return <ConfirmForm />;
   }
 
   return <RegisterForm team={team ? new Team(team) : undefined} />;

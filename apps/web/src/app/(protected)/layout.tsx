@@ -6,6 +6,7 @@ import Footer from "@/components/ui/Footer/Footer";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { DashboardNav } from "@/components/nav";
 import { AuthProvider } from "@/context/AuthContext";
+import { Separator } from "@/components/ui/separator";
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;
@@ -21,15 +22,17 @@ export default async function DashboardLayout({
 }: DashboardLayoutProps) {
   return (
     <AuthProvider>
-      <div className="container flex min-h-screen flex-col space-y-6 w-full md:w-[1024px] mx-auto">
+      <div className="flex min-h-screen flex-col space-y-6">
         <header className="sticky top-0 z-40 border-b bg-background">
           <div className="container flex h-16 items-center justify-between py-4">
             <MainNav items={dashboardConfig.mainNav} />
             <UserAccountNav />
           </div>
         </header>
-        <ProtectedRoute>{children}</ProtectedRoute>
-        <Footer className="border-t" />
+        <div className="flex-1 container mx-auto">
+          <ProtectedRoute>{children}</ProtectedRoute>
+        </div>
+        <Footer className="border-t px-10" />
       </div>
     </AuthProvider>
   );

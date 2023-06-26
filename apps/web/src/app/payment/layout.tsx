@@ -1,3 +1,7 @@
-import { default as LayoutMdx } from "@/components/LayoutSecure";
+interface AuthLayoutProps {
+  children: React.ReactNode;
+}
 
-export default LayoutMdx;
+export default function AuthLayout({ children }: AuthLayoutProps) {
+  return <div className="min-h-screen">{children}</div>;
+}

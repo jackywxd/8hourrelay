@@ -4,13 +4,6 @@ import { RaceEntryCreateButton } from "@/components/race-create-button";
 import RaceEntries from "./RaceEntries";
 
 const ProtectedPage = async () => {
-  // user logged in and authStore has been fullfilled with user data
-  // return (
-  //   <div className="container flex flex-col flex-1 p-5 lg:mx-auto justify-center">
-  //     <ProfileForm />
-  //   </div>
-  // );
-
   return (
     <DashboardShell>
       <DashboardHeader heading="My Race Entry" text="Manage your race entries.">

@@ -12,7 +12,7 @@ export function RaceEntryCreateButton({
   ...props
 }: RaceEntryCreateButtonProps) {
   return (
-    <Link href="/register">
+    <Link href="/register?from=/account/myrace">
       <button className={cn(buttonVariants({ variant }), className)} {...props}>
         New Race Entry
       </button>

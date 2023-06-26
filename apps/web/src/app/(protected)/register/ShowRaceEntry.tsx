@@ -11,7 +11,6 @@ const data = {
   email: "Email",
   yearBirth: "Year of Birth",
   size: "Selected Shirt Size",
-  team: "Team Name",
   emergencyName: "Emergency Contact Name",
   emergencyPhone: "Emergency Contact Phone",
 };
@@ -19,15 +18,14 @@ const data = {
 function ShowRaceEntry({ raceEntry }: { raceEntry: RaceEntry }) {
   return (
     <div className="w-full p-2">
-      <div>Registered Race: {raceEntry.raceDisplayName}</div>
-      <div>Entry Fee: {raceEntry.entryFee}</div>
-      <div className="divider">Race Entry Info</div>
-
       <div className="flex flex-wrap">
         {Object.entries(raceEntry).map((entry) => {
           if (entry[1] && data[entry[0]])
             return (
-              <div key={entry[0]} className="flex w-full justify-between">
+              <div
+                key={entry[0]}
+                className="flex w-full justify-between border-b mb-3"
+              >
                 <div className="">{data[entry[0]]} :</div>
                 {entry[0] === "team" ? (
                   <div>

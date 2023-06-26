@@ -103,7 +103,9 @@ export class RegistrationStore extends BaseStore {
   get teams() {
     let teams: Team[] = [];
     if (this.teamFilter && this.allTeams && this.allTeams.length > 0) {
-      teams = this.allTeams.filter((f) => f.race === this.teamFilter);
+      teams = this.allTeams.filter(
+        (f) => f.race.toLowerCase() === this.teamFilter?.toLowerCase()
+      );
     }
     if (!this.teamFilter && this.allTeams) {
       teams = this.allTeams;
@@ -117,11 +119,23 @@ export class RegistrationStore extends BaseStore {
       const teams = this.allTeams.filter(
         (f) => f.name.toLowerCase() === team.toLowerCase()
       );
-      const race = teams[0].race;
+      const race = teams[0]?.race;
       console.log(`getRaceByTeam`, race);
       return race;
     }
     return null;
+  }
+
+  getTeamDisplayName(team: string) {
+    if (this.allTeams) {
+      const teams = this.allTeams.filter(
+        (f) => f.name.toLowerCase() === team.toLowerCase()
+      );
+      const race = teams[0]?.displayName;
+      console.log(`getRaceByTeam`, race);
+      return race;
+    }
+    return "";
   }
 
   get existingEntries() {
@@ -235,6 +249,7 @@ export class RegistrationStore extends BaseStore {
   }
 
   setState(state: RegistrationState) {
+    console.log(`setting state to ${state}`);
     this.state = state;
   }
 
@@ -247,6 +262,7 @@ export class RegistrationStore extends BaseStore {
     if (this.state === "RE_EDIT" && this.form) return this.form;
     if (this.form) return this.form;
     if (team) this.teamFilter = team.race;
+    else if (this.teamFilter) this.setTeamFilter(null);
 
     const raceEntry = this.raceEntry;
     const user = this.userStore?.user;
@@ -255,15 +271,15 @@ export class RegistrationStore extends BaseStore {
       id: raceEntry?.id ?? "",
       year: raceEntry?.year ?? new Date().getFullYear().toString(),
       uid: this.userStore?.uid,
-      email: raceEntry?.email ?? user?.email ?? "",
-      firstName: raceEntry?.firstName ?? user?.firstName ?? "",
-      lastName: raceEntry?.lastName ?? user?.lastName ?? "",
+      email: raceEntry?.email ?? "",
+      firstName: raceEntry?.firstName ?? "",
+      lastName: raceEntry?.lastName ?? "",
       preferName: raceEntry?.preferName ?? "",
-      phone: raceEntry?.phone ?? user?.phone ?? "",
-      gender: raceEntry?.gender ?? user?.gender ?? "",
-      wechatId: raceEntry?.wechatId ?? user?.wechatId ?? "",
-      birthYear: raceEntry?.birthYear ?? user?.birthYear ?? "",
-      personalBest: raceEntry?.personalBest ?? user?.personalBest ?? "",
+      phone: raceEntry?.phone ?? "",
+      gender: raceEntry?.gender ?? "",
+      wechatId: raceEntry?.wechatId ?? "",
+      birthYear: raceEntry?.birthYear ?? "",
+      personalBest: raceEntry?.personalBest ?? "",
       race: team ? team.race : raceEntry?.race ?? "",
       size: raceEntry?.size ?? "",
       emergencyName: raceEntry?.emergencyName ?? "",
@@ -433,7 +449,6 @@ export class RegistrationStore extends BaseStore {
   }
 
   *validateTeamPassword(team: string, teamPassword: string) {
-    if (this.isLoading) return;
     const functions = getFunctions();
     const onValidateTeamPassword = httpsCallable(
       functions,
@@ -481,7 +496,7 @@ export class RegistrationStore extends BaseStore {
     }
     this.setLoading(false);
     toast.update(id, {
-      render: `Invalid team password`,
+      render: `Invalid team password. Please get the correct team password from your team captain.`,
       type: "error",
       isLoading: false,
       autoClose: 5000,

@@ -7,7 +7,7 @@ const ProtectedPage = () => {
   return (
     <DashboardShell>
       <DashboardHeader heading="My Team" text="Manage your race team.">
-        <TeamCreateButton />
+        {/* <TeamCreateButton /> */}
       </DashboardHeader>
 
       <div className="grid gap-10">

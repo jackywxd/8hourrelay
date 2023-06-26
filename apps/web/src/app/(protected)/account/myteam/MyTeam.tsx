@@ -19,6 +19,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import TeamForm from "./TeamForm";
+import { EmptyPlaceholder } from "@/components/empty-placeholder";
+import { RaceEntryCreateButton } from "@/components/race-create-button";
+import { TeamCreateButton } from "@/components/team-create-button";
 
 const TABLE_HEAD = ["Name", "Email", ""];
 function classNames(...classes) {
@@ -28,123 +32,23 @@ function classNames(...classes) {
 function MyTeam() {
   const { store } = useAuth();
   const team = store.userStore.myTeam;
-  const [enabled, setEnabled] = useState(store.userStore.myTeam?.isOpen);
-  const [password, setPassword] = useState(store.userStore.myTeam?.password);
-  const [slogan, setSlogan] = useState(store.userStore.myTeam?.slogan);
-
-  const initialValues = {
-    isOpen: store.userStore.myTeam?.isOpen,
-    password: store.userStore.myTeam?.password ?? "",
-    slogan: store.userStore.myTeam?.slogan ?? "",
-  };
-  const Schema = Yup.object().shape({
-    password: Yup.string().nonNullable().required("Required"),
-    slogon: Yup.string(),
-  });
-
-  if (!store.userStore.myTeam) return null;
-
-  const onSubmit = () => {
-    if (!password) {
-      toast.error(`Team password cannot be blank`);
-      return;
-    }
-    store.userStore.onUpdateTeam({ isOpen: enabled, password, slogan });
-  };
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>My Team: {store.userStore.myTeam.displayName}</CardTitle>
-        <CardDescription>
-          Race: {store.userStore.myTeam.raceDisplayName}
-        </CardDescription>
-      </CardHeader>
-      {/* <div className="flex self-end">
-        <Link
-          className="link link-primary"
-          href={`/team/${store.userStore.myTeam.name}`}
-        >
-          Team Details
-        </Link>
-      </div> */}
-      <CardContent>
-        <h2>Open For Registration:</h2>
-        <Switch
-          checked={enabled}
-          onChange={setEnabled}
-          className={classNames(
-            enabled ? "bg-indigo-600" : "bg-gray-200",
-            "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
-          )}
-        >
-          <span
-            aria-hidden="true"
-            className={classNames(
-              enabled ? "translate-x-5" : "translate-x-0",
-              "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-            )}
-          />
-        </Switch>
-        <div className="flex w-full justify-between items-center">
-          <h2 className="leading-6 ">Team Password:</h2>
-          <div className="mt-2">
-            <input
-              value={password}
-              type="text"
-              name="first-name"
-              id="first-name"
-              autoComplete="given-name"
-              className="block w-full rounded-md border-0 bg-white/5 py-1.5  shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-              onChange={(value) => setPassword(value.target.value)}
-            />
-          </div>
-        </div>
-        <div className="flex w-full justify-between items-center">
-          <h2 className="leading-6 ">Team Slogan:</h2>
-          <div className="mt-2">
-            <input
-              value={slogan}
-              type="text"
-              name="slogan"
-              id="slogan"
-              className="block w-full rounded-md border-0 bg-white/5 py-1.5  shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-              onChange={(value) => setSlogan(value.target.value)}
-            />
-          </div>
-        </div>
-      </CardContent>
-
-      <CardFooter>
-        <Button
-          type="submit"
-          onClick={onSubmit}
-          disabled={store.userStore.isLoading ? true : false}
-        >
-          Save
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={Schema}
-      enableReinitialize
-      onSubmit={onSubmit}
-    >
-      {(props) => (
-        <Form className="flex w-full flex-col gap-6 justify-center items-center">
-          <FieldItem label="Team Password*" fieldName="password" />
-          <FieldItem label="Slogan" fieldName="slogan" />
-
-          <div className="flex flex-row w-full justify-between">
-            <button type="submit" className="btn btn-primary">
-              save
-            </button>
-          </div>
-        </Form>
+    <>
+      {team ? (
+        <TeamForm />
+      ) : (
+        <EmptyPlaceholder>
+          <EmptyPlaceholder.Icon name="users" />
+          <EmptyPlaceholder.Title>
+            You don't have team yet
+          </EmptyPlaceholder.Title>
+          <EmptyPlaceholder.Description>
+            Create your team and invite your friends to join
+          </EmptyPlaceholder.Description>
+          <TeamCreateButton variant="outline" />
+        </EmptyPlaceholder>
       )}
-    </Formik>
+    </>
   );
 }
 

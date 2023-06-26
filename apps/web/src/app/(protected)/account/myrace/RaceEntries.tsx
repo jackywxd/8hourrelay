@@ -7,17 +7,6 @@ import LoginFirst from "@/components/LoginFirst";
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import { toast } from "react-toastify";
-import { Form, Formik } from "formik";
-import * as Yup from "yup";
-import { FieldItem } from "@/components/CustomFiled";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RaceEntries } from "@/components/raceEntries";
 import { EmptyPlaceholder } from "@/components/empty-placeholder";
@@ -42,14 +31,14 @@ function MyRacePage() {
     toast.error(`Team password cannot be blank`);
   };
   return (
-    <DashboardShell>
+    <>
       {raceEntries?.length ? (
         <div className="divide-y divide-border rounded-md border p-2">
           <RaceEntries raceEntries={raceEntries} />
         </div>
       ) : (
         <EmptyPlaceholder>
-          <EmptyPlaceholder.Icon name="post" />
+          <EmptyPlaceholder.Icon name="trophy" />
           <EmptyPlaceholder.Title>No race entry</EmptyPlaceholder.Title>
           <EmptyPlaceholder.Description>
             You don&apos;t have any race entry yet.
@@ -57,7 +46,7 @@ function MyRacePage() {
           <RaceEntryCreateButton variant="outline" />
         </EmptyPlaceholder>
       )}
-    </DashboardShell>
+    </>
   );
 }
 
