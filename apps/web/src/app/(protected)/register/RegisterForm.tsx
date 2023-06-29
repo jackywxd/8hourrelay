@@ -61,7 +61,7 @@ const raceFormSchema = z
           message: "Enter valid phone number",
         }
       ),
-    gender: z.string(),
+    gender: z.enum(["Male", "Femal"]),
     birthYear: z
       .string()
       .regex(new RegExp(`^[0-9]{4}$`), { message: "Enter 4 digits birth year" })
@@ -92,8 +92,9 @@ const raceFormSchema = z
     isActive: z.boolean().default(true),
     preferName: z.string().optional(),
   })
+  .passthrough()
   .superRefine((arg, ctx) => {
-    const errors = registerStore.validateForm(arg as RaceEntry);
+    const errors = registerStore.validateForm(arg);
     if (errors.firstName) {
       ctx.addIssue({
         path: ["firstName"],

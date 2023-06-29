@@ -1,7 +1,7 @@
 import { makeObservable, observable, action, computed, flow } from "mobx";
 import { BaseStore } from "./UIBaseStore";
 import { UserStore } from "./UserStore";
-import { event2023, RaceEntry, Team } from "@8hourrelay/models";
+import { event2023, Race, RaceEntry, Team } from "@8hourrelay/models";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDoc, doc, deleteDoc, getFirestore } from "firebase/firestore";
 import { toast } from "react-toastify";
@@ -148,7 +148,7 @@ export class RegistrationStore extends BaseStore {
     return [];
   }
 
-  validateForm(form: RaceEntry) {
+  validateForm(form: Partial<RaceEntry>) {
     let errors: any = {};
     const age = form.birthYear;
     console.log(`validatForm`, form, this.userStore?.raceEntries.slice());
@@ -292,7 +292,7 @@ export class RegistrationStore extends BaseStore {
       teamState: "",
       accepted: false,
     };
-    return raceInitEntry;
+    return raceInitEntry as RaceEntry;
   }
 
   *updateRaceEntry(form: RaceEntry) {

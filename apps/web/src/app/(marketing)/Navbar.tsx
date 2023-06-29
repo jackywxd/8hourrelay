@@ -52,7 +52,7 @@ const Navbar = ({ changeBg }: { changeBg: boolean }) => {
               <Link href={item.href}>{item.name}</Link>
             </li>
           ))}
-          <li className="nav-link signin hover:underline hover:underline-offset-4">
+          <li className="font-semibold nav-link signin hover:underline hover:underline-offset-4">
             <a href="/login" className={changeBg ? "text-white" : undefined}>
               Sign In/Account
             </a>

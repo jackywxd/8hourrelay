@@ -68,14 +68,6 @@ function ProfileForm() {
     store.userStore.onUpdateUser(values);
   };
 
-  if (initForm) {
-    return (
-      <div>
-        <FormSkeleton items={5} />
-      </div>
-    );
-  }
-
   return (
     <>
       <Card>
@@ -86,101 +78,110 @@ function ProfileForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid md:grid-cols-2 gap-2">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="First Name" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Your first name as it appears on your ID
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Last Name" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Your last name as it appears on your ID
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="preferName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Prefer name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Prefer Name" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      You can set your prefer name will be used in the web
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Phone number" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Your mobile number will be used to contact you
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="birthYear"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Year of birth</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Year of birth" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Your year of birth will be used to identify you
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="submit"
-                disabled={store.userStore.isLoading ? true : false}
+          {initForm ? (
+            <div>
+              <FormSkeleton items={5} />
+            </div>
+          ) : (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
               >
-                {store.userStore.isLoading && (
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Update Account
-              </Button>
-            </form>
-          </Form>
+                <div className="grid md:grid-cols-2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="First Name" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Your first name as it appears on your ID
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Last Name" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Your last name as it appears on your ID
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="preferName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prefer name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Prefer Name" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        You can set your prefer name will be used in the web
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Phone number" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Your mobile number will be used to contact you
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="birthYear"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Year of birth</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Year of birth" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Your year of birth will be used to identify you
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  disabled={store.userStore.isLoading ? true : false}
+                >
+                  {store.userStore.isLoading && (
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Update Account
+                </Button>
+              </form>
+            </Form>
+          )}
         </CardContent>
       </Card>
     </>

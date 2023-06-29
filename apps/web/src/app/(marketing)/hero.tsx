@@ -9,13 +9,11 @@ import { useInView } from "react-intersection-observer";
 import Navbar from "./Navbar";
 
 export default function HeroSection() {
-  const { ref, inView, entry } = useInView({
-    /* Optional options */
+  // intersection observer to handle navbar change background
+  const { ref, inView } = useInView({
     threshold: 0.3,
   });
-  useEffect(() => {
-    console.log(`inView`, { inView });
-  });
+
   return (
     <>
       <div className="w-full">

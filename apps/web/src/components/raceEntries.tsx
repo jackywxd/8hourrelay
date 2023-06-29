@@ -6,8 +6,11 @@ import { RaceEntry } from "@8hourrelay/models";
 export function RaceEntries({ raceEntries }: { raceEntries: RaceEntry[] }) {
   return (
     <>
-      {raceEntries.map((raceEntry) => (
-        <div className="flex w-full justify-between items-center mt-3 bg-slate-900 rounded-md p-3">
+      {raceEntries.map((raceEntry, index) => (
+        <div
+          key={raceEntry.paymentId ?? `${raceEntry.email}${index}`}
+          className="flex w-full justify-between items-center mt-3 bg-slate-900 rounded-md p-3"
+        >
           <div className="w-1/4 items-center justify-between gap-4">
             <Avatar className="h-12 w-12">
               <AvatarImage
