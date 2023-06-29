@@ -20,8 +20,8 @@ async function RegistrationPage({ params }) {
     redirect("/account/myrace");
   }
   console.log(`team data`, { team });
-  if (!team.team.isOpen) {
-    const teamInfo = new Team(team.team);
+  if (!team?.team?.isOpen) {
+    const teamInfo = new Team(team?.team);
     return (
       <EmptyPlaceholder>
         <EmptyPlaceholder.Icon name="users" className="text-red-500" />
