@@ -41,9 +41,17 @@ import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ShowSizeChart } from "./ShowShirtSizeChart";
 import { FormSkeleton } from "@/components/FormSkeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const raceFormSchema = z
   .object({
+    isForOther: z.boolean().default(false),
     firstName: z.string().nonempty({ message: "First name is required" }),
     lastName: z.string().nonempty({ message: "Last name is required" }),
     email: z
@@ -128,19 +136,27 @@ const raceFormSchema = z
 
 type RaceFormValues = z.infer<typeof raceFormSchema>;
 
-function RegisterForm({ team }: { team?: Team }) {
+function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [initForm, setInitForm] = useState(registerStore.isLoading);
 
   const fromUrl = searchParams?.get("from") || "/account";
 
-  const defaultValues = registerStore.initRaceEntryForm(team);
+  console.log(`team is ${team} raceId is ${raceId}`);
+  const defaultValues = raceId
+    ? registerStore.initWithRaceid(raceId)
+    : registerStore.initRaceEntryForm(team);
 
   console.log(`defaultValues`, { ...defaultValues });
   const form = useForm<RaceFormValues>({
     resolver: zodResolver(raceFormSchema),
-    defaultValues: { ...defaultValues },
+    defaultValues: {
+      ...defaultValues,
+      isForOther: false, // default not for other people
+      teamPassword: "",
+      accepted: false,
+    },
   });
 
   useEffect(() => {
@@ -161,35 +177,28 @@ function RegisterForm({ team }: { team?: Team }) {
   const onSubmit = async (values) => {
     console.log(`Register Form data`, { values });
     const form = { ...values };
-    if (!registerStore.teamValidated) {
-      registerStore.setForm(form);
-      if (
-        !(await registerStore.validateTeamPassword(
-          values.team,
-          values.teamPassword
-        ))
-      ) {
-        return;
-      }
+    registerStore.setForm(form);
+    if (
+      !(await registerStore.validateTeamPassword(
+        values.team,
+        values.teamPassword
+      ))
+    ) {
+      return;
+    } else {
+      registerStore.setState("FORM_SUBMITTED");
     }
-    registerStore.setState("FORM_SUBMITTED");
-  };
-
-  const onDelete = async () => {
-    await registerStore.deleteRaceEntry();
-    registerStore.setState("INIT");
-  };
-
-  const onCancel = () => {
-    registerStore.reset();
-    router.push("/account");
   };
 
   console.log(`form values`, {
     defaultValues,
     values: form.getValues(),
-    state: form.formState,
   });
+
+  if (!defaultValues) {
+    router.push("/register");
+  }
+
   return (
     <div className="w-full md:w-[1024px] container mx-auto">
       <DashboardHeader
@@ -207,7 +216,7 @@ function RegisterForm({ team }: { team?: Team }) {
           <form className="space-y-8">
             <Card>
               <CardHeader>
-                <CardTitle>Select your team and enter team password</CardTitle>
+                <CardTitle>Select team and enter team password</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-2">
@@ -216,7 +225,7 @@ function RegisterForm({ team }: { team?: Team }) {
                     name="team"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel>Your team</FormLabel>
+                        <FormLabel>Selected team</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -284,7 +293,8 @@ function RegisterForm({ team }: { team?: Team }) {
                           </PopoverContent>
                         </Popover>
                         <FormDescription>
-                          Select your team from the list
+                          Select team from the list then enter the password
+                          below
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -342,14 +352,37 @@ function RegisterForm({ team }: { team?: Team }) {
             <Card>
               <CardHeader>
                 <CardTitle>Participant Information</CardTitle>
-                <CardDescription>
-                  Enter the participant information below. If you register for
-                  other people or your kids, you must use their personal
-                  information
-                </CardDescription>
+                <div className="flex flex-col md:flex-row justify-between md:items-center">
+                  <CardDescription className="">
+                    Enter the participant information below. If you register for
+                    other people or your kids, you must use their personal
+                    information
+                  </CardDescription>
+
+                  <FormField
+                    control={form.control}
+                    name="isForOther"
+                    render={({ field }) => (
+                      <FormItem className="flex space-x-3 space-y-0 items-center px-2 ">
+                        <FormControl>
+                          <Checkbox
+                            className="items-center"
+                            checked={field.value}
+                            onCheckedChange={
+                              field.onChange as (checked) => void
+                            }
+                          />
+                        </FormControl>
+                        <div className="div">
+                          <FormLabel>Reigster for other people</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </CardHeader>
               <CardContent>
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
@@ -364,7 +397,7 @@ function RegisterForm({ team }: { team?: Team }) {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
                 <div className="grid md:grid-cols-2 gap-2 mt-2">
                   <FormField
                     control={form.control}
@@ -395,6 +428,38 @@ function RegisterForm({ team }: { team?: Team }) {
                         <FormDescription>
                           Participant last name as it appears on the government
                           issued ID
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Gender</FormLabel>
+                        <Select
+                          onValueChange={
+                            field.onChange as (value: string) => void
+                          }
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Gender" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {["Male", "Female"].map((r) => (
+                              <SelectItem key={r} value={r}>
+                                {r}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Gender of the participant
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -453,61 +518,28 @@ function RegisterForm({ team }: { team?: Team }) {
                       control={form.control}
                       name="size"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col mt-2">
+                        <FormItem className="flex flex-col mt-2 w-1/2">
                           <FormLabel>Size</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  className={cn(
-                                    "w-[200px] md:w-[300px] justify-between",
-                                    !field.value && "text-muted-foreground"
-                                  )}
-                                >
-                                  {field.value
-                                    ? registerStore.shirtSizeOptions.find(
-                                        (race) =>
-                                          race.value.toLowerCase() ===
-                                          field.value.toLowerCase()
-                                      )?.label
-                                    : "Size of shirt"}
-                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[200px] md:w-[300px] p-0">
-                              <Command>
-                                {/* <CommandInput placeholder="Search language..." /> */}
-                                {/* <CommandEmpty>No Race</CommandEmpty> */}
-                                <CommandGroup>
-                                  {registerStore.shirtSizeOptions.map(
-                                    (race) => (
-                                      <CommandItem
-                                        value={race.value}
-                                        key={race.value}
-                                        onSelect={(value) => {
-                                          form.setValue("size", value);
-                                        }}
-                                      >
-                                        <Check
-                                          className={cn(
-                                            "mr-2 h-4 w-4",
-                                            race.value.toLowerCase() ===
-                                              field.value
-                                              ? "opacity-100"
-                                              : "opacity-0"
-                                          )}
-                                        />
-                                        {race.label}
-                                      </CommandItem>
-                                    )
-                                  )}
-                                </CommandGroup>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
+                          <Select
+                            onValueChange={
+                              field.onChange as (value: string) => void
+                            }
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Gender" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {registerStore.shirtSizeOptions.map((r) => (
+                                <SelectItem key={r.label} value={r.value}>
+                                  {r.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
                           <FormDescription>
                             Size of shirt for the participant
                           </FormDescription>
@@ -642,12 +674,6 @@ function RegisterForm({ team }: { team?: Team }) {
               >
                 Cancel
               </Button>
-              {/* <Button
-                   variant="destructive"
-                   disabled={registerStore.isLoading ? true : false}
-                 >
-                   Delete
-                 </Button> */}
             </CardFooter>
           </form>
         </Form>

@@ -75,7 +75,7 @@ export const onCreateCheckout = functions
     let customer;
 
     // remove teamPassword from raceEntry data
-    const { teamPassword, ...raceData }: RaceEntry = data;
+    const { teamPassword, isForOther, ...raceData } = data;
 
     if (!raceData.team || !teamPassword) {
       return { error: `Invalid data!` };
@@ -171,11 +171,11 @@ export const onCreateCheckout = functions
               .collection("Users")
               .doc(uid)
               .collection("RaceEntry")
-              .add(Object.assign({}, raceEntry)),
+              .add(Object.assign({ isForOther }, raceEntry)),
       ];
 
       // if the current user and race entry is the same personal, we can update current login user's preference
-      if (raceEntry.email === user.email) {
+      if (!isForOther) {
         const {
           firstName,
           lastName,
