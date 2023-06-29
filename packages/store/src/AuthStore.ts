@@ -3,6 +3,8 @@ import {
   sendSignInLinkToEmail,
   signInWithEmailLink,
   isSignInWithEmailLink,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import {
   runInAction,
@@ -56,6 +58,7 @@ export class AuthStore extends BaseStore {
       currentUser: computed,
       signinWithEmailLink: flow,
       sendLoginEmailLink: flow,
+      signInWithGoogle: flow,
       logout: flow,
     });
 
@@ -218,6 +221,18 @@ export class AuthStore extends BaseStore {
         this.error = (error as Error).message;
       }
       this.isLoading = false;
+    }
+  }
+
+  *signInWithGoogle(): Generator<any, any, any> {
+    try {
+      console.log(`signing in with google`);
+      const provider = new GoogleAuthProvider();
+      yield signInWithPopup(this.auth!, provider);
+    } catch (error) {
+      console.log(`Failed to signin with google`, { error });
+      this.error = (error as Error).message;
+      // toast.error(`Failed to signin with google. Please try again later`);
     }
   }
 

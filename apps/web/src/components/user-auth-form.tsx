@@ -3,7 +3,6 @@
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -12,7 +11,6 @@ import { userAuthSchema } from "@/lib/validations/auth";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/use-toast";
 import { Icons } from "@/components/icons";
 import { useAuth } from "@/context/AuthContext";
 import { observer } from "mobx-react-lite";
@@ -36,6 +34,10 @@ export const UserAuthForm = observer(
     });
     const searchParams = useSearchParams();
 
+    async function onSignInWithGoogle() {
+      console.log(`Signing in with google`);
+      await store.authStore.signInWithGoogle();
+    }
     async function onSubmit(data: FormData) {
       if (typeof window === "object" && mode === "confirm") {
         const fullUrl = window.location.href;
@@ -86,7 +88,7 @@ export const UserAuthForm = observer(
             </button>
           </div>
         </form>
-        {/* <div className="relative">
+        <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
@@ -99,19 +101,16 @@ export const UserAuthForm = observer(
         <button
           type="button"
           className={cn(buttonVariants({ variant: "outline" }))}
-          onClick={() => {
-            setIsGitHubLoading(true);
-            signIn("github");
-          }}
-          disabled={isLoading || isGoogleLoading}
+          onClick={onSignInWithGoogle}
+          disabled={store.authStore.isLoading}
         >
-          {isGoogleLoading ? (
+          {store.authStore.isLoading ? (
             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
           ) : (
-            <Icons.google className="mr-2 h-4 w-4" />
+            <Icons.google className="mr-2 h-4 w-4 text-red-600" />
           )}{" "}
           Google
-        </button> */}
+        </button>
       </div>
     );
   }
