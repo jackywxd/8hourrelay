@@ -1,6 +1,6 @@
 "use client";
 import { observer } from "mobx-react-lite";
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/context/AuthContext";
@@ -16,6 +16,7 @@ import { Team } from "@8hourrelay/models";
 function RegisterPage({ team, action }: { team?: Team; action?: string }) {
   const router = useRouter();
   const { store } = useAuth();
+  registerStore.attachedUserStore(store.userStore);
 
   useEffect(() => {
     if (team) {
@@ -27,7 +28,6 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
     registerStore.setTeamValidated(false);
   }, [team]);
 
-  registerStore.attachedUserStore(store.userStore);
   console.log(`action ${action} team ${team} state is ${registerStore.state}`);
 
   if (registerStore.state === "SHOW") {
@@ -58,11 +58,6 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
   }
 
   return <RegisterForm team={team ? new Team(team) : undefined} />;
-  return (
-    <div className="w-full overflow-clip">
-      <DisplayRegistration />
-    </div>
-  );
 }
 
 export default observer(RegisterPage);
