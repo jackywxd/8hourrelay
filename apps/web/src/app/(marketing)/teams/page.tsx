@@ -46,11 +46,11 @@ export default async function TeamsPage() {
           </div>
         </div>
 
-        {/* <button className="btn btn-primary btn-large blue">
-					<Link className="link open-button" href="/teams/create">
-						Create team
-					</Link>
-				</button> */}
+        <button className="btn btn-primary btn-large blue">
+          <Link className="link open-button" href="/team/create">
+            Create team
+          </Link>
+        </button>
       </div>
       <Suspense fallback={Loader}>
         <DisplayTeams teams={teams} />
