@@ -25,14 +25,14 @@ const authOnCreate = functions.auth.user().onCreate(async (user, _context) => {
     // below are for VpnUsers data
     if (user.email) {
       logger.info(`New User`, user);
-      const u: Omit<User, "displayName"> = {
+      const u: Omit<User, "displayName" | "name"> = {
         uid: user.uid,
         email: user.email,
         emailVerified: user.emailVerified,
         createdAt: now,
         updatedAt: now,
         phone: user.phoneNumber ?? undefined,
-        photoUrl: user.photoURL ?? undefined,
+        image: user.photoURL ?? undefined,
         address: undefined,
         preferName: undefined,
         firstName: undefined,

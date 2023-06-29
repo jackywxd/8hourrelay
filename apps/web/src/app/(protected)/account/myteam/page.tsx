@@ -6,7 +6,10 @@ import { TeamCreateButton } from "@/components/team-create-button";
 const ProtectedPage = () => {
   return (
     <DashboardShell>
-      <DashboardHeader heading="My Team" text="Manage your race team.">
+      <DashboardHeader
+        heading="My Team"
+        text="Manage your race team. One account can only have one team."
+      >
         {/* <TeamCreateButton /> */}
       </DashboardHeader>
 

@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import RegisterPage from "../RegisterPage";
 import { getTeam } from "@/firebase/serverApi";
 
@@ -12,11 +13,7 @@ async function RegistrationPage({ params }) {
   }
 
   if (action === "join" && !team) {
-    return (
-      <div className="pt-10">
-        <div>Cannot join this team</div>
-      </div>
-    );
+    redirect("/account/myrace");
   }
   // user logged in and authStore has been fullfilled with user data
   return (

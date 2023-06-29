@@ -6,7 +6,10 @@ import RaceEntries from "./RaceEntries";
 const ProtectedPage = async () => {
   return (
     <DashboardShell>
-      <DashboardHeader heading="My Race Entry" text="Manage your race entries.">
+      <DashboardHeader
+        heading="My Race Entry"
+        text="Manage your race entries. You can register multiple race entries for different persons using different email and phone number."
+      >
         <RaceEntryCreateButton />
       </DashboardHeader>
       <div className="grid gap-10">

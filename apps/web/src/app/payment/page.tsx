@@ -1,6 +1,8 @@
 "use client";
+import { EmptyPlaceholder } from "@/components/empty-placeholder";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function PaymentPage() {
@@ -24,13 +26,17 @@ export default function PaymentPage() {
 
   if (canceled) {
     return (
-      <div className="flex flex-col h-full items-center mt-10">
-        <div>Payment canceled! Reidirect to home in 5 seconds</div>
-        <div>
-          <Link className="link link-primary" href="/">
-            Go to Home Now
+      <div className="flex flex-col w-full h-full items-center mt-10">
+        <EmptyPlaceholder>
+          <EmptyPlaceholder.Icon name="close" className="text-red-500" />
+          <EmptyPlaceholder.Title>
+            Payment canceled! Reidirect to home in 5 seconds
+          </EmptyPlaceholder.Title>
+          <EmptyPlaceholder.Description></EmptyPlaceholder.Description>
+          <Link href="/">
+            <Button className="w-full">Go Home Now</Button>
           </Link>
-        </div>
+        </EmptyPlaceholder>
       </div>
     );
   }
@@ -38,27 +44,27 @@ export default function PaymentPage() {
   if (sessionId && success) {
     return (
       <div className="flex flex-col w-full h-full items-center mt-10">
-        <div>Payment successfully! Thank you!</div>
-        <div className="flex w-2/3 justify-between pt-10">
-          <Link className="link link-primary" href="/register">
-            Manage my race
-          </Link>
-          <Link className="link link-primary" href="/teams">
-            Teams
-          </Link>
-        </div>
+        <EmptyPlaceholder>
+          <EmptyPlaceholder.Icon name="trophy" className="text-green-500" />
+          <EmptyPlaceholder.Title>
+            Payment successful! You have successfully registered for the relay
+            race!
+          </EmptyPlaceholder.Title>
+          <EmptyPlaceholder.Description>
+            Welcome to the game! Let's go!
+          </EmptyPlaceholder.Description>
+          <div className="grid grid-cols-2 gap-3">
+            <Link href="/account/myrace">
+              <Button className="w-full">My Race</Button>
+            </Link>
+            <Link href="/account">
+              <Button className="w-full">My Account</Button>
+            </Link>
+          </div>
+        </EmptyPlaceholder>
       </div>
     );
   }
 
-  return (
-    <div className="flex flex-col h-full items-center">
-      <div>Invalid Data</div>
-      <div>
-        <Link className="link link-primary" href="/">
-          Go to Home
-        </Link>
-      </div>
-    </div>
-  );
+  redirect("/");
 }

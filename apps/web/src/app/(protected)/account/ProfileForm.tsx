@@ -26,6 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Icons } from "@/components/icons";
+import { FormSkeleton } from "@/components/FormSkeleton";
 
 const profileFormSchema = z
   .object({
@@ -41,6 +42,13 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 function ProfileForm() {
   const { store } = useAuth();
+  const [initForm, setInitForm] = useState(store.userStore.isLoading);
+
+  useEffect(() => {
+    if (!store.userStore.isLoading) {
+      setInitForm(false);
+    }
+  }, [store.userStore.isLoading]);
 
   const defaultValues: Partial<ProfileFormValues> = {
     firstName: store.userStore.user?.firstName ?? "",
@@ -59,6 +67,14 @@ function ProfileForm() {
     console.log(`saveing new values`, values);
     store.userStore.onUpdateUser(values);
   };
+
+  if (initForm) {
+    return (
+      <div>
+        <FormSkeleton items={5} />
+      </div>
+    );
+  }
 
   return (
     <>

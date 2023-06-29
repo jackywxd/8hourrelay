@@ -7,22 +7,22 @@ import Loader from "@/components/Loader";
 
 import "./teams.css";
 import { EmptyPlaceholder } from "@/components/empty-placeholder";
-import { RaceEntryCreateButton } from "@/components/race-create-button";
 import { Button } from "@/components/ui/button";
+
 export default async function TeamsPage() {
   const data = await getTeams();
 
   if (!data) {
     return (
-      <div className="container mx-auto pt-10">
+      <div className="container mx-auto pt-20">
         <EmptyPlaceholder>
           <EmptyPlaceholder.Icon name="users" />
           <EmptyPlaceholder.Title>No Team avaiable yet</EmptyPlaceholder.Title>
           <EmptyPlaceholder.Description>
-            You don&apos;t have any race entry yet.
+            It is so quiet...
           </EmptyPlaceholder.Description>
           <Button>
-            <Link className="link open-button" href="/teams/create">
+            <Link className="link open-button" href="/team/create">
               Create Team Now
             </Link>
           </Button>
@@ -58,3 +58,6 @@ export default async function TeamsPage() {
     </div>
   );
 }
+
+// every 5 minutes will refersh the pages
+export const revalidate = 300;

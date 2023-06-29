@@ -9,7 +9,7 @@ function TeamItem({ team }: { team: Team | null }) {
   return (
     <div className={`grid-item`}>
       <div className="icon-container">
-        <Link href={`/team/${name}`}>
+        <Link href={`/team/show/${name}`}>
           <img
             src={
               race === "Adult Race"
@@ -28,7 +28,9 @@ function TeamItem({ team }: { team: Team | null }) {
           <button className="btn btn-round btn-small btn-light">Join</button>
         </Link>
       ) : (
-        <div className="text-center text-red-400">Closed</div>
+        <div className="w-20 p-1 text-center border rounded-full bg-red-500">
+          Closed
+        </div>
       )}
     </div>
   );

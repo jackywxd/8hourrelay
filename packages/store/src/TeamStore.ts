@@ -74,6 +74,7 @@ export class TeamStore extends BaseStore {
   }
 
   reset(): void {
+    console.log(`reset state`);
     super.reset();
     this.form = null;
     this.state = "INIT";

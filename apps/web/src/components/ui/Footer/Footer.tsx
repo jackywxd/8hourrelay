@@ -19,7 +19,7 @@ export default function Footer({
             <span className="font-semibold">Heidi Technology</span>
           </Link>
         </div>
-        <ModeToggle />
+        {/* <ModeToggle /> */}
       </div>
     </footer>
   );

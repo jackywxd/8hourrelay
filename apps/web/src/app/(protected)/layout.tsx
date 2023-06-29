@@ -4,9 +4,7 @@ import { MainNav } from "@/components/main-nav";
 import { UserAccountNav } from "@/components/user-account-nav";
 import Footer from "@/components/ui/Footer/Footer";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { DashboardNav } from "@/components/nav";
 import { AuthProvider } from "@/context/AuthContext";
-import { Separator } from "@/components/ui/separator";
 
 interface DashboardLayoutProps {
   children?: React.ReactNode;

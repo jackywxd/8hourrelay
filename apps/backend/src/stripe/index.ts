@@ -203,7 +203,9 @@ export const stripeWebhook = functions.https.onRequest(
               .where("sessionId", "==", sessionId)
               .where("isActive", "==", true)
               .get(),
-            stripe.paymentIntents.retrieve(session.payment_intent as string),
+            stripe.paymentIntents.retrieve(session.payment_intent as string, {
+              expand: ["total_details.breakdown.discounts.discount"],
+            }),
           ]);
 
           logger.debug(`payment intent`, { payment });

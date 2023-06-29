@@ -58,7 +58,7 @@ export class RaceEntry {
   accepted?: boolean; // accepted race waver
   smsOptIn?: boolean;
   emailConsent?: boolean;
-  promoCode?: string;
+  promoCode?: string; // assigned promo code
   constructor(r: RaceEntry) {
     Object.assign(this, r);
   }

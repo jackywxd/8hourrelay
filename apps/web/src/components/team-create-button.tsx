@@ -13,7 +13,7 @@ export const TeamCreateButton = observer(
   ({ className, variant, ...props }: RaceEntryCreateButtonProps) => {
     const { store } = useAuth();
     return (
-      <Link href="/register">
+      <Link href="/team/create">
         <button
           className={cn(buttonVariants({ variant }), className)}
           {...props}

@@ -3,13 +3,15 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { RaceEntry, Team } from "@8hourrelay/models";
-import LoginFirst from "@/components/LoginFirst";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { DashboardHeader } from "@/components/header";
+import { TeamJoinButton } from "@/components/team-join-button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { EmptyPlaceholder } from "@/components/empty-placeholder";
+import RaceEntryItem from "./RaceEntryItem";
 
-const TABLE_HEAD = ["Name", "Email", ""];
-
-// data passed from server side is plain object
 function TeamMemberList({
   teamData,
   membersData,
@@ -19,12 +21,18 @@ function TeamMemberList({
 }) {
   const { store } = useAuth();
   const router = useRouter();
-  const isMember =
-    store.userStore.user?.email &&
-    membersData &&
-    membersData.some((f) => f.email === store.userStore?.user?.email);
-
   const team = new Team(teamData);
+  const entries = store.userStore?.raceEntries.slice();
+  // whether is current login user is the member of the selected team
+  const isMember = () => {
+    if (entries?.length && team && team.teamMembers) {
+      team.teamMembers.forEach((m) => {
+        if (entries.some((f) => f.teamId === m)) return true;
+      });
+    }
+    return false;
+  };
+
   const members = membersData?.map((m) => new RaceEntry(m));
   useEffect(() => {
     if (!store.authStore.isAuthenticated) {
@@ -33,62 +41,62 @@ function TeamMemberList({
   }, [store.authStore.isAuthenticated]);
 
   return (
-    <div className="flex flex-col overflow-x-auto w-full items-center">
-      <div>
-        <h2>Team: {team.displayName}</h2>
-      </div>
-      {team.isOpen && (
-        <div className="self-end">
-          <Link
-            className="link link-primary"
-            href={`/register/join/${team.name}`}
-          >
-            <button className="btn btn-primary btn-large">JOIN</button>
-          </Link>
-        </div>
-      )}
+    <>
+      <DashboardHeader
+        heading={team.displayName}
+        text={`Race: ${team.raceDisplayName}`}
+      >
+        {/* <TeamJoinButton team={team} /> */}
+      </DashboardHeader>
 
-      <div className="divider" />
-      <div className="flex w-full justify-between m-8">
-        <h2>Race: {team.raceDisplayName}</h2>
-        {team.slogan && <h2>{team.slogan}</h2>}
-        <h2>Captain: {team.captainName}</h2>
-      </div>
-      {!membersData || membersData.length === 0 ? (
-        <p>Team {team.name} has no team members yet</p>
-      ) : (
-        isMember && (
-          <>
-            <div className="divider">Team Members</div>
-            <table className="table w-full">
-              {/* head */}
-              <thead>
-                <tr>
-                  {TABLE_HEAD.map((head) => (
-                    <th key={head}>{head}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {members.map(({ displayName: name, email }, index) => {
-                  return (
-                    <tr key={`${name}-${index}`}>
-                      <td>
-                        <div>
-                          <div className="font-bold">{name}</div>
-                        </div>
-                      </td>
-                      <td>{email}</td>
-                      <th className="flex gap-2"></th>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </>
-        )
-      )}
-    </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {team.isOpen
+              ? `${team.name} is open for registration`
+              : `${team.name} is closed for registration`}
+          </CardTitle>
+          <CardTitle>Captain: {team.captainName}</CardTitle>
+          <CardTitle>{team.slogan && `Slogan: ${team.slogan}`}</CardTitle>
+        </CardHeader>
+
+        {!membersData || membersData.length === 0 ? (
+          <EmptyPlaceholder>
+            {/* <EmptyPlaceholder.Icon name="close" className="text-red-500" /> */}
+            <EmptyPlaceholder.Title>
+              {decodeURI(team.displayName)} has no member yet
+            </EmptyPlaceholder.Title>
+            <EmptyPlaceholder.Description></EmptyPlaceholder.Description>
+            {team.isOpen && (
+              <Link href={`/register/join/${team.name}`}>
+                <Button variant="outline">Join Now</Button>
+              </Link>
+            )}
+          </EmptyPlaceholder>
+        ) : !isMember ? (
+          <EmptyPlaceholder>
+            {/* <EmptyPlaceholder.Icon name="close" className="text-red-500" /> */}
+            <EmptyPlaceholder.Title>
+              You are not member of team {decodeURI(team.displayName)}
+            </EmptyPlaceholder.Title>
+            <EmptyPlaceholder.Description>
+              Only team member can veiw the details of the team.
+            </EmptyPlaceholder.Description>
+            <Link href={`/register/join/${team.name}`}>
+              <Button variant="outline">Join Now</Button>
+            </Link>
+          </EmptyPlaceholder>
+        ) : (
+          <CardContent className="border-t pt-3">
+            <div className="flex flex-col gap-3">
+              {members.map((member) => {
+                return <RaceEntryItem member={member} key={member.id} />;
+              })}
+            </div>
+          </CardContent>
+        )}
+      </Card>
+    </>
   );
 }
 

@@ -61,14 +61,14 @@ export class RegistrationStore extends BaseStore {
   teamFilter: string | null = null;
   teamValidated = false;
   genderOptions = ["Male", "Femal"].map((m) => ({ value: m, label: m }));
-  shirtSizeOptions = ["XS", "Small", "Medium", "Large", "XLarge"].map((m) => ({
+  shirtSizeOptions = ["S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((m) => ({
     value: m,
     label: m,
   }));
   raceOptions = event2023.races.map((race) => ({
     value: race.name,
     label: race.description,
-    entryFee: race.entryFee,
+    entryFee: `$${race.entryFee} CAD`,
   }));
 
   constructor() {
@@ -159,7 +159,7 @@ export class RegistrationStore extends BaseStore {
       if (!re.test(form.birthYear)) {
         errors.birthYear = `Year of birth must be 4 digits`;
       } else if (!this.isAgeValid(form.birthYear))
-        errors[`birthYear`] = `Invalid age`;
+        errors[`birthYear`] = `Invalid age for the race selected`;
     }
     console.log(`formvalidate errors`, { errors });
     if (form.email && form.firstName && form.lastName) {
@@ -168,9 +168,9 @@ export class RegistrationStore extends BaseStore {
           `${form.email}${form.firstName}${form.lastName}`.toLowerCase()
         )
       ) {
-        errors.email = `Duplicated entry`;
-        errors.firstName = `Duplicated entry`;
-        errors.lastName = `Duplicated entry`;
+        errors.email = `Email already registered. `;
+        errors.firstName = `Duplicated entry. The name is already registered with the same email.`;
+        errors.lastName = `Duplicated entry. The name is already registered with the same email.`;
       }
     }
     if (form.phone && !validatePhoneNumber(form.phone)) {
