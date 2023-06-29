@@ -1,16 +1,11 @@
 "use client";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/context/AuthContext";
 import { registerStore } from "@8hourrelay/store";
-import DisplayRegistration from "./DisplayRegistration";
 import RegisterForm from "./RegisterForm";
-import ShowRaceEntry from "./ShowRaceEntry";
 import ConfirmForm from "./ConfirmPayment";
-import LoginFirst from "@/components/LoginFirst";
-import Loader from "@/components/Loader";
 import { Team } from "@8hourrelay/models";
 
 function RegisterPage({
@@ -22,7 +17,6 @@ function RegisterPage({
   action?: string;
   raceId?: string;
 }) {
-  const router = useRouter();
   const { store } = useAuth();
   registerStore.attachedUserStore(store.userStore);
 
