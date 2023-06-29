@@ -15,13 +15,15 @@ export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
   return (
-    <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
-      <aside className="hidden w-[200px] flex-col md:flex">
-        <DashboardNav items={dashboardConfig.sidebarNav} />
-      </aside>
-      <main className="flex w-full flex-1 flex-col overflow-hidden md:w-[800px]">
-        {children}
-      </main>
+    <div className="flex flex-col w-full md:w-[1024px] container mx-auto">
+      <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
+        <aside className="hidden w-[200px] flex-col md:flex">
+          <DashboardNav items={dashboardConfig.sidebarNav} />
+        </aside>
+        <main className="flex w-full flex-1 flex-col overflow-hidden md:w-[800px]">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

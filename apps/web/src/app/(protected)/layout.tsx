@@ -20,8 +20,8 @@ export default async function DashboardLayout({
 }: DashboardLayoutProps) {
   return (
     <AuthProvider>
-      <div className="flex min-h-screen flex-col space-y-6">
-        <header className="sticky top-0 z-40 border-b bg-background">
+      <div className="flex min-h-screen flex-col space-y-6 w-full">
+        <header className="sticky top-0 z-40 border-b bg-background flex w-full justify-center">
           <div className="container flex h-16 items-center justify-between py-4">
             <MainNav items={dashboardConfig.mainNav} />
             <UserAccountNav />

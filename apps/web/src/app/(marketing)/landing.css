@@ -65,9 +65,9 @@
     width: min(1920px, 100%);
   }
 
-  .content-container.small {
+  /* .content-container.small {
     width: min(900px, 100%);
-  }
+  } */
 }
 
 @layer utitilies {
@@ -495,7 +495,7 @@ nav li {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  height: clamp(48em, 42vmin + 105px, 960px);
+  height: clamp(50em, 42vmin + 105px, 960px);
   overflow: hidden;
 }
 
@@ -525,10 +525,10 @@ nav li {
 .countdown-container {
   width: 100%;
   display: grid;
-  gap: 1vw;
+  gap: 1px;
   padding-top: 0;
   justify-content: center;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
 }
 
 .countdown-item {
@@ -553,7 +553,7 @@ nav li {
   text-transform: uppercase;
   color: var(--clr-unit);
   font-weight: 500;
-  margin-top: 1.5rem;
+  /* margin-top: 0.5rem; */
 }
 
 .hero-section > *:not(.hero-text) {
@@ -913,11 +913,11 @@ section.keep-in-touch .button-container {
 
   .countdown-container {
     grid-template-columns: repeat(2, 1fr);
-    gap: 5vw;
+    /* gap: 5vw; */
   }
 
   .hero-text {
-    margin-top: 7vmax;
+    /* margin-top: 1vmax; */
   }
 }
 
