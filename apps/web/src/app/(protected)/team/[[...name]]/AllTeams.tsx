@@ -20,7 +20,7 @@ export default async function AllTeamsPage() {
           <EmptyPlaceholder.Title>No Team avaiable yet</EmptyPlaceholder.Title>
           <EmptyPlaceholder.Description></EmptyPlaceholder.Description>
           <Button>
-            <Link className="link open-button" href="/teams/create">
+            <Link className="link open-button" href="/team/create">
               Create Team Now
             </Link>
           </Button>

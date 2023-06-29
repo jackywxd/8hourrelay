@@ -13,7 +13,15 @@ import LoginFirst from "@/components/LoginFirst";
 import Loader from "@/components/Loader";
 import { Team } from "@8hourrelay/models";
 
-function RegisterPage({ team, action }: { team?: Team; action?: string }) {
+function RegisterPage({
+  team,
+  action,
+  raceId,
+}: {
+  team?: Team;
+  action?: string;
+  raceId?: string;
+}) {
   const router = useRouter();
   const { store } = useAuth();
   registerStore.attachedUserStore(store.userStore);
@@ -30,34 +38,20 @@ function RegisterPage({ team, action }: { team?: Team; action?: string }) {
 
   console.log(`action ${action} team ${team} state is ${registerStore.state}`);
 
-  if (registerStore.state === "SHOW") {
-    return (
-      <>
-        <ShowRaceEntry raceEntry={registerStore.raceEntry!} />
-        <button
-          className="btn btn-md btn-primary mt-10"
-          onClick={() => {
-            registerStore.setState("INIT");
-            router.push("/register");
-          }}
-        >
-          Return
-        </button>
-      </>
-    );
-  }
   if (registerStore.state === "FORM_SUBMITTED") {
     return <ConfirmForm />;
-  }
-  if (
+  } else if (
     action === "create" ||
     action === "join" ||
     registerStore.state === "RE_EDIT"
   ) {
     return <RegisterForm team={team ? new Team(team) : undefined} />;
+  } else {
+    // this is for edit
+    return (
+      <RegisterForm team={team ? new Team(team) : undefined} raceId={raceId} />
+    );
   }
-
-  return <RegisterForm team={team ? new Team(team) : undefined} />;
 }
 
 export default observer(RegisterPage);

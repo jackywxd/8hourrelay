@@ -1,7 +1,7 @@
 import { makeObservable, observable, action, computed, flow } from "mobx";
 import { BaseStore } from "./UIBaseStore";
 import { UserStore } from "./UserStore";
-import { event2023, Race, RaceEntry, Team } from "@8hourrelay/models";
+import { event2023, RaceEntry, Team } from "@8hourrelay/models";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDoc, doc, deleteDoc, getFirestore } from "firebase/firestore";
 import { toast } from "react-toastify";
@@ -29,7 +29,6 @@ import { getApp } from "firebase/app";
 
 export type RegistrationState =
   | "INIT"
-  | "SHOW" // show a form
   | "RE_EDIT" // editing form
   | "EDIT" // editing form
   | "CONFIRM" // confirm form
@@ -88,6 +87,7 @@ export class RegistrationStore extends BaseStore {
       setTeamValidated: action,
       getRaceByTeam: action,
       initRaceEntryForm: action,
+      initWithRaceid: action,
       isAgeValid: action,
       teams: computed,
       raceEntry: computed,
@@ -115,7 +115,7 @@ export class RegistrationStore extends BaseStore {
   }
 
   getRaceByTeam(team: string) {
-    if (this.allTeams) {
+    if (this.allTeams && team) {
       const teams = this.allTeams.filter(
         (f) => f.name.toLowerCase() === team.toLowerCase()
       );
@@ -257,6 +257,20 @@ export class RegistrationStore extends BaseStore {
     this.isLoading = loading;
   }
 
+  initWithRaceid(raceId: string) {
+    let race;
+    this.userStore?.raceEntries.forEach((r, i) => {
+      console.log(`init with race Id ${raceId}`);
+      if (r.id === raceId && !r.isPaid) {
+        this.setEditIndex(i);
+        this.setTeamFilter(r.race!);
+        race = r;
+        return r;
+      }
+    });
+    if (race) return race;
+    return null;
+  }
   // team name could be passed
   initRaceEntryForm(team?: Team) {
     if (this.state === "RE_EDIT" && this.form) return this.form;
@@ -271,7 +285,7 @@ export class RegistrationStore extends BaseStore {
       id: raceEntry?.id ?? "",
       year: raceEntry?.year ?? new Date().getFullYear().toString(),
       uid: this.userStore?.uid,
-      email: raceEntry?.email ?? "",
+      email: raceEntry?.email ?? user?.email ?? "",
       firstName: raceEntry?.firstName ?? "",
       lastName: raceEntry?.lastName ?? "",
       preferName: raceEntry?.preferName ?? "",
@@ -426,7 +440,7 @@ export class RegistrationStore extends BaseStore {
       if (result) {
         this.setEditIndex(null);
         toast.update(id, {
-          render: `Race entry submitted successfully`,
+          render: `Race entry submitted successfully. Redirecting to payment page...`,
           type: "success",
           isLoading: false,
           autoClose: 5000,

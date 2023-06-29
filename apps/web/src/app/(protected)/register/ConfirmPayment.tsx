@@ -1,7 +1,6 @@
 "use client";
 import { observer } from "mobx-react-lite";
 import { loadStripe } from "@stripe/stripe-js";
-import { useState } from "react";
 import ShowRaceEntry from "./ShowRaceEntry";
 import { registerStore } from "@8hourrelay/store";
 import { RaceEntry } from "@8hourrelay/models";
@@ -49,16 +48,18 @@ function ConfirmForm() {
     defaultValues: { accepted: false },
   });
 
-  const [confirm, setConfirm] = useState(false);
-
   const onSubmit = async () => {
-    const [stripe, sessionId] = await Promise.all([
-      stripePromise,
-      registerStore.submitRaceForm(),
-    ]);
-    // redirect user to Stripe Checkout for payment
-    if (stripe && sessionId) {
-      stripe.redirectToCheckout({ sessionId: (sessionId as any).id });
+    try {
+      const [stripe, sessionId] = await Promise.all([
+        stripePromise,
+        registerStore.submitRaceForm(),
+      ]);
+      // redirect user to Stripe Checkout for payment
+      if (stripe && sessionId) {
+        stripe.redirectToCheckout({ sessionId: (sessionId as any).id });
+      }
+    } catch (error) {
+      console.log(`error`, error);
     }
   };
 
@@ -68,7 +69,7 @@ function ConfirmForm() {
     <div className="w-full md:w-[800px] container mx-auto">
       <DashboardHeader
         heading="Confirm registration"
-        text=" Please review your registration information carefully and accept race polices. Race entry cannot be change after submitted"
+        text=" Please review your registration information carefully and accept race polices. Race entry cannot be changed after submitted"
       ></DashboardHeader>
 
       <Form {...form}>
@@ -137,12 +138,6 @@ function ConfirmForm() {
             >
               Edit Registration
             </Button>
-            {/* <Button
-              variant="destructive"
-              disabled={registerStore.isLoading ? true : false}
-            >
-              Delete
-            </Button> */}
           </CardFooter>
         </form>
       </Form>

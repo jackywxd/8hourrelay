@@ -22,7 +22,7 @@ function MyTeam() {
           <EmptyPlaceholder.Description>
             Create your team and invite your friends to join.
           </EmptyPlaceholder.Description>
-          <TeamCreateButton variant="outline" />
+          <TeamCreateButton variant="default" />
         </EmptyPlaceholder>
       )}
     </>

@@ -29,6 +29,7 @@ import {
   Save,
   Users,
   Trophy,
+  Edit,
   type Icon as LucideIcon,
 } from "lucide-react";
 
@@ -48,6 +49,7 @@ export const Icons = {
       <circle cx="12" cy="12" r="10"></circle>
     </svg>
   ),
+  edit: Edit,
   users: Users,
   trophy: Trophy,
   save: Save,
@@ -56,7 +58,7 @@ export const Icons = {
   spinner: Loader2,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
-  chevronDown: ChevronDown,
+  chevronDown: ChevronRight,
   trash: Trash,
   post: FileText,
   page: File,
