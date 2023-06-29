@@ -187,6 +187,15 @@ export const onCreateCheckout = functions
           birthYear,
           wechatId,
         } = raceEntry;
+
+        // Update Stripe customer
+        const userObject: any = {};
+        if (firstName && lastName) userObject.name = `${firstName} ${lastName}`;
+        if (phone) userObject.phone = phone;
+        if (Object.keys(userObject).length > 0) {
+          await stripe.customers.update(customer!, userObject);
+        }
+
         updatePromises.push(
           db.collection("Users").doc(uid).set(
             {
