@@ -68,6 +68,7 @@ function ProfileForm() {
     store.userStore.onUpdateUser(values);
   };
 
+  console.log(`profile form defaultValue`, defaultValues);
   return (
     <>
       <Card>

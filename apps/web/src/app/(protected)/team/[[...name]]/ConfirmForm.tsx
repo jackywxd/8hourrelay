@@ -53,7 +53,7 @@ function ConfirmForm() {
     <>
       <DashboardHeader
         heading="Review"
-        text=" Please review your team information carefully. Team data cannot be change after submitted"
+        text="Please review your team information carefully. Team data cannot be changed after submitted"
       ></DashboardHeader>
 
       <Form {...form}>

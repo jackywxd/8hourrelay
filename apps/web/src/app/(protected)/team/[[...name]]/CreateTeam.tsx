@@ -77,7 +77,7 @@ function CreateTeam() {
           <EmptyPlaceholder.Title>Your team created!</EmptyPlaceholder.Title>
           <EmptyPlaceholder.Description>
             New team request was submitted and pending for approval. We will
-            notify you via email once it is approved. You will find your team's
+            notify you via email once it is approved. You can find your team's
             link in the email and share with your team members.
           </EmptyPlaceholder.Description>
           <Button

@@ -174,6 +174,22 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
     }
   }, [form.watch("team")]);
 
+  // if this form is for other people, we need to reset the personal info
+  useEffect(() => {
+    console.log(`register for other people!!`);
+    // only reset values when it is not edited by user
+    if (form.getValues().isForOther) {
+      const { setValue, getFieldState } = form;
+      !getFieldState("firstName").isDirty && setValue("firstName", "");
+      !getFieldState("lastName").isDirty && setValue("lastName", "");
+      !getFieldState("preferName").isDirty && setValue("preferName", "");
+      !getFieldState("phone").isDirty && setValue("phone", "");
+      !getFieldState("birthYear").isDirty && setValue("birthYear", "");
+      !getFieldState("wechatId").isDirty && setValue("wechatId", "");
+      !getFieldState("personalBest").isDirty && setValue("personalBest", "");
+    }
+  }, [form.watch("isForOther")]);
+
   const onSubmit = async (values) => {
     console.log(`Register Form data`, { values });
     const form = { ...values };
@@ -513,7 +529,7 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
                       </FormItem>
                     )}
                   />
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between pr-2">
                     <FormField
                       control={form.control}
                       name="size"
