@@ -23,6 +23,10 @@ import {
   SunMedium,
   Trash,
   Twitter,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Mail,
   User,
   X,
   Heart,
@@ -49,6 +53,10 @@ export const Icons = {
       <circle cx="12" cy="12" r="10"></circle>
     </svg>
   ),
+  facebook: Facebook,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  mail: Mail,
   edit: Edit,
   users: Users,
   trophy: Trophy,

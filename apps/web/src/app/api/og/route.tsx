@@ -20,10 +20,13 @@ export async function GET(req: Request) {
     let mode = "dark",
       heading = event2023.description,
       location = event2023.location,
+      slogan = "",
       time = event2023.time,
       type = "website";
+
     const url = new URL(req.url);
     const values = Object.fromEntries(url.searchParams);
+    console.log(`values are ${JSON.stringify(values)}`);
     if (values.mode) mode = values.mode;
     if (values.heading)
       heading =
@@ -31,8 +34,9 @@ export async function GET(req: Request) {
           ? `${values.heading.substring(0, 140)}...`
           : values.heading;
     if (values.type) type = values.type;
+    if (values.slogan) slogan = values.slogan;
 
-    const paint = mode === "dark" ? "#fff" : "#000";
+    const paint = mode === "dark" ? "#fff" : "#00356a";
 
     const fontSize = heading.length > 100 ? "70px" : "100px";
 
@@ -44,17 +48,19 @@ export async function GET(req: Request) {
             color: paint,
             background:
               mode === "dark"
-                ? "linear-gradient(90deg, #000 0%, #111 100%)"
+                ? "linear-gradient(60deg, #00356a 0%, #111356 100%)"
                 : "white",
           }}
         >
-          <Logo fill="white" />
+          <div tw="flex w-full flex-row-reverse">
+            <Logo fill="white" />
+          </div>
           <div tw="flex flex-col flex-1 py-10">
             <div
               tw="flex text-xl uppercase font-bold tracking-tight"
               style={{ fontFamily: "Inter", fontWeight: "normal" }}
             >
-              {type}
+              {slogan ? slogan : type}
             </div>
             <div
               tw="flex leading-[1.1] text-[80px] font-bold"
@@ -68,7 +74,7 @@ export async function GET(req: Request) {
               {heading}
             </div>
           </div>
-          <div>{time}</div>
+          <div></div>
           <div tw="flex items-center w-full justify-between">
             <div
               tw="flex text-xl"
@@ -80,7 +86,7 @@ export async function GET(req: Request) {
               tw="flex items-center text-xl"
               style={{ fontFamily: "Inter", fontWeight: "normal" }}
             >
-              <div tw="flex ml-2">8 Hour Relay</div>
+              <div tw="flex ml-2">{time}</div>
             </div>
           </div>
         </div>

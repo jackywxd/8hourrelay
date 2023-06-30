@@ -9,7 +9,7 @@ function TeamItem({ team }: { team: Team | null }) {
   return (
     <div className={`grid-item`}>
       <div className="icon-container">
-        <Link href={`/team/show/${name}`}>
+        <Link href={`/teams/${name}`}>
           <img
             src={
               race === "Adult Race"
@@ -21,7 +21,9 @@ function TeamItem({ team }: { team: Team | null }) {
       </div>
       <div className="team-text-container">
         <div className="team-name">{name}</div>
-        <div className="team-description">{slogan ? slogan : ""}</div>
+        <div className="team-description">
+          {slogan ? slogan.toUpperCase() : ""}
+        </div>
       </div>
       {isOpen ? (
         <Link href={`/register/join/${name}`}>

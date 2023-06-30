@@ -20,12 +20,13 @@ export const onTeamUpdate = functions.firestore
       if (after.state === "APPROVED" && after.state !== before.state) {
         // we need to send email to user to notify
 
-        const teamLink = encodeURI(`${HOST_NAME}/team/show/${after.name}`);
+        const teamLink = encodeURI(`${HOST_NAME}/teams/${after.name}`);
         const content = `Congratulations! Your team ${after.name} has been approved. Now you can share your team by this link: ${teamLink} \n\n 8HourRelay Team`;
 
         // revalidate page to show the new team
         await Promise.all([
           revalidate("/teams"),
+          revalidate(encodeURI(`/teams/${after.name}`)),
           revalidate(encodeURI(`/team/show/${after.name}`)),
         ]);
         const email: Mail.Options = {
@@ -41,6 +42,7 @@ export const onTeamUpdate = functions.firestore
         // revalidate page to show the new team
         await Promise.all([
           revalidate("/teams"),
+          revalidate(encodeURI(`/teams/${after.name}`)),
           revalidate(encodeURI(`/team/show/${after.name}`)),
         ]);
       }
@@ -59,6 +61,7 @@ export const onTeamDelete = functions.firestore
       // revalidate page to show the new team
       await Promise.all([
         revalidate("/teams"),
+        revalidate(encodeURI(`/teams/${deletedTeam.name}`)),
         revalidate(encodeURI(`/team/show/${deletedTeam.name}`)),
       ]);
     } catch (err) {

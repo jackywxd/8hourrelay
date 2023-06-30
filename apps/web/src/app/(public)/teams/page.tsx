@@ -8,6 +8,7 @@ import Loader from "@/components/Loader";
 import "./teams.css";
 import { EmptyPlaceholder } from "@/components/empty-placeholder";
 import { Button } from "@/components/ui/button";
+import Navbar from "@/app/(marketing)/Navbar";
 
 export default async function TeamsPage() {
   const data = await getTeams();
@@ -35,27 +36,32 @@ export default async function TeamsPage() {
   console.log(`all teams data`, { teams });
 
   return (
-    <div className="container mx-auto p-3">
-      <div className="page-header">
-        <div className="page-title-group">
-          <div className="page-title">Find your team to join</div>
-          <div className="page-description">
-            Must sign in to join a team. All team members must have a valid
-            entry and complete the registration process before the entry
-            deadline.
-          </div>
-        </div>
-
-        <button className="btn btn-primary btn-large blue">
-          <Link className="link open-button" href="/team/create">
-            Create team
-          </Link>
-        </button>
+    <>
+      <div className="w-full">
+        <Navbar changeBg />
       </div>
-      <Suspense fallback={Loader}>
-        <DisplayTeams teams={teams} />
-      </Suspense>
-    </div>
+      <div className="container mx-auto p-3">
+        <div className="page-header">
+          <div className="page-title-group">
+            <div className="page-title">Find your team to join</div>
+            <div className="page-description">
+              Must sign in to join a team. All team members must have a valid
+              entry and complete the registration process before the entry
+              deadline.
+            </div>
+          </div>
+
+          <button className="btn btn-primary btn-large blue">
+            <Link className="link open-button" href="/team/create">
+              Create team
+            </Link>
+          </button>
+        </div>
+        <Suspense fallback={Loader}>
+          <DisplayTeams teams={teams} />
+        </Suspense>
+      </div>
+    </>
   );
 }
 

@@ -23,6 +23,10 @@ export class Team {
     Object.assign(this, t);
   }
 
+  get teamUrl() {
+    return encodeURI(`/teams/${this.name}`);
+  }
+
   get raceDisplayName() {
     const races = event2023.races.filter((r) => r.name === this.race);
     if (races.length === 1) return races[0].description;
