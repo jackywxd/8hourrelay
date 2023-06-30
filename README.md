@@ -1,16 +1,19 @@
-# Turborepo react-native starter
+# 8 Hour Relay Offical Website Repo
 
-This is an official starter Turborepo.
+This is an .
 
-## Using this example
+## Folder structures
 
-Run the following command:
+### apps folder: apps for the 8 hour relay systems, including backend and front end
 
-```sh
-npx create-turbo@latest -e with-react-native-web
-```
+-- backend: Firebase backend functions
+-- functions: Firebase functions webpack out folder
+-- native: Expo mobile App (not being used)
+-- web: nextjs webiste
 
-## What's inside?
+### packages folder: shared libs for both front end and backend
+
+## How to Deploy
 
 This Turborepo includes the following packages/apps:
 

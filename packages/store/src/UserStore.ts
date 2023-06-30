@@ -154,6 +154,7 @@ export class UserStore extends BaseStore {
   setUid(uid: string | null) {
     if (this.uid === uid) return;
     console.log(`setting uid to ${uid} ${this.uid}`);
+    this.root.authStore.setState("DONE");
     this.uid = uid;
   }
 

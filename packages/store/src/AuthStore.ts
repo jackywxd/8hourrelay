@@ -3,6 +3,8 @@ import {
   sendSignInLinkToEmail,
   signInWithEmailLink,
   isSignInWithEmailLink,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import {
   runInAction,
@@ -33,7 +35,6 @@ export type RegisterState =
 
 export class AuthStore extends BaseStore {
   root: RootStore;
-  isAuthenticated: boolean = false;
   emailLocalKey = `8hourrelayEmailKey`;
   email?: string;
   state: RegisterState = "INIT";
@@ -47,25 +48,42 @@ export class AuthStore extends BaseStore {
     this.state = "INIT";
     this.onInit();
     makeObservable(this, {
-      isAuthenticated: observable,
       email: observable,
       state: observable,
       setEmail: action,
       setState: action,
       onInit: action,
-      setAuthenticated: action,
       dispose: action,
+      isAuthenticated: computed,
       currentUser: computed,
       signinWithEmailLink: flow,
       sendLoginEmailLink: flow,
+      signInWithGoogle: flow,
       logout: flow,
     });
+
+    this.disposer = reaction(
+      () => this.state,
+      (newState) => {
+        // if (!newUid) {
+        //   this.dispose();
+        // }
+        if (newState === "VERFIED") {
+          this.setState("DONE");
+        }
+      }
+    );
   }
 
-  setAuthenticated = (status: boolean) => {
-    this.isAuthenticated = status;
-    if (status) this.state = "DONE";
-  };
+  get isAuthenticated() {
+    console.log(`isAuthenticated ${this.root.userStore.uid} ${this.state}`);
+    if (
+      this.root.userStore.uid &&
+      (this.state === "DONE" || this.state === "VERFIED")
+    )
+      return true;
+    return false;
+  }
 
   setEmail = (email: string) => {
     this.email = email;
@@ -103,7 +121,6 @@ export class AuthStore extends BaseStore {
   dispose() {
     super.reset();
     this.setState("INIT");
-    this.setAuthenticated(false);
     this.email = undefined;
     if (this.disposer) {
       this.disposer();
@@ -204,6 +221,18 @@ export class AuthStore extends BaseStore {
         this.error = (error as Error).message;
       }
       this.isLoading = false;
+    }
+  }
+
+  *signInWithGoogle(): Generator<any, any, any> {
+    try {
+      console.log(`signing in with google`);
+      const provider = new GoogleAuthProvider();
+      yield signInWithPopup(this.auth!, provider);
+    } catch (error) {
+      console.log(`Failed to signin with google`, { error });
+      this.error = (error as Error).message;
+      // toast.error(`Failed to signin with google. Please try again later`);
     }
   }
 

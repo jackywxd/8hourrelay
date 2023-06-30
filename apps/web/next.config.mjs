@@ -4,15 +4,45 @@ import rehypePrism from "@mapbox/rehype-prism";
 import path from "path";
 import { fileURLToPath } from "url";
 
+const ContentSecurityPolicy = `
+  default-src 'self';
+  script-src 'self';
+  child-src 8hourrelay.com;
+  style-src 'self' 8hourrelay.com;
+  font-src 'self';
+`;
+
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        // matching all API routes
+        source: "/api/:path*",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
+      // {
+      //   // matching all pages
+      //   source: "/:path*",
+      //   headers: [
+      //     {
+      //       key: "Content-Security-Policy",
+      //       value: ContentSecurityPolicy.replace(/\s{2,}/g, " ").trim(),
+      //     },
+      //   ],
+      // },
+    ];
+  },
   trailingSlash: true,
   pageExtensions: ["ts", "tsx", "js", "jsx", "mdx"],
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
+  },
+  experimental: {
+    serverActions: true,
   },
   // i18n: {
   //   locales: ["en", "zh", "zh-TW"],
@@ -20,7 +50,6 @@ const nextConfig = {
   // },
   transpilePackages: [
     "ui",
-    "@8hourrelay/login",
     "@8hourrelay/store",
     "@material-tailwind",
     "react-native-async-storage",

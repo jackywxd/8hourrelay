@@ -58,13 +58,21 @@ export class RaceEntry {
   accepted?: boolean; // accepted race waver
   smsOptIn?: boolean;
   emailConsent?: boolean;
-  promoCode?: string;
+  promoCode?: string; // assigned promo code
   constructor(r: RaceEntry) {
     Object.assign(this, r);
   }
+
+  get raceDisplayName() {
+    const races = event2023.races.filter((r) => r.name === this.race);
+    if (races.length === 1) return races[0].description;
+    return "";
+  }
+
   get displayName() {
     return `${this.firstName} ${this.lastName}`;
   }
+
   get entryFee() {
     const races = event2023.races.filter((r) => r.name === this.race);
     if (races.length === 1) return races[0].entryFee;

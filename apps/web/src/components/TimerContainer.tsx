@@ -70,22 +70,11 @@ export const TimerContainer = ({
   }
 
   return (
-    <div className=" mt-2 md:mt-20  rounded-xl">
-      <div className="grid grid-cols-2 gap-4 py-6 px-10 md:flex md:items-center md:justify-between md:mt-2  rounded-xl md:px-6 md:py-8 ">
-        <NumberBox num={daysStr} unit="Days" flip={daysFlip} />
-        <span className=" hidden text-5xl -mt-8 md:inline-block md:text-7xl font-normal text-gray-50 ">
-          :
-        </span>
-        <NumberBox num={hoursStr} unit="Hours" flip={hoursFlip} />
-        <span className="hidden text-5xl -mt-8 md:inline-block md:text-7xl font-normal text-gray-50 ">
-          :
-        </span>
-        <NumberBox num={minutesStr} unit="Minutes" flip={minutesFlip} />
-        <span className="hidden text-5xl -mt-8 md:inline-block md:text-7xl font-normal text-gray-50 ">
-          :
-        </span>
-        <NumberBox num={secondsStr} unit="Seconds" flip={secondsFlip} />
-      </div>
-    </div>
+    <section className="countdown-container">
+      <NumberBox num={daysStr} unit="Days" flip={daysFlip} />
+      <NumberBox num={hoursStr} unit="Hours" flip={hoursFlip} />
+      <NumberBox num={minutesStr} unit="Minutes" flip={minutesFlip} />
+      <NumberBox num={secondsStr} unit="Seconds" flip={secondsFlip} />
+    </section>
   );
 };

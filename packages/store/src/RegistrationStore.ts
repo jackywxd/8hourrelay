@@ -29,7 +29,6 @@ import { getApp } from "firebase/app";
 
 export type RegistrationState =
   | "INIT"
-  | "SHOW" // show a form
   | "RE_EDIT" // editing form
   | "EDIT" // editing form
   | "CONFIRM" // confirm form
@@ -61,15 +60,16 @@ export class RegistrationStore extends BaseStore {
   teamFilter: string | null = null;
   teamValidated = false;
   genderOptions = ["Male", "Femal"].map((m) => ({ value: m, label: m }));
-  shirtSizeOptions = ["XS", "Small", "Medium", "Large", "XLarge"].map((m) => ({
+  shirtSizeOptions = ["S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((m) => ({
     value: m,
     label: m,
   }));
   raceOptions = event2023.races.map((race) => ({
     value: race.name,
     label: race.description,
-    entryFee: race.entryFee,
+    entryFee: `$${race.entryFee} CAD`,
   }));
+
   constructor() {
     super();
     makeObservable(this, {
@@ -87,6 +87,7 @@ export class RegistrationStore extends BaseStore {
       setTeamValidated: action,
       getRaceByTeam: action,
       initRaceEntryForm: action,
+      initWithRaceid: action,
       isAgeValid: action,
       teams: computed,
       raceEntry: computed,
@@ -102,7 +103,9 @@ export class RegistrationStore extends BaseStore {
   get teams() {
     let teams: Team[] = [];
     if (this.teamFilter && this.allTeams && this.allTeams.length > 0) {
-      teams = this.allTeams.filter((f) => f.race === this.teamFilter);
+      teams = this.allTeams.filter(
+        (f) => f.race.toLowerCase() === this.teamFilter?.toLowerCase()
+      );
     }
     if (!this.teamFilter && this.allTeams) {
       teams = this.allTeams;
@@ -112,27 +115,40 @@ export class RegistrationStore extends BaseStore {
   }
 
   getRaceByTeam(team: string) {
-    if (this.allTeams) {
+    if (this.allTeams && team) {
       const teams = this.allTeams.filter(
         (f) => f.name.toLowerCase() === team.toLowerCase()
       );
-      const race = teams[0].race;
+      const race = teams[0]?.race;
       console.log(`getRaceByTeam`, race);
       return race;
     }
     return null;
   }
 
+  getTeamDisplayName(team: string) {
+    if (this.allTeams) {
+      const teams = this.allTeams.filter(
+        (f) => f.name.toLowerCase() === team.toLowerCase()
+      );
+      const race = teams[0]?.displayName;
+      console.log(`getRaceByTeam`, race);
+      return race;
+    }
+    return "";
+  }
+
   get existingEntries() {
-    if (this.userStore?.raceEntries) {
+    if (this.userStore && this.userStore.raceEntries) {
       return this.userStore.raceEntries
+        .filter((r) => r)
         .filter((r) => r.isPaid)
         .map((r) => `${r.email}${r.firstName}${r.lastName}`.toLowerCase());
     }
     return [];
   }
 
-  validateForm(form: RaceEntry) {
+  validateForm(form: Partial<RaceEntry>) {
     let errors: any = {};
     const age = form.birthYear;
     console.log(`validatForm`, form, this.userStore?.raceEntries.slice());
@@ -143,7 +159,7 @@ export class RegistrationStore extends BaseStore {
       if (!re.test(form.birthYear)) {
         errors.birthYear = `Year of birth must be 4 digits`;
       } else if (!this.isAgeValid(form.birthYear))
-        errors[`birthYear`] = `Invalid age`;
+        errors[`birthYear`] = `Invalid age for the race selected`;
     }
     console.log(`formvalidate errors`, { errors });
     if (form.email && form.firstName && form.lastName) {
@@ -152,9 +168,9 @@ export class RegistrationStore extends BaseStore {
           `${form.email}${form.firstName}${form.lastName}`.toLowerCase()
         )
       ) {
-        errors.email = `Duplicated entry`;
-        errors.firstName = `Duplicated entry`;
-        errors.lastName = `Duplicated entry`;
+        errors.email = `Email already registered. `;
+        errors.firstName = `Duplicated entry. The name is already registered with the same email.`;
+        errors.lastName = `Duplicated entry. The name is already registered with the same email.`;
       }
     }
     if (form.phone && !validatePhoneNumber(form.phone)) {
@@ -233,6 +249,7 @@ export class RegistrationStore extends BaseStore {
   }
 
   setState(state: RegistrationState) {
+    console.log(`setting state to ${state}`);
     this.state = state;
   }
 
@@ -240,11 +257,26 @@ export class RegistrationStore extends BaseStore {
     this.isLoading = loading;
   }
 
+  initWithRaceid(raceId: string) {
+    let race;
+    this.userStore?.raceEntries.forEach((r, i) => {
+      console.log(`init with race Id ${raceId}`);
+      if (r.id === raceId && !r.isPaid) {
+        this.setEditIndex(i);
+        this.setTeamFilter(r.race!);
+        race = r;
+        return r;
+      }
+    });
+    if (race) return race;
+    return null;
+  }
   // team name could be passed
   initRaceEntryForm(team?: Team) {
     if (this.state === "RE_EDIT" && this.form) return this.form;
     if (this.form) return this.form;
     if (team) this.teamFilter = team.race;
+    else if (this.teamFilter) this.setTeamFilter(null);
 
     const raceEntry = this.raceEntry;
     const user = this.userStore?.user;
@@ -256,7 +288,7 @@ export class RegistrationStore extends BaseStore {
       email: raceEntry?.email ?? user?.email ?? "",
       firstName: raceEntry?.firstName ?? user?.firstName ?? "",
       lastName: raceEntry?.lastName ?? user?.lastName ?? "",
-      preferName: raceEntry?.preferName ?? "",
+      preferName: raceEntry?.preferName ?? user?.preferName ?? "",
       phone: raceEntry?.phone ?? user?.phone ?? "",
       gender: raceEntry?.gender ?? user?.gender ?? "",
       wechatId: raceEntry?.wechatId ?? user?.wechatId ?? "",
@@ -268,13 +300,13 @@ export class RegistrationStore extends BaseStore {
       emergencyPhone: raceEntry?.emergencyPhone ?? "",
       isActive: raceEntry?.isActive ?? true,
       isPaid: raceEntry?.isPaid ?? false,
-      team: team ? team.displayName : raceEntry?.team ?? "",
-      teamId: raceEntry?.teamId ?? "",
+      team: team ? team.name : raceEntry?.team ?? "",
+      teamId: team ? team.id : raceEntry?.teamId ?? "",
       teamPassword: "",
       teamState: "",
       accepted: false,
     };
-    return raceInitEntry;
+    return raceInitEntry as RaceEntry;
   }
 
   *updateRaceEntry(form: RaceEntry) {
@@ -408,7 +440,7 @@ export class RegistrationStore extends BaseStore {
       if (result) {
         this.setEditIndex(null);
         toast.update(id, {
-          render: `Race entry submitted successfully`,
+          render: `Race entry submitted successfully. Redirecting to payment page...`,
           type: "success",
           isLoading: false,
           autoClose: 5000,
@@ -431,7 +463,6 @@ export class RegistrationStore extends BaseStore {
   }
 
   *validateTeamPassword(team: string, teamPassword: string) {
-    if (this.isLoading) return;
     const functions = getFunctions();
     const onValidateTeamPassword = httpsCallable(
       functions,
@@ -479,7 +510,7 @@ export class RegistrationStore extends BaseStore {
     }
     this.setLoading(false);
     toast.update(id, {
-      render: `Invalid team password`,
+      render: `Invalid team password. Please get the correct team password from your team captain.`,
       type: "error",
       isLoading: false,
       autoClose: 5000,

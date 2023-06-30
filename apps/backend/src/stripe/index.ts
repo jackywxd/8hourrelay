@@ -206,7 +206,7 @@ export const stripeWebhook = functions.https.onRequest(
             stripe.paymentIntents.retrieve(session.payment_intent as string),
           ]);
 
-          logger.debug(`payment intent`, { payment });
+          if (payment) logger.debug(`payment intent`, { payment });
           if (dbRef.size === 0 || !payment) {
             throw new Error(
               `Could not find payment for this session ID ${sessionId}`

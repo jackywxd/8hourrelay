@@ -25,16 +25,18 @@ const authOnCreate = functions.auth.user().onCreate(async (user, _context) => {
     // below are for VpnUsers data
     if (user.email) {
       logger.info(`New User`, user);
-      const u: Omit<User, "displayName"> = {
+      const u: Omit<User, "displayName" | "name"> = {
         uid: user.uid,
-        email: user.email,
+        email: user.email ?? user?.providerData[0].email,
         emailVerified: user.emailVerified,
         createdAt: now,
         updatedAt: now,
         phone: user.phoneNumber ?? undefined,
-        photoUrl: user.photoURL ?? undefined,
+        image: user.photoURL ?? user?.providerData[0].photoURL ?? null,
+        preferName:
+          user.displayName ?? user?.providerData[0]?.displayName ?? undefined,
+        provider: user?.providerData[0]?.providerId ?? undefined,
         address: undefined,
-        preferName: undefined,
         firstName: undefined,
         lastName: undefined,
         wechatId: undefined,
@@ -52,7 +54,7 @@ const authOnCreate = functions.auth.user().onCreate(async (user, _context) => {
       u.customerId = newCustomer.id;
       await Promise.all([
         db.collection("Users").doc(user.uid).set(u, { merge: true }),
-        slackSendText(`New user ${user.uid} registered!`),
+        slackSendText(`New user ${user.email} registered!`),
       ]);
       return null;
     }

@@ -5,6 +5,7 @@ class Event {
   year: string; // year
   location: string; //location of the event
   time: string; // when the event will happen
+  registerDeadline: string; // when the event will happen
   description: string;
   isActive: boolean; // passed year will be set to false
   createdAt: number;
@@ -19,31 +20,34 @@ class Event {
     this.isActive = e.isActive;
     this.createdAt = e.createdAt ?? new Date().getTime();
     this.races = e.races;
+    this.registerDeadline = e.registerDeadline;
   }
 }
 
+const year = new Date().getFullYear().toString();
 export const event2023 = new Event({
+  year,
   name: `8HourRealy`,
   description: `8 Hour Realy Race - 2023`,
-  year: `2023`,
-  location: "TBD",
+  location: "Minoru Oval, Athletic field in Richmond, British Columbia",
   time: "Sep 10, 2023",
   isActive: true,
   createdAt: new Date().getTime(),
+  registerDeadline: "August 31, 2023",
   races: [
     new Race({
-      year: "2023",
+      year,
       name: "Adult Race",
-      description: "Adult Race",
+      description: "8 Hour Relay",
       entryFee: 30,
       isCompetitive: true,
       lowerAge: 18,
     }),
     new Race({
-      year: "2023",
+      year,
       name: "Kids",
-      description: "Kids run",
-      entryFee: 5,
+      description: "4 Hour Youth Relay",
+      entryFee: 10,
       isCompetitive: false,
       lowerAge: 10,
       upperAge: 18,

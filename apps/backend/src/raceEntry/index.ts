@@ -15,7 +15,7 @@ export const onRaceEntryCreated = functions.firestore
       const year = new Date().getFullYear().toString();
       await Promise.all([
         slackSendMsg(
-          `User ${raceEntry.displayName} ${raceEntry.email} registered for race ${raceEntry.race}`
+          `User ${raceEntry.displayName} ${raceEntry.email} created race entry for ${raceEntry.race}`
         ),
         db.collection("Race").doc(year).set(
           {

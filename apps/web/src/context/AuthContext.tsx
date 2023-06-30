@@ -50,10 +50,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log(`init authStore with currentUser`, {
       currentUser: auth.currentUser.uid,
     });
-    rootStore.authStore.setAuthenticated(true);
     rootStore.userStore.setUid(auth.currentUser.uid);
   } else {
-    rootStore.authStore.setAuthenticated(false);
+    rootStore.userStore.setUid(null);
   }
   rootStore.authStore.setAuth(auth);
 
@@ -61,8 +60,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log(`useEffect update user`, { user });
       if (user && user.uid) {
-        rootStore.authStore.setAuthenticated(true);
         rootStore.userStore.setUid(user.uid);
+      } else {
+        rootStore.userStore.setUid(null);
       }
     });
 

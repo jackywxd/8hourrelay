@@ -1,7 +1,9 @@
 import https from "https";
 
 const HOST_NAME =
-  process.env.ENV === "prod" ? "8hourrelay.com" : "staging.8hourrelay.com";
+  process.env.NEXT_PUBLIC_ENV === "prod"
+    ? "8hourrelay.com"
+    : "staging.8hourrelay.com";
 
 const SECRET = process.env.PATH_SECRET;
 
