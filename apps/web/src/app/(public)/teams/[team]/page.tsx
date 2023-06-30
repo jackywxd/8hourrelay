@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps) {
   const ogUrl = new URL(`${url}api/og`);
   ogUrl.searchParams.set("heading", team.displayName);
   ogUrl.searchParams.set("slogan", team.slogan);
-  ogUrl.searchParams.set("type", "Join our team");
+  ogUrl.searchParams.set("type", "website");
   ogUrl.searchParams.set("mode", "dark");
 
   const title = `8 Hour Relay/Team ${team.displayName}`;
@@ -48,6 +48,7 @@ export async function generateMetadata({ params }: PageProps) {
     openGraph: {
       title,
       description,
+      type: "website",
       url: `${url}teams/${team.name}`,
       images: [
         {

@@ -24,7 +24,7 @@ export class Team {
   }
 
   get teamUrl() {
-    return encodeURI(`/teams/${this.name}`);
+    return encodeURI(`teams/${this.name}`);
   }
 
   get raceDisplayName() {

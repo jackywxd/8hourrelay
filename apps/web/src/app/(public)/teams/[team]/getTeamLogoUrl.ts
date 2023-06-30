@@ -6,7 +6,7 @@ export function getTeamLogoUrl(team: Team) {
   const ogUrl = new URL(`${url}api/og`);
   ogUrl.searchParams.set("heading", team.displayName);
   ogUrl.searchParams.set("slogan", team.slogan);
-  ogUrl.searchParams.set("type", "Join our team");
+  ogUrl.searchParams.set("type", "website");
   ogUrl.searchParams.set("mode", "dark");
 
   return ogUrl.toString();

@@ -1,10 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { getTeamLogoUrl } from "./getTeamLogoUrl";
 import { Team } from "@8hourrelay/models";
-import { Share } from "next/font/google";
 import ShareButtons from "./ShareButtons";
 
 export default async function TeamPage({ team }: { team: Team }) {
@@ -25,10 +23,10 @@ export default async function TeamPage({ team }: { team: Team }) {
           title={`Join my relay team ${team.displayName}`}
         />
         <div className="relative">
-          <Image
+          <img
             className="rounded-md"
             src={ogUrl}
-            alt="team imaga"
+            alt={`Team ${team.displayName} image`}
             width={1200}
             height={630}
             style={{ maxWidth: "100%", height: "auto" }}
