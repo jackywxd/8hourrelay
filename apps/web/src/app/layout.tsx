@@ -10,6 +10,8 @@ import { Analytics } from "@/components/analytics";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 
+const ogUrl = new URL(`${process.env.NEXT_PUBLIC_HOST_NAME}api/og`);
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -31,7 +33,13 @@ export const metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: ["8hourrelay", "Vancouver", "8 hour relay", "Running race"],
+  keywords: [
+    "8hourrelay",
+    "Vancouver",
+    "8 hour relay",
+    "Running race",
+    "4 hour youth relay",
+  ],
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
@@ -43,20 +51,27 @@ export const metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
+    images: [
+      {
+        url: ogUrl.toString(),
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
-    images: [`${siteConfig.url}/og.jpg`],
-    creator: "@shadcn",
+    images: [ogUrl.toString()],
   },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-16x16.png",
     apple: "/apple-touch-icon.png",
   },
-  manifest: `${siteConfig.url}/site.webmanifest`,
+  manifest: `${process.env.NEXT_PUBLIC_HOST_NAME}/site.webmanifest`,
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {

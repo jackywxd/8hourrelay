@@ -29,7 +29,7 @@ export const event2023 = new Event({
   year,
   name: `8HourRealy`,
   description: `8 Hour Realy Race - 2023`,
-  location: "TBD",
+  location: "Minoru Oval, Athletic field in Richmond, British Columbia",
   time: "Sep 10, 2023",
   isActive: true,
   createdAt: new Date().getTime(),

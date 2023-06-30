@@ -3,7 +3,7 @@ import Navbar from "../Navbar";
 
 export const metadata: Metadata = {
   title: "8 Hour Relay/Teams",
-  description: "Vancouver 8 hour relay offical website",
+  description: "All teams for vancouver 8 hour relay",
 };
 
 function TeamsLayout({
