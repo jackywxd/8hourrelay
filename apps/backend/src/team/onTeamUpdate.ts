@@ -20,8 +20,9 @@ export const onTeamUpdate = functions.firestore
       if (after.state === "APPROVED" && after.state !== before.state) {
         // we need to send email to user to notify
 
-        const teamLink = encodeURI(`${HOST_NAME}/teams/${after.name}`);
-        const content = `Congratulations! Your team ${after.name} has been approved. Now you can share your team by this link: ${teamLink} \n\n 8HourRelay Team`;
+        const team = new Team(after);
+        const teamLink = `${HOST_NAME}/${team.teamUrl}`;
+        const content = `Congratulations! Your team ${team.displayName} has been approved. Now you can share your team by this link: ${teamLink} \n\n 8HourRelay Team`;
 
         // revalidate page to show the new team
         await Promise.all([
@@ -32,7 +33,7 @@ export const onTeamUpdate = functions.firestore
         const email: Mail.Options = {
           from: process.env.FROM_EMAIL,
           to: after.captainEmail,
-          subject: `Team ${after.name} approved!`, //TODO: come out better email subject
+          subject: `Team ${after.displayName} approved!`, //TODO: come out better email subject
           // html: `======<br>${Body}<br><br> Send text to ${To} by replying this email without altering the email subject.`,
           text: content,
         };
