@@ -150,7 +150,6 @@ export class RegistrationStore extends BaseStore {
 
   validateForm(form: Partial<RaceEntry>) {
     let errors: any = {};
-    const age = form.birthYear;
     console.log(`validatForm`, form, this.userStore?.raceEntries.slice());
 
     if (form.race && form.birthYear) {

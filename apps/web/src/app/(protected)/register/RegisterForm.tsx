@@ -60,15 +60,7 @@ const raceFormSchema = z
       .email({ message: "Invalid Email" })
       .toLowerCase(),
     race: z.string().nonempty({ message: "Select race" }),
-    phone: z
-      .string()
-      .nonempty({ message: "Phone number is required" })
-      .refine(
-        (v) => /^(?:\+1)?(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$/.test(v),
-        {
-          message: "Enter valid phone number",
-        }
-      ),
+    phone: z.string().nonempty({ message: "Phone number is required" }),
     gender: z.enum(["Male", "Femal"]),
     birthYear: z
       .string()
@@ -84,13 +76,7 @@ const raceFormSchema = z
       .min(2, { message: "Emergency contact name is required" }),
     emergencyPhone: z
       .string()
-      .nonempty({ message: "Emgergency phone number is required" })
-      .refine(
-        (v) => /^(?:\+?1)?(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$/.test(v),
-        {
-          message: "Enter valid phone number",
-        }
-      ),
+      .nonempty({ message: "Emgergency phone number is required" }),
     accepted: z
       .boolean()
       .refine((v) => v, { message: "You must accept race wavier" }),
@@ -129,6 +115,20 @@ const raceFormSchema = z
         path: ["birthYear"],
         code: z.ZodIssueCode.custom,
         message: errors.birthYear,
+      });
+    }
+    if (errors.phone) {
+      ctx.addIssue({
+        path: ["phone"],
+        code: z.ZodIssueCode.custom,
+        message: errors.phone,
+      });
+    }
+    if (errors.emergencyPhone) {
+      ctx.addIssue({
+        path: ["emergencyPhone"],
+        code: z.ZodIssueCode.custom,
+        message: errors.emergencyPhone,
       });
     }
     return z.NEVER;
