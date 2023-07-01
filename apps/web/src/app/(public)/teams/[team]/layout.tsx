@@ -11,7 +11,7 @@ interface AuthLayoutProps {
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="min-h-screen">
-      <div className="flex flex-col w-full h-full items-center mt-10">
+      <div className="flex flex-col w-full h-full items-center mt-10 text-white">
         <div className="container flex px-2 h-screen w-full flex-col">
           <Link
             href="/teams"

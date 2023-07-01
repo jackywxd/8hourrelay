@@ -1,5 +1,6 @@
 import { Icons } from "@/components/icons";
 import Link from "next/link";
+import { ModeToggle } from "./mode-toggle";
 
 export default function Footer({
   className,
@@ -14,9 +15,10 @@ export default function Footer({
           <Icons.heart className="w-8 text-red-600" />
           <span className="text mr-2">by</span>
           <Link href="https://heidi.cloud">
-            <span className="font-semibold text-white">Heidi Technology</span>
+            <span className="font-semibold">Heidi Technology</span>
           </Link>
         </div>
+        <ModeToggle />
       </div>
     </footer>
   );

@@ -19,7 +19,7 @@ function TeamsLayout({
       <div className="flex flex-col w-full flex-1">
         <div className="flex flex-col flex-1 w-full flex-grow">{children}</div>
         <div className="flex flex-col self-end w-full">
-          <div className="container mx-auto">
+          <div className="container mx-auto text-white">
             <Footer />
           </div>
         </div>

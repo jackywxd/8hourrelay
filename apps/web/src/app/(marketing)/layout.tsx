@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import React from "react";
 
 import Layout from "@/components/Layout";
-import Footer from "./Footer";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "8 Hour Relay",
