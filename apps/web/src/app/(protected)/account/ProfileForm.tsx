@@ -77,6 +77,9 @@ function ProfileForm() {
           <CardDescription>
             This information is used to identify you and your team
           </CardDescription>
+          <CardDescription>
+            Email: {store.userStore.user?.email}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {initForm ? (
