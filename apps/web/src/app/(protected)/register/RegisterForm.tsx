@@ -391,7 +391,7 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
                           />
                         </FormControl>
                         <div className="div">
-                          <FormLabel>Reigster for other people</FormLabel>
+                          <FormLabel>Register for other people</FormLabel>
                         </div>
                       </FormItem>
                     )}
