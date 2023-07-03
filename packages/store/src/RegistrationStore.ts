@@ -59,7 +59,7 @@ export class RegistrationStore extends BaseStore {
   allTeams: Team[] | null = null;
   teamFilter: string | null = null;
   teamValidated = false;
-  genderOptions = ["Male", "Femal"].map((m) => ({ value: m, label: m }));
+  genderOptions = ["Male", "Female"].map((m) => ({ value: m, label: m }));
   shirtSizeOptions = ["S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((m) => ({
     value: m,
     label: m,
