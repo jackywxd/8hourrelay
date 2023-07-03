@@ -157,7 +157,7 @@ export class RegistrationStore extends BaseStore {
 
       if (!re.test(form.birthYear)) {
         errors.birthYear = `Year of birth must be 4 digits`;
-      } else if (!this.isAgeValid(form.birthYear))
+      } else if (!this.isAgeValid(form.birthYear, form.race))
         errors[`birthYear`] = `Invalid age for the race selected`;
     }
     console.log(`formvalidate errors`, { errors });
@@ -181,13 +181,11 @@ export class RegistrationStore extends BaseStore {
     return errors;
   }
 
-  isAgeValid(birthYear: string) {
+  isAgeValid(birthYear: string, raceRegistered?: string) {
     let valid = false;
-    if (this.teamFilter) {
-      const race = event2023.races.filter((r) => r.name === this.teamFilter);
-      if (race && race.length > 0) {
-        valid = race[0].isValid(birthYear);
-      }
+    const race = event2023.races.filter((r) => r.name === raceRegistered);
+    if (race && race.length > 0) {
+      valid = race[0].isValid(birthYear);
     }
     console.log(`birhty year is valid ${valid}`);
     return valid;
