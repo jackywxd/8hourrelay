@@ -1,7 +1,7 @@
 import { event2023 } from "./Event";
 import { TeamState } from "./Team";
 
-export type Gender = "Male" | "Femal";
+export type Gender = "Male" | "Female";
 
 // entries user can update after register payment
 export const editableEntries = [
