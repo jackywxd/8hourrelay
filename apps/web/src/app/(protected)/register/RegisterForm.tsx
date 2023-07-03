@@ -61,7 +61,7 @@ const raceFormSchema = z
       .toLowerCase(),
     race: z.string().nonempty({ message: "Select race" }),
     phone: z.string().nonempty({ message: "Phone number is required" }),
-    gender: z.enum(["Male", "Femal"]),
+    gender: z.enum(["Male", "Female"]),
     birthYear: z
       .string()
       .regex(new RegExp(`^[0-9]{4}$`), { message: "Enter 4 digits birth year" })
