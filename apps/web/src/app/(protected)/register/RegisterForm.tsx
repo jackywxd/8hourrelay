@@ -171,6 +171,7 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
     if (race && race !== form.getValues().race) {
       form.setValue("race", race);
       form.clearErrors("race");
+      registerStore.setTeamFilter(race); // set the team filter
     }
   }, [form.watch("team")]);
 
