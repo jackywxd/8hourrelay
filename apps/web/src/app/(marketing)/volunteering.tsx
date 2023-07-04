@@ -70,30 +70,42 @@ export default function VolunteeringSection() {
             <div className="grid-item">
               <h4>Sponsorship Levels</h4>
               <div className="group">
-                <h5>Gold Sponsor</h5>
-                Maximum brand exposure
+                <h5><b>Title Sponsor (1 stand) $2000</b></h5>
+                The name and logo will be on athletes’ T-shirts and the arch
                 <br />
-                Logo on participant t-shirts, banners, and website
+                Athletes number plate (with investor logo attached)
                 <br />
-                Opportunity to set up a promotional booth at the event
+                Independent tent booth(10’× 10’)
+                <br />
+                Lawn billboard displays all days(2’× 6’)
+                <br />
+                The host thanks and introduces the company
+                <br />
+                Social Media promotion
                 <br />
               </div>
               <div className="group">
-                <h5>Silver Sponsor</h5>
-                Logo displayed on the website
+                <h5><b>King Sponsors(3stands) $1000</b></h5>
+                Athletes number plate (with investor logo attached)
                 <br />
-                Opportunity to distribute promotional materials during the event
+                Independent tent booth(10’× 10’)
+                <br />
+                Lawn billboard displays all days(2’× 6’)
+                <br />
+                The host thanks and introduces the company
+                <br />
+                Social Media promotion
                 <br />
               </div>
               <div className="group">
-                <h5>Bronze Sponsor</h5>
-                Company’s logo featured on the website
-              </div>
-              <div className="group">
-                <h5>In-Kind Sponsor</h5>
-                Welcome contributions of food, beverages, or services
+                <h5><b>Diamond Sponsors(5 stands) $500</b></h5>
+                Independent tent booth(10’× 10’)
                 <br />
-                Acknowledgment of contribution on website and during the event
+                Lawn billboard displays all days(2’× 6’)
+                <br />
+                The host thanks and introduces the company
+                <br />
+                Social Media promotion
                 <br />
               </div>
             </div>
