@@ -6,7 +6,7 @@ export default function MissionSection() {
 				<p>
 					The Vancouver 8 Hour Relay, organized by
 					<span className="highlight">
-						Vancouver Chinese Runners (VCR)
+						Vancouver Community Runners (VCR)
 					</span>
 					, comprising IRUN Club, CROSSNA, and WIND Running Club, aims
 					to unite runners from diverse cities, fostering focused
