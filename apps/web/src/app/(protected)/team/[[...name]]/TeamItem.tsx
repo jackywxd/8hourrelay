@@ -8,7 +8,7 @@ function TeamItem({ team }: { team: Team | null }) {
   const { displayName: name, race, isOpen, slogan } = team;
   return (
     <Link href={`/team/show/${name}`}>
-      <div className="flex bg-slate-300 dark:bg-slate-900 border justify-between items-center rounded-md hover:cursor-pointer group">
+      <div className="flex bg-slate-400 dark:bg-slate-900 border justify-between items-center rounded-md hover:cursor-pointer group">
         <div className="m-3 dark:text-red-200">
           <Image
             src={
@@ -30,12 +30,12 @@ function TeamItem({ team }: { team: Team | null }) {
         <div className="m-3">
           {isOpen ? (
             <Link href={`/register/join/${name}`}>
-              <div className="w-20 p-1 text-center border rounded-full border-blue-600 group-hover:bg-blue-500">
+              <div className="w-20 p-1 text-center border rounded-full shadow-sm border-blue-600 group-hover:bg-blue-500">
                 Join
               </div>
             </Link>
           ) : (
-            <div className="w-20 p-1 text-center border rounded-full bg-red-500">
+            <div className="w-20 p-1 text-center rounded-full bg-red-500 shadow-sm">
               Closed
             </div>
           )}

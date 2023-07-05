@@ -10,7 +10,7 @@ export function RaceEntries({ raceEntries }: { raceEntries: RaceEntry[] }) {
       {raceEntries.map((raceEntry, index) => (
         <div
           key={raceEntry.paymentId ?? `${raceEntry.email}${index}`}
-          className="flex w-full justify-between items-center mt-3 bg-slate-900 rounded-md p-3"
+          className="flex w-full justify-between items-center mt-3 bg-slate-400 dark:bg-slate-900 rounded-md p-3"
         >
           <div className="w-1/4 items-center justify-between gap-4">
             <Avatar className="h-12 w-12">
@@ -26,12 +26,9 @@ export function RaceEntries({ raceEntries }: { raceEntries: RaceEntry[] }) {
             </Avatar>
           </div>
           <div className="flex w-full justify-between items-center">
-            <div>
-              <div>Name: {raceEntry.displayName}</div>
-              {/* <div className="text-sm text-muted-foreground">
-                Email: {raceEntry.email}
-              </div> */}
-            </div>
+            <>
+              <span>Name: {raceEntry.displayName}</span>
+            </>
             <p className="hidden md:block text-sm font-medium leading-none underline uppercase items-center">
               <Link href={`/team/show/${raceEntry.team}`}>
                 {raceEntry.team}
