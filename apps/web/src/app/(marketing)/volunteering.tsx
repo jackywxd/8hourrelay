@@ -38,7 +38,7 @@ export default function VolunteeringSection() {
           </h3>
           <p className="deck">
             Align your brand with our values and reach a diverse audience of
-            athletes and spectators. Choose from Gold, Silver, Bronze, or
+            athletes and spectators. Choose from Title, King, Diamond, or
             In-Kind sponsorship levels. Join us in promoting physical and mental
             well-being through running and community!
           </p>
@@ -47,19 +47,19 @@ export default function VolunteeringSection() {
             <div className="grid-item">
               <h4>Why Sponsor</h4>
               <div className="group">
-                <h5>Brand Visibility</h5>
+                <h5><b>Brand Visibility</b></h5>
                 Sponsorship of the Vancouver 8 Hour Relay offers extensive brand
                 exposure, reaching a diverse audience as participants come from
                 various cities.
               </div>
               <div className="group">
-                <h5>Community Engagement</h5>
-                Sponsorship of the Vancouver 8 Hour Relay offers extensive brand
-                exposure, reaching a diverse audience as participants come from
-                various cities.
+                <h5><b>Community Engagement</b></h5>
+                Demonstrate your support for the local community by sponsoring this
+                event, showcasing your dedication to promoting health, wellness and
+                fostering a sense of community.
               </div>
               <div className="group">
-                <h5>Networking Opportunities</h5>
+                <h5><b>Networking Opportunities</b></h5>
                 The relay goes beyond a race; it brings together individuals who
                 share a passion for running and community. As a sponsor, you’ll
                 have the chance to network with participants, fellow sponsors,
