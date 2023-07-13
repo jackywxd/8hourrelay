@@ -7,6 +7,16 @@ const images = [
   "/img/gallery4.jpg",
   "/img/gallery5.jpg",
   "/img/gallery6.jpg",
+  "/img/gallery7.jpg",
+  "/img/gallery8.jpg",
+  "/img/gallery9.jpg",
+  "/img/gallery10.jpg",
+  "/img/gallery11.jpg",
+  "/img/gallery12.jpg",
+  "/img/gallery13.jpg",
+  "/img/gallery14.jpg",
+  "/img/gallery15.jpg",
+  "/img/gallery16.jpg",
 ];
 export default function GallerySection() {
   return (
@@ -22,17 +32,6 @@ export default function GallerySection() {
               fill
               src={img}
               alt={`gallery-0${i}`}
-              quality={50}
-            />
-          </div>
-        ))}
-        {images.map((img, i) => (
-          <div className="img-container w-full transition ease-in-out delay-150 hover:transition-all relative">
-            <Image
-              className="object-cover w-full h-full"
-              fill
-              src={img}
-              alt={`gallery-1${i}`}
               quality={50}
             />
           </div>

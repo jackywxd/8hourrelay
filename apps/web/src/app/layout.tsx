@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Analytics } from "@/components/analytics";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const ogUrl = new URL(`${process.env.NEXT_PUBLIC_HOST_NAME}api/og`);
 
@@ -77,6 +78,7 @@ export const metadata = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <GoogleAnalytics GA_TRACKING_ID={process.env.GA_TRACKING_ID!} />
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
