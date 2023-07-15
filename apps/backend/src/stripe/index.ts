@@ -102,7 +102,7 @@ export const stripeWebhook = functions.https.onRequest(
                   { merge: true }
                 ),
               teamRef.docs[0].ref.set(
-                { teamMembers, updatedAt: now },
+                { teamMembers: new Set(teamMembers), updatedAt: now },
                 { merge: true }
               ),
             ]);
@@ -254,7 +254,7 @@ export const stripeWebhook = functions.https.onRequest(
               ),
             teamRef.size > 0 &&
               teamRef.docs[0].ref.set(
-                { teamMembers, updatedAt: now },
+                { teamMembers: new Set(teamMembers), updatedAt: now },
                 { merge: true }
               ),
           ]);
