@@ -54,11 +54,11 @@ const raceFormSchema = z
     isForOther: z.boolean().default(false),
     firstName: z.string().nonempty({ message: "First name is required" }),
     lastName: z.string().nonempty({ message: "Last name is required" }),
-    email: z
-      .string()
-      .nonempty({ message: "Email is required" })
-      .email({ message: "Invalid Email" })
-      .toLowerCase(),
+    // email: z
+    //   .string()
+    //   .nonempty({ message: "Email is required" })
+    //   .email({ message: "Invalid Email" })
+    //   .toLowerCase(),
     race: z.string().nonempty({ message: "Select race" }),
     phone: z.string().nonempty({ message: "Phone number is required" }),
     gender: z.enum(["Male", "Female"]),
@@ -210,6 +210,7 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
   console.log(`form values`, {
     defaultValues,
     values: form.getValues(),
+    error: form.formState.errors,
   });
 
   if (!defaultValues) {
