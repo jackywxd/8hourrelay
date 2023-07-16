@@ -90,7 +90,7 @@ export const stripeWebhook = functions.https.onRequest(
               db
                 .collection("StripeEvents")
                 .doc(paymentIntent.id)
-                .create(paymentIntent),
+                .set(paymentIntent, { merge: true }),
               userSnapshot.size > 0 &&
                 userSnapshot.docs[0].ref.set(
                   {
@@ -102,7 +102,7 @@ export const stripeWebhook = functions.https.onRequest(
                   { merge: true }
                 ),
               teamRef.docs[0].ref.set(
-                { teamMembers: new Set(teamMembers), updatedAt: now },
+                { teamMembers: [...new Set(teamMembers)], updatedAt: now },
                 { merge: true }
               ),
             ]);
@@ -112,7 +112,7 @@ export const stripeWebhook = functions.https.onRequest(
               db
                 .collection("StripeEvents")
                 .doc(paymentIntent.id)
-                .create(paymentIntent),
+                .set(paymentIntent, { merge: true }),
             ]);
           }
           break;
@@ -176,7 +176,10 @@ export const stripeWebhook = functions.https.onRequest(
             .get();
           await Promise.all([
             // slackSendMsg(msg),
-            db.collection("StripeEvents").doc(charge.id).create(charge),
+            db
+              .collection("StripeEvents")
+              .doc(charge.id)
+              .set(charge, { merge: true }),
             userSnapshot.size > 0 &&
               userSnapshot.docs[0].ref.set(
                 {
@@ -238,7 +241,10 @@ export const stripeWebhook = functions.https.onRequest(
           logger.debug(`charge object`, { charge });
           await Promise.all([
             // slackSendMsg(msg),
-            db.collection("StripeEvents").doc(session.id).create(session),
+            db
+              .collection("StripeEvents")
+              .doc(session.id)
+              .set(session, { merge: true }),
             dbRef.size > 0 &&
               dbRef.docs[0].ref.set(
                 {
@@ -254,7 +260,7 @@ export const stripeWebhook = functions.https.onRequest(
               ),
             teamRef.size > 0 &&
               teamRef.docs[0].ref.set(
-                { teamMembers: new Set(teamMembers), updatedAt: now },
+                { teamMembers: [...new Set(teamMembers)], updatedAt: now },
                 { merge: true }
               ),
           ]);
