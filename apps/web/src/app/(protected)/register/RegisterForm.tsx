@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { registerStore } from "@8hourrelay/store";
-import { RaceEntry, Team } from "@8hourrelay/models";
+import { Team } from "@8hourrelay/models";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -137,6 +137,7 @@ const raceFormSchema = z
 type RaceFormValues = z.infer<typeof raceFormSchema>;
 
 function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [initForm, setInitForm] = useState(registerStore.isLoading);
@@ -244,13 +245,14 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Selected team</FormLabel>
-                        <Popover>
+                        <Popover open={open} onOpenChange={setOpen}>
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
                                 disabled={team ? true : false}
                                 variant="outline"
                                 role="combobox"
+                                aria-aria-expanded={open}
                                 className={cn(
                                   "w-[300px] justify-between",
                                   !field.value && "text-muted-foreground"
@@ -263,8 +265,8 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
                                         label: t.displayName,
                                       }))
                                       .find(
-                                        (race) =>
-                                          race.value.toLowerCase() ===
+                                        (team) =>
+                                          team.value.toLowerCase() ===
                                           field.value.toLowerCase()
                                       )?.label
                                   : "Select Team"}
@@ -282,28 +284,32 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
                                     value: t.name,
                                     label: t.displayName,
                                   }))
-                                  .map((race) => (
+                                  .map((team) => (
                                     <CommandItem
-                                      value={race.value}
-                                      key={race.value}
+                                      value={team.value}
+                                      key={team.value}
                                       onSelect={(value) => {
                                         console.log(
                                           `setting value to ${value}`
                                         );
-                                        form.setValue("team", value);
+                                        form.setValue(
+                                          "team",
+                                          value === field.value ? "" : value
+                                        );
                                         form.clearErrors("team");
+                                        setOpen(false);
                                       }}
                                     >
                                       <Check
                                         className={cn(
                                           "mr-2 h-4 w-4",
-                                          race.value.toLowerCase() ===
-                                            field.value
+                                          team.value.toLowerCase() ===
+                                            field.value.toLowerCase()
                                             ? "opacity-100"
                                             : "opacity-0"
                                         )}
                                       />
-                                      {race.label}
+                                      {team.label}
                                     </CommandItem>
                                   ))}
                               </CommandGroup>
