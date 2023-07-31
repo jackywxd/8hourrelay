@@ -49,7 +49,74 @@ export default function RulesSection() {
             <li>
               <details>
                 <summary>Calculating the weighted coefficient</summary>
-                <div>TBD</div>
+                <div>
+                  <div className="table-name">Coeficient Table</div>
+                  <ul className="coefficient-table mt-5">
+                    <li className="table-header">
+                      <div>Age</div>
+                      <div>Male Marathon BQ Time (min)</div>
+                      <div>Male Coefficient</div>
+                      <div>Female Marathon BQ Time (min)</div>
+                      <div>Female Coefficient</div>
+                    </li>
+                    <li>
+                      <div>10</div>
+                      <div>240</div>
+                      <div>1.2</div>
+                      <div>280</div>
+                      <div>1.4</div>
+                    </li>
+                    <li>
+                      <div>11</div>
+                      <div>220</div>
+                      <div>1.1</div>
+                      <div>260</div>
+                      <div>1.3</div>
+                    </li>
+                    <li>
+                      <div>12</div>
+                      <div>210</div>
+                      <div>1.05</div>
+                      <div>248</div>
+                      <div>1.24</div>
+                    </li>
+                    <li>
+                      <div>13</div>
+                      <div>200</div>
+                      <div>1</div>
+                      <div>238</div>
+                      <div>1.19</div>
+                    </li>
+                    <li>
+                      <div>14</div>
+                      <div>192</div>
+                      <div>0.96</div>
+                      <div>230</div>
+                      <div>1.15</div>
+                    </li>
+                    <li>
+                      <div>15</div>
+                      <div>187</div>
+                      <div>0.935</div>
+                      <div>225</div>
+                      <div>1.125</div>
+                    </li>
+                    <li>
+                      <div>16</div>
+                      <div>184</div>
+                      <div>0.92</div>
+                      <div>220</div>
+                      <div>1.1</div>
+                    </li>
+                    <li>
+                      <div>17</div>
+                      <div>182</div>
+                      <div>0.91</div>
+                      <div>215</div>
+                      <div>1.075</div>
+                    </li>
+                  </ul>
+                </div>
               </details>
             </li>
           </ul>
