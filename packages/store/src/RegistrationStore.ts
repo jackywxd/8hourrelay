@@ -254,11 +254,11 @@ export class RegistrationStore extends BaseStore {
     this.isLoading = loading;
   }
 
-  initWithRaceid(raceId: string) {
+  initWithRaceid(raceId: string): RaceEntry | null {
     let race;
     this.userStore?.raceEntries.forEach((r, i) => {
       console.log(`init with race Id ${raceId}`);
-      if (r.id === raceId && !r.isPaid) {
+      if (r.id === raceId) {
         this.setEditIndex(i);
         this.setTeamFilter(r.race!);
         race = r;

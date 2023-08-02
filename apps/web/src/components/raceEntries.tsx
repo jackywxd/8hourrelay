@@ -39,12 +39,13 @@ export function RaceEntries({ raceEntries }: { raceEntries: RaceEntry[] }) {
                 <Icons.check className="w-6 h-6 text-green-500" />
               </div>
             ) : (
-              <div>
-                <Link href={`/register/edit/${raceEntry.id}`}>
-                  <Icons.edit className="w-6 h-6" />
-                </Link>
-              </div>
+              <div></div>
             )}
+            <div>
+              <Link href={`/register/edit/${raceEntry.id}`}>
+                <Icons.edit className="w-6 h-6" />
+              </Link>
+            </div>
           </div>
         </div>
       ))}

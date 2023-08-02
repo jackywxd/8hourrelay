@@ -34,6 +34,7 @@ import {
   Users,
   Trophy,
   Edit,
+  XSquare as Delete,
   type Icon as LucideIcon,
 } from "lucide-react";
 
@@ -53,6 +54,7 @@ export const Icons = {
       <circle cx="12" cy="12" r="10"></circle>
     </svg>
   ),
+  delete: Delete,
   facebook: Facebook,
   instagram: Instagram,
   linkedin: Linkedin,

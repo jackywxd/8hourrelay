@@ -7,6 +7,7 @@ import { registerStore } from "@8hourrelay/store";
 import RegisterForm from "./RegisterForm";
 import ConfirmForm from "./ConfirmPayment";
 import { Team } from "@8hourrelay/models";
+import EditRegisterForm from "./EditRegisterForm";
 
 function RegisterPage({
   team,
@@ -34,6 +35,14 @@ function RegisterPage({
 
   if (registerStore.state === "FORM_SUBMITTED") {
     return <ConfirmForm />;
+  } // edit current paid registration
+  else if (raceId) {
+    const race = registerStore.initWithRaceid(raceId);
+    if (race && race.isPaid) {
+      return <EditRegisterForm race={race} />;
+    } else {
+      return <RegisterForm team={undefined} raceId={raceId} />;
+    }
   } else if (
     action === "create" ||
     action === "join" ||
