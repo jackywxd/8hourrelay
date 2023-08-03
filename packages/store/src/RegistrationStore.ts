@@ -133,7 +133,7 @@ export class RegistrationStore extends BaseStore {
   }
 
   getTeamDisplayName(team: string) {
-    if (this.allTeams) {
+    if (this.allTeams && team) {
       const teams = this.allTeams.filter(
         (f) => f.name.toLowerCase() === team.toLowerCase()
       );
