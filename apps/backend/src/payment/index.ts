@@ -127,7 +127,15 @@ export const onCreateCheckout = functions
 
       const isFree = await isFreeEntry(raceEntry);
       if (isFree) {
-        payment_intent = await processFreeEntry(user.uid, raceEntry, team);
+        [payment_intent] = await Promise.all([
+          processFreeEntry(user.uid, raceEntry, team),
+          db
+            .collection("Race")
+            .doc(year)
+            .collection("FreeEntry")
+            .doc(isFree.id)
+            .set({ isClaimed: true }, { merge: true }),
+        ]);
       } else {
         const priceId =
           raceEntry.race === race?.name
@@ -164,8 +172,6 @@ export const onCreateCheckout = functions
         raceEntry.sessionId = session.id;
         raceEntry.paymentId = session.payment_intent as string;
         sessionId = session.id;
-      }
-      if (!isFree) {
         await Promise.all([
           slackSendText(
             `Checkout session created successfully for email ${email}`
@@ -237,6 +243,7 @@ interface FreeEntry {
   firstName: string;
   lastName: string;
   phone: string;
+  isClaimed?: boolean;
 }
 
 async function isFreeEntry(raceEntry: RaceEntry) {
@@ -247,21 +254,24 @@ async function isFreeEntry(raceEntry: RaceEntry) {
     .collection("FreeEntry")
     .get();
 
-  if (freeEntriesRef.size === 0) return false;
+  if (freeEntriesRef.size === 0) return null;
 
   let isFree = false;
+  let id = "";
   freeEntriesRef.docs.forEach((doc) => {
     const entry = doc.data() as FreeEntry;
     if (
       entry.firstName.toLowerCase() === raceEntry.firstName.toLowerCase() &&
       entry.lastName.toLowerCase() === raceEntry.lastName.toLowerCase() &&
-      entry.phone === raceEntry.phone
+      entry.phone === raceEntry.phone &&
+      !entry.isClaimed // free not claimed
     ) {
       isFree = true;
+      id = doc.id;
     }
   });
-  logger.debug(`isFreeEntry`, { isFree });
-  return isFree;
+  logger.debug(`isFreeEntry`, { isFree, id });
+  return { isFree, id };
 }
 
 /*
