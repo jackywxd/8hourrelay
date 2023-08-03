@@ -75,7 +75,7 @@ export const onCreateCheckout = functions
     let customer;
 
     // remove teamPassword from raceEntry data
-    const { teamPassword, isForOther, ...raceData } = data;
+    const { teamPassword, ...raceData } = data;
 
     if (!raceData.team || !teamPassword) {
       return { error: `Invalid data!` };
@@ -84,7 +84,7 @@ export const onCreateCheckout = functions
     const year = new Date().getFullYear().toString();
     const [userRef, teamRef] = await Promise.all([
       db.collection("Users").doc(uid).get(),
-      await db
+      db
         .collection("Race")
         .doc(year)
         .collection("Teams")
@@ -114,6 +114,10 @@ export const onCreateCheckout = functions
     const user = userRef.data() as User;
     customer = user.customerId;
     const email = user.email;
+
+    if (!customer || !email) {
+      throw new Error(`User without email and customerId. Invalid data.`);
+    }
 
     try {
       const race = event2023.races.filter(
@@ -166,16 +170,16 @@ export const onCreateCheckout = functions
               .doc(uid)
               .collection("RaceEntry")
               .doc(raceEntry.id)
-              .set(Object.assign({}, raceEntry), { merge: true })
+              .set(Object.assign({}, raceEntry), { merge: true }) // Firestore doesn't support object with created via new Class()
           : db
               .collection("Users")
               .doc(uid)
               .collection("RaceEntry")
-              .add(Object.assign({ isForOther }, raceEntry)),
+              .add(Object.assign({}, raceEntry)),
       ];
 
       // if the current user and race entry is the same personal, we can update current login user's preference
-      if (!isForOther) {
+      if (!raceEntry.isForOther) {
         const {
           firstName,
           lastName,

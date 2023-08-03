@@ -154,7 +154,6 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
     resolver: zodResolver(raceFormSchema),
     defaultValues: {
       ...defaultValues,
-      isForOther: false, // default not for other people
       teamPassword: "",
       accepted: false,
     },
@@ -178,9 +177,9 @@ function RegisterForm({ team, raceId }: { team?: Team; raceId?: string }) {
 
   // if this form is for other people, we need to reset the personal info
   useEffect(() => {
-    console.log(`register for other people!!`);
-    // only reset values when it is not edited by user
-    if (form.getValues().isForOther) {
+    // only reset values when defaultValues is not for other and it is changed to isForOther
+    if (!defaultValues?.isForOther && form.getValues().isForOther) {
+      console.log(`register for other people!!`);
       const { setValue, getFieldState } = form;
       !getFieldState("firstName").isDirty && setValue("firstName", "");
       !getFieldState("lastName").isDirty && setValue("lastName", "");

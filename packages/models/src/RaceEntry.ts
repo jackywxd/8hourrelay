@@ -59,6 +59,7 @@ export class RaceEntry {
   smsOptIn?: boolean;
   emailConsent?: boolean;
   promoCode?: string; // assigned promo code
+  isForOther?: boolean; // whether this entry is for other people
   constructor(r: RaceEntry) {
     Object.assign(this, r);
   }

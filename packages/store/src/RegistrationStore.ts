@@ -47,6 +47,7 @@ export const editableEntries = [
   "gender",
   "size",
   "team",
+  "isForOther",
   "emergencyName",
   "emergencyPhone",
 ];
@@ -297,6 +298,7 @@ export class RegistrationStore extends BaseStore {
       emergencyPhone: raceEntry?.emergencyPhone ?? "",
       isActive: raceEntry?.isActive ?? true,
       isPaid: raceEntry?.isPaid ?? false,
+      isForOther: raceEntry?.isForOther ?? false,
       team: team ? team.name : raceEntry?.team ?? "",
       teamId: team ? team.id : raceEntry?.teamId ?? "",
       teamPassword: "",
