@@ -329,9 +329,14 @@ export class RegistrationStore extends BaseStore {
       });
       console.log(`update race with data`, { data });
       if (this.userStore?.uid && this.raceEntry) {
-        const id = this.raceEntry.id;
         yield setDoc(
-          doc(this.db, "Users", this.userStore.uid, "RaceEntry", id),
+          doc(
+            this.db,
+            "Users",
+            this.userStore.uid,
+            "RaceEntry",
+            this.raceEntry.id
+          ),
           data,
           {
             merge: true,
