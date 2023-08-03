@@ -318,6 +318,7 @@ export class RegistrationStore extends BaseStore {
       form,
       index: this.editIndex,
     });
+    const id = toast.loading(`Updating race entry...`);
     this.isLoading = true;
     try {
       const data: any = {};
@@ -336,6 +337,12 @@ export class RegistrationStore extends BaseStore {
             merge: true,
           }
         );
+        toast.update(id, {
+          render: `Race entry updated successfully`,
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
         yield AsyncStorage.removeItem(entryFormSnapshot);
         this.setEditIndex(null);
         this.setState("SUCCESS");
@@ -345,6 +352,12 @@ export class RegistrationStore extends BaseStore {
       this.isLoading = false;
     } catch (error) {
       console.log(`failed to Update Race Entry`, error);
+      toast.update(id, {
+        render: `Failed to update race entry`,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
       this.error = (error as Error).message;
       this.isLoading = false;
       this.setState("ERROR");

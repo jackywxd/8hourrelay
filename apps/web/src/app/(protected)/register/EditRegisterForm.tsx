@@ -80,12 +80,12 @@ function EditRegisterForm({ race }: { race: RaceEntry }) {
     },
   });
 
-  useEffect(() => {
-    const subscription = form.watch((value, { name, type }) =>
-      console.log(`Something change`, value, name, type)
-    );
-    return () => subscription.unsubscribe();
-  }, [form.watch]);
+  // useEffect(() => {
+  //   const subscription = form.watch((value, { name, type }) =>
+  //     console.log(`Something change`, value, name, type)
+  //   );
+  //   return () => subscription.unsubscribe();
+  // }, [form.watch]);
 
   const onSubmit = async (values) => {
     console.log(`Updated Form data`, { values });
