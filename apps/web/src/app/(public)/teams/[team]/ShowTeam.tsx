@@ -11,12 +11,15 @@ export default async function TeamPage({ team }: { team: Team }) {
   return (
     <>
       <div className="flex flex-col w-full">
-        <div className="flex w-full flex-row-reverse gap-5 m-3 p-3">
+        <div className="flex w-full flex-row-reverse gap-3 m-3 p-3">
           {team.isOpen && (
             <Link href={`/register/join/${team.name}`}>
-              <Button className="w-[200px]">Join {team.displayName}</Button>
+              <Button>Join {team.displayName}</Button>
             </Link>
           )}
+          <Link href={`/team/show/${team.name}`}>
+            <Button>Details</Button>
+          </Link>
         </div>
         <ShareButtons
           url={shareUrl}
