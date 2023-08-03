@@ -6,6 +6,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setDoc, doc, deleteDoc, getFirestore } from "firebase/firestore";
 import { toast } from "react-toastify";
 
+export interface CreateSessionResponse {
+  id: string;
+  isFree?: boolean;
+}
+
 export function validatePhoneNumber(phoneNumber: string) {
   // The regex matches U.S. phone number format
   const re = /^(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$/;
@@ -401,19 +406,19 @@ export class RegistrationStore extends BaseStore {
     return null;
   }
 
-  *submitRaceForm(): unknown {
-    if (this.isLoading) return;
+  *submitRaceForm(): Generator<any, CreateSessionResponse | null, any> {
+    if (this.isLoading) return null;
     const functions = getFunctions();
     const onCreateCheckout = httpsCallable(functions, "onCreateCheckout");
     if (!this.form) {
       this.setError(`Invalid data`);
-      return;
+      return null;
     }
     const { team, teamPassword } = this.form;
 
     if (!team && teamPassword) {
       this.setError(`Invalid data`);
-      return;
+      return null;
     }
 
     const id = toast.loading(`Submiting race entry...`);
@@ -428,12 +433,11 @@ export class RegistrationStore extends BaseStore {
         if (!isPasswordValid) {
           this.setError(`Team password is not correct`);
           this.isLoading = false;
-          return;
+          return null;
         }
       }
-      const result: HttpsCallableResult<unknown> = yield onCreateCheckout(
-        this.form
-      );
+      const result: HttpsCallableResult<CreateSessionResponse> =
+        yield onCreateCheckout(this.form);
       console.log(`submit result`, result);
 
       if (result) {
@@ -444,6 +448,7 @@ export class RegistrationStore extends BaseStore {
           isLoading: false,
           autoClose: 5000,
         });
+        this.isLoading = false;
         return result.data;
       }
     } catch (error) {

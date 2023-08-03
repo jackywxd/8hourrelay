@@ -95,7 +95,7 @@ export const onCreateCheckout = functions
       return { error: `User or team not exists!` };
     }
 
-    const team = teamRef.docs[0].data() as Team;
+    const team = { ...teamRef.docs[0].data(), id: teamRef.docs[0].id } as Team;
 
     if (team.state !== "APPROVED") {
       return { error: `Team is not approved!` };
@@ -119,65 +119,71 @@ export const onCreateCheckout = functions
       throw new Error(`User without email and customerId. Invalid data.`);
     }
 
+    let sessionId, payment_intent;
     try {
       const race = event2023.races.filter(
         (r) => r.name === raceEntry.race && r.entryFee === 30
       )[0];
 
-      const priceId =
-        raceEntry.race === race?.name
-          ? process.env.PRICE_ID_ADULT // adules
-          : process.env.PRICE_ID_KIDS;
+      const isFree = await isFreeEntry(raceEntry);
+      if (isFree) {
+        payment_intent = await processFreeEntry(user.uid, raceEntry, team);
+      } else {
+        const priceId =
+          raceEntry.race === race?.name
+            ? process.env.PRICE_ID_ADULT // adules
+            : process.env.PRICE_ID_KIDS;
 
-      const sessionCreateParams: Stripe.Checkout.SessionCreateParams = {
-        customer,
-        mode: "payment",
+        const sessionCreateParams: Stripe.Checkout.SessionCreateParams = {
+          customer,
+          mode: "payment",
 
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        allow_promotion_codes: true,
-        success_url: `${HOST_NAME}/payment?success=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${HOST_NAME}/payment?canceled=true`,
-      };
+          line_items: [
+            {
+              price: priceId,
+              quantity: 1,
+            },
+          ],
+          allow_promotion_codes: true,
+          success_url: `${HOST_NAME}/payment?success=true&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${HOST_NAME}/payment?canceled=true`,
+        };
 
-      const session = await stripe.checkout.sessions.create(
-        sessionCreateParams
-      );
-      logger.debug(`Created stripe session`, { session });
-      // if (!session.url) {
-      //   await slackSendText(
-      //     `Failed to create checkout session for email ${email}`
-      //   );
-      //   throw new Error(`Failed to create check out seeions!`);
-      // }
+        const session = await stripe.checkout.sessions.create(
+          sessionCreateParams
+        );
+        logger.debug(`Created stripe session`, { session });
+        // if (!session.url) {
+        //   await slackSendText(
+        //     `Failed to create checkout session for email ${email}`
+        //   );
+        //   throw new Error(`Failed to create check out seeions!`);
+        // }
 
-      // set stripe checkout session ID and payment intent ID
-      raceEntry.sessionId = session.id;
-      raceEntry.paymentId = session.payment_intent as string;
-
-      // race entry is for this current user
-      const updatePromises = [
-        slackSendText(
-          `Checkout session created successfully for email ${email}`
-        ),
-        raceEntry.id
-          ? db
-              .collection("Users")
-              .doc(uid)
-              .collection("RaceEntry")
-              .doc(raceEntry.id)
-              .set(Object.assign({}, raceEntry), { merge: true }) // Firestore doesn't support object with created via new Class()
-          : db
-              .collection("Users")
-              .doc(uid)
-              .collection("RaceEntry")
-              .add(Object.assign({}, raceEntry)),
-      ];
-
+        // set stripe checkout session ID and payment intent ID
+        raceEntry.sessionId = session.id;
+        raceEntry.paymentId = session.payment_intent as string;
+        sessionId = session.id;
+      }
+      if (!isFree) {
+        await Promise.all([
+          slackSendText(
+            `Checkout session created successfully for email ${email}`
+          ),
+          raceEntry.id
+            ? db
+                .collection("Users")
+                .doc(uid)
+                .collection("RaceEntry")
+                .doc(raceEntry.id)
+                .set(Object.assign({}, raceEntry), { merge: true }) // Firestore doesn't support object with created via new Class()
+            : db
+                .collection("Users")
+                .doc(uid)
+                .collection("RaceEntry")
+                .add(Object.assign({}, raceEntry)),
+        ]);
+      }
       // if the current user and race entry is the same personal, we can update current login user's preference
       if (!raceEntry.isForOther) {
         const {
@@ -200,27 +206,24 @@ export const onCreateCheckout = functions
           await stripe.customers.update(customer!, userObject);
         }
 
-        updatePromises.push(
-          db.collection("Users").doc(uid).set(
-            {
-              firstName,
-              lastName,
-              preferName,
-              gender,
-              personalBest,
-              phone,
-              size,
-              birthYear,
-              wechatId,
-            },
-            { merge: true }
-          )
+        await db.collection("Users").doc(uid).set(
+          {
+            firstName,
+            lastName,
+            preferName,
+            gender,
+            personalBest,
+            phone,
+            size,
+            birthYear,
+            wechatId,
+          },
+          { merge: true }
         );
       }
 
-      await Promise.all(updatePromises);
-      logger.debug(`sending session`, { session });
-      return { id: session.id };
+      if (isFree) return { id: payment_intent, isFree: true };
+      else return { id: sessionId };
     } catch (error) {
       logger.error(error);
       await slackSendText(
@@ -229,3 +232,96 @@ export const onCreateCheckout = functions
     }
     return null;
   });
+
+interface FreeEntry {
+  firstName: string;
+  lastName: string;
+  phone: string;
+}
+
+async function isFreeEntry(raceEntry: RaceEntry) {
+  const year = new Date().getFullYear().toString();
+  const freeEntriesRef = await db
+    .collection("Race")
+    .doc(year)
+    .collection("FreeEntry")
+    .get();
+
+  if (freeEntriesRef.size === 0) return false;
+
+  let isFree = false;
+  freeEntriesRef.docs.forEach((doc) => {
+    const entry = doc.data() as FreeEntry;
+    if (
+      entry.firstName.toLowerCase() === raceEntry.firstName.toLowerCase() &&
+      entry.lastName.toLowerCase() === raceEntry.lastName.toLowerCase() &&
+      entry.phone === raceEntry.phone
+    ) {
+      isFree = true;
+    }
+  });
+  logger.debug(`isFreeEntry`, { isFree });
+  return isFree;
+}
+
+/*
+ * Process free entry
+ * Update user's race entry to set the paid flag to true
+ * Update team's teamMembers to add the payment intent ID
+ */
+async function processFreeEntry(uid: string, raceEntry: RaceEntry, team: Team) {
+  logger.debug(`processFreeEntry`, { uid, raceEntry, team });
+  const year = new Date().getFullYear().toString();
+  const now = new Date().getTime();
+
+  // generate payment intent ID by using free-uid-timestamp
+  const payment_intent = `free-${uid}-${now}`;
+
+  // add payment intent ID to team members array
+  const teamMembers = team.teamMembers
+    ? [...team.teamMembers, payment_intent]
+    : [payment_intent];
+
+  const msg = `Free ${raceEntry.race} race entry for ${raceEntry.firstName} ${raceEntry.lastName} ${raceEntry.phone} created!`;
+  await Promise.all([
+    slackSendText(msg),
+    raceEntry.id // with id this is an update
+      ? db
+          .collection("Users")
+          .doc(uid)
+          .collection("RaceEntry")
+          .doc(raceEntry.id)
+          .set(
+            {
+              paymentId: payment_intent,
+              isPaid: true,
+              teamState: "APPROVED",
+              teamId: team.id,
+              updatedAt: now,
+            },
+            { merge: true }
+          )
+      : db // without id this is a new entry
+          .collection("Users")
+          .doc(uid)
+          .collection("RaceEntry")
+          .add({
+            ...raceEntry,
+            paymentId: payment_intent,
+            isPaid: true,
+            teamState: "APPROVED",
+            teamId: team.id,
+            updatedAt: now,
+          }),
+    db // update team members
+      .collection("Race")
+      .doc(year)
+      .collection("Teams")
+      .doc(team.id)
+      .set(
+        { teamMembers: [...new Set(teamMembers)], updatedAt: now },
+        { merge: true }
+      ),
+  ]);
+  return payment_intent;
+}

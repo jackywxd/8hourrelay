@@ -28,6 +28,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
+import { CreateSessionResponse } from "@8hourrelay/store/src/RegistrationStore";
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe(
@@ -43,6 +45,7 @@ const confirmFormSchema = z.object({
 type ConfirmFormValues = z.infer<typeof confirmFormSchema>;
 
 function ConfirmForm() {
+  const router = useRouter();
   const form = useForm<ConfirmFormValues>({
     resolver: zodResolver(confirmFormSchema),
     defaultValues: { accepted: false },
@@ -50,13 +53,21 @@ function ConfirmForm() {
 
   const onSubmit = async () => {
     try {
-      const [stripe, sessionId] = await Promise.all([
+      const [stripe, sessionResponse] = await Promise.all([
         stripePromise,
         registerStore.submitRaceForm(),
       ]);
-      // redirect user to Stripe Checkout for payment
-      if (stripe && sessionId) {
-        stripe.redirectToCheckout({ sessionId: (sessionId as any).id });
+
+      // cast sessionResponse to CreateSessionResponse
+      const session = sessionResponse as unknown as CreateSessionResponse;
+      // redirect user to Stripe Checkout for payment if not free
+      if (stripe && session && !session.isFree) {
+        stripe.redirectToCheckout({
+          sessionId: session.id,
+        });
+      } else if (session && session.isFree) {
+        // redirect user to payment success page if isFree is set
+        router.push(`/payment?success=true&session_id=${session.id}`);
       }
     } catch (error) {
       console.log(`error`, error);
