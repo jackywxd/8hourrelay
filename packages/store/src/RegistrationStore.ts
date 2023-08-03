@@ -440,14 +440,17 @@ export class RegistrationStore extends BaseStore {
         yield onCreateCheckout(this.form);
       console.log(`submit result`, result);
 
-      if (result) {
+      if (result && result.data && result.data.id) {
         this.setEditIndex(null);
         toast.update(id, {
-          render: `Race entry submitted successfully. Redirecting to payment page...`,
+          render: !result.data.isFree
+            ? `Race entry submitted successfully. Redirecting to payment page...`
+            : `Race entry submitted successfully`,
           type: "success",
           isLoading: false,
           autoClose: 5000,
         });
+        this.setForm(null); // reset form
         this.isLoading = false;
         return result.data;
       }
