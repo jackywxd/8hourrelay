@@ -32,9 +32,9 @@ export async function getTeam(name: string) {
             .get();
         });
         const teamMembersRef = await Promise.all(teamMembersPromise);
-        teamMembers = teamMembersRef.map(
-          (ref) => ref.docs[0] && (ref.docs[0].data() as RaceEntry)
-        );
+        teamMembers = teamMembersRef
+          .map((ref) => ref.docs[0] && (ref.docs[0].data() as RaceEntry))
+          .filter((f) => f);
       }
       return { team, teamMembers } as { team: Team; teamMembers: RaceEntry[] };
     }

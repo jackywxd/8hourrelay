@@ -58,6 +58,9 @@ function TeamMemberList({
           </CardTitle>
           <CardTitle>Captain: {team.captainName}</CardTitle>
           <CardTitle>{team.slogan && `Slogan: ${team.slogan}`}</CardTitle>
+          <CardTitle>
+            {members?.length > 0 && `Total members: ${members.length}`}
+          </CardTitle>
         </CardHeader>
 
         {!membersData || membersData.length === 0 ? (
