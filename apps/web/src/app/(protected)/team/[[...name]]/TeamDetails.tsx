@@ -25,14 +25,16 @@ function TeamMemberList({
   const entries = store.userStore?.raceEntries.slice();
   // whether is current login user is the member of the selected team
   const isMember = () => {
+    let member = false;
     if (entries?.length && team && team.teamMembers) {
       team.teamMembers.forEach((m) => {
-        if (entries.some((f) => f.teamId === m)) return true;
+        if (entries.map((e) => e.paymentId).some((f) => f === m)) member = true;
       });
     }
-    return false;
+    return member;
   };
 
+  console.log("isMember", isMember());
   const members = membersData?.map((m) => new RaceEntry(m));
   useEffect(() => {
     if (!store.authStore.isAuthenticated) {
@@ -76,7 +78,7 @@ function TeamMemberList({
               </Link>
             )}
           </EmptyPlaceholder>
-        ) : !isMember ? (
+        ) : !isMember() ? (
           <EmptyPlaceholder>
             {/* <EmptyPlaceholder.Icon name="close" className="text-red-500" /> */}
             <EmptyPlaceholder.Title>
