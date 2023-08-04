@@ -55,6 +55,7 @@ export const editableEntries = [
   "isForOther",
   "emergencyName",
   "emergencyPhone",
+  "wechatId",
 ];
 
 export class RegistrationStore extends BaseStore {
