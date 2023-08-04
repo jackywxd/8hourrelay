@@ -126,7 +126,7 @@ export const onCreateCheckout = functions
       )[0];
 
       const isFree = await isFreeEntry(raceEntry);
-      if (isFree) {
+      if (isFree && isFree.isFree) {
         [payment_intent] = await Promise.all([
           processFreeEntry(user.uid, raceEntry, team),
           db
@@ -145,7 +145,6 @@ export const onCreateCheckout = functions
         const sessionCreateParams: Stripe.Checkout.SessionCreateParams = {
           customer,
           mode: "payment",
-
           line_items: [
             {
               price: priceId,
@@ -161,12 +160,6 @@ export const onCreateCheckout = functions
           sessionCreateParams
         );
         logger.debug(`Created stripe session`, { session });
-        // if (!session.url) {
-        //   await slackSendText(
-        //     `Failed to create checkout session for email ${email}`
-        //   );
-        //   throw new Error(`Failed to create check out seeions!`);
-        // }
 
         // set stripe checkout session ID and payment intent ID
         raceEntry.sessionId = session.id;
@@ -228,8 +221,10 @@ export const onCreateCheckout = functions
         );
       }
 
-      if (isFree) return { id: payment_intent, isFree: true };
-      else return { id: sessionId };
+      if (payment_intent && isFree?.isFree)
+        return { id: payment_intent, isFree: true };
+      else if (sessionId) return { id: sessionId, isFree: false };
+      else throw new Error(`Failed to create checkout session`);
     } catch (error) {
       logger.error(error);
       await slackSendText(
