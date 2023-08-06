@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function VolunteeringSection() {
   return (
@@ -24,10 +25,12 @@ export default function VolunteeringSection() {
             8hourrelay@gmail.com for more details on sponsorship packages and
             opportunities. Join us in creating an unforgettable event together!
           </p>
-          {/* <button className="btn-primary btn-large">
-            <div className="small">I want to</div>
-            <div className="big">Volunteer</div>
-          </button> */}
+          <Link href="https://volunteersignup.org/AA4L4">
+            <button className="btn-primary btn-large">
+              <div className="small">I want to</div>
+              <div className="big">Volunteer</div>
+            </button>
+          </Link>
         </div>
       </section>
       <section className="sponsorship relative z-10" id="sponsorship">
@@ -47,19 +50,25 @@ export default function VolunteeringSection() {
             <div className="grid-item">
               <h4>Why Sponsor</h4>
               <div className="group">
-                <h5><b>Brand Visibility</b></h5>
+                <h5>
+                  <b>Brand Visibility</b>
+                </h5>
                 Sponsorship of the Vancouver 8 Hour Relay offers extensive brand
                 exposure, reaching a diverse audience as participants come from
                 various cities.
               </div>
               <div className="group">
-                <h5><b>Community Engagement</b></h5>
-                Demonstrate your support for the local community by sponsoring this
-                event, showcasing your dedication to promoting health, wellness and
-                fostering a sense of community.
+                <h5>
+                  <b>Community Engagement</b>
+                </h5>
+                Demonstrate your support for the local community by sponsoring
+                this event, showcasing your dedication to promoting health,
+                wellness and fostering a sense of community.
               </div>
               <div className="group">
-                <h5><b>Networking Opportunities</b></h5>
+                <h5>
+                  <b>Networking Opportunities</b>
+                </h5>
                 The relay goes beyond a race; it brings together individuals who
                 share a passion for running and community. As a sponsor, you’ll
                 have the chance to network with participants, fellow sponsors,
@@ -70,7 +79,9 @@ export default function VolunteeringSection() {
             <div className="grid-item">
               <h4>Sponsorship Levels</h4>
               <div className="group">
-                <h5><b>Title Sponsor (1 stand) $2000</b></h5>
+                <h5>
+                  <b>Title Sponsor (1 stand) $2000</b>
+                </h5>
                 The name and logo will be on athletes’ T-shirts and the arch
                 <br />
                 Athletes number plate (with investor logo attached)
@@ -85,7 +96,9 @@ export default function VolunteeringSection() {
                 <br />
               </div>
               <div className="group">
-                <h5><b>King Sponsors(3stands) $1000</b></h5>
+                <h5>
+                  <b>King Sponsors(3stands) $1000</b>
+                </h5>
                 Athletes number plate (with investor logo attached)
                 <br />
                 Independent tent booth(10’× 10’)
@@ -98,7 +111,9 @@ export default function VolunteeringSection() {
                 <br />
               </div>
               <div className="group">
-                <h5><b>Diamond Sponsors(5 stands) $500</b></h5>
+                <h5>
+                  <b>Diamond Sponsors(5 stands) $500</b>
+                </h5>
                 Independent tent booth(10’× 10’)
                 <br />
                 Lawn billboard displays all days(2’× 6’)
