@@ -153,8 +153,13 @@ export default function RulesSection() {
               <details>
                 <summary>​​Calculating the final result of a team</summary>
                 <div>
-                  Quis at voluptatibus quas corrupti! Quibusdam vitae quas atque
-                  voluptas?
+                  Each team must calculate the weighted coefficient of the team,
+                  which is based on each member’s age, gender, and running time
+                  entered on the regisliation form. The team’s weighted
+                  coefficient must be reported the day before the race. The
+                  team’s distance for record-keeping in determining the winner
+                  is calculated as the actual distance covered in the relay by
+                  the team and its weighted coefficient.
                 </div>
               </details>
             </li>
