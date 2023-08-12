@@ -28,7 +28,7 @@ export default function RulesSection() {
                   The team that covers the longest distance wins the race.
                 </div>
                 <div>
-                  Each leg of the relay must be no less than 10 minutes.
+                  Each leg of the relay must be no less than 10 minutes, and no more than 60 minutes.
                 </div>
               </details>
             </li>
@@ -145,7 +145,7 @@ export default function RulesSection() {
                   The team that covers the longest distance wins the race.
                 </div>
                 <div>
-                  Each leg of the relay must be no less than 20 minutes.
+                  Each leg of the relay must be no less than 20 minutes, and no more than 120 minutes.
                 </div>
               </details>
             </li>
