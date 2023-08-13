@@ -575,12 +575,19 @@ nav li {
 
 .sponsor-logo-container {
   display: flex;
+  align-items: center;
   justify-content: center;
   gap: 30px;
 }
 
 .sponsor-logo {
-  height: 50px;
+  height: 90px;
+  width: auto;
+  margin: 10px 20px;
+}
+
+.sponsor-logo.carol {
+  height: 150px;
   width: auto;
 }
 
