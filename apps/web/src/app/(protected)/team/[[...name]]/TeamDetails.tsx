@@ -25,6 +25,7 @@ function TeamMemberList({
   const entries = store.userStore?.raceEntries.slice();
   // whether is current login user is the member of the selected team
   const isMember = () => {
+    // if current user is the creator of the team, then he/she can view the team details
     if (team.createdBy === store.userStore?.uid) return true;
     let member = false;
     if (entries?.length && team && team.teamMembers) {
