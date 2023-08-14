@@ -575,6 +575,7 @@ nav li {
 
 .sponsor-logo-container {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 30px;
@@ -590,6 +591,15 @@ nav li {
   height: 150px;
   width: auto;
 }
+
+@media only screen and (max-width: 700px) {
+  .sponsor-logo.main {
+    padding-inline: 30px;
+    width: 100%;
+    height: auto;
+  }
+}
+
 
 .mark-calendar {
   padding-block: 50px 150px;
