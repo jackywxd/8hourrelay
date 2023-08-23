@@ -256,8 +256,8 @@ async function isFreeEntry(raceEntry: RaceEntry) {
   freeEntriesRef.docs.forEach((doc) => {
     const entry = doc.data() as FreeEntry;
     if (
-      entry.firstName.toLowerCase() === raceEntry.firstName.toLowerCase() &&
-      entry.lastName.toLowerCase() === raceEntry.lastName.toLowerCase() &&
+      entry.firstName?.toLowerCase() === raceEntry.firstName?.toLowerCase() &&
+      entry.lastName?.toLowerCase() === raceEntry.lastName?.toLowerCase() &&
       entry.phone === raceEntry.phone &&
       !entry.isClaimed // free not claimed
     ) {
