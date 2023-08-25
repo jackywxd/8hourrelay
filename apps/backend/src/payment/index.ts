@@ -5,6 +5,9 @@ import { RaceEntry, Team, User, event2023 } from "@8hourrelay/models";
 import { db, functions } from "../fcm";
 
 const apiKey = process.env.STRIPE_SECRET;
+
+const CUT_OFF_DATE = process.env.CUT_OFF_DATE ?? "2023-08-31T23:59:59-07:00";
+
 const stripe = new Stripe(apiKey!, {
   apiVersion: "2022-11-15",
   typescript: true,
@@ -69,6 +72,13 @@ export const onCreateCheckout = functions
     }
 
     logger.info(`Stripe checkout form`, data);
+
+    // cutoff date
+    const cutoffDate = new Date(CUT_OFF_DATE).getTime();
+
+    if (new Date().getTime() > cutoffDate) {
+      return { error: `Registration is closed!` };
+    }
 
     const uid = context.auth.uid;
 
