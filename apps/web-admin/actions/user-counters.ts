@@ -1,11 +1,11 @@
 "use server";
 
-import { authConfig } from "../../config/server-config";
+import { authConfig } from "../config/server-config";
 import { getFirestore } from "firebase-admin/firestore";
 import { getTokens } from "next-firebase-auth-edge/lib/next/tokens";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { getFirebaseAdminApp } from "../firebase";
+import { getFirebaseAdminApp } from "@/app/firebase";
 
 export async function incrementCounter() {
   const tokens = await getTokens(cookies(), authConfig);

@@ -5,9 +5,18 @@ import { authConfig } from "./config/server-config";
 
 const PUBLIC_PATHS = ["/register", "/login", "/reset-password"];
 
+const ADMIN_USERS = ["admin@heidi.cloud", "jackywxd@gmail.com"];
+
 function redirectToHome(request: NextRequest) {
   const url = request.nextUrl.clone();
   url.pathname = "/";
+  url.search = "";
+  return NextResponse.redirect(url);
+}
+
+function redirectToUnAuthorized(request: NextRequest) {
+  const url = request.nextUrl.clone();
+  url.pathname = "/unauthorized";
   url.search = "";
   return NextResponse.redirect(url);
 }
@@ -34,7 +43,21 @@ export async function middleware(request: NextRequest) {
     cookieSignatureKeys: authConfig.cookieSignatureKeys,
     serviceAccount: authConfig.serviceAccount,
     handleValidToken: async ({ token, decodedToken }) => {
-      console.log("Valid token", { token, decodedToken });
+      if (
+        decodedToken.email &&
+        !ADMIN_USERS.includes(decodedToken?.email) &&
+        !request.nextUrl.pathname.startsWith("/unauthorized")
+      ) {
+        return redirectToUnAuthorized(request);
+      }
+      if (
+        decodedToken.email &&
+        ADMIN_USERS.includes(decodedToken?.email) &&
+        request.nextUrl.pathname.startsWith("/unauthorized")
+      ) {
+        return redirectToHome(request);
+      }
+
       // Authenticated user should not be able to access /login, /register and /reset-password routes
       if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
         return redirectToHome(request);
@@ -50,7 +73,6 @@ export async function middleware(request: NextRequest) {
       return redirectToLogin(request);
     },
   });
-  console.log(`[middleware] ${request.nextUrl.pathname}`, result);
   return result;
 }
 

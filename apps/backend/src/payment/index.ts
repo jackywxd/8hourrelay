@@ -1,7 +1,13 @@
 import { logger } from "firebase-functions";
 import { slackSendText } from "../libs/slack";
 import Stripe from "stripe";
-import { RaceEntry, Team, User, event2023 } from "@8hourrelay/models";
+import {
+  FreeEntry,
+  RaceEntry,
+  Team,
+  User,
+  event2023,
+} from "@8hourrelay/models";
 import { db, functions } from "../fcm";
 
 const apiKey = process.env.STRIPE_SECRET;
@@ -233,13 +239,6 @@ export const onCreateCheckout = functions
     }
     return null;
   });
-
-interface FreeEntry {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  isClaimed?: boolean;
-}
 
 async function isFreeEntry(raceEntry: RaceEntry) {
   const year = new Date().getFullYear().toString();

@@ -4,7 +4,11 @@ import { AuthProvider } from "./client-auth-provider";
 import { authConfig } from "../config/server-config";
 import { Tokens } from "next-firebase-auth-edge/lib/auth";
 import { User } from "./context";
-import { filterStandardClaims } from 'next-firebase-auth-edge/lib/auth/claims';
+import { filterStandardClaims } from "next-firebase-auth-edge/lib/auth/claims";
+import { getTeams } from "@/actions/teams";
+import { getRaceEntries } from "@/actions/raceEntries";
+import { getUsers } from "@/actions/users";
+import { getFreeEntries } from "@/actions/freeEntries";
 
 const mapTokensToUser = ({ decodedToken }: Tokens): User => {
   const {
@@ -25,7 +29,7 @@ const mapTokensToUser = ({ decodedToken }: Tokens): User => {
     photoURL: photoURL ?? null,
     phoneNumber: phoneNumber ?? null,
     emailVerified: emailVerified ?? false,
-    customClaims
+    customClaims,
   };
 };
 
@@ -36,6 +40,22 @@ export async function ServerAuthProvider({
 }) {
   const tokens = await getTokens(cookies(), authConfig);
   const user = tokens ? mapTokensToUser(tokens) : null;
+  let defaultData = {};
+  if (user?.customClaims?.role === "admin") {
+    const [teams, raceEntries, users, freeEntries] = await Promise.all([
+      getTeams(),
+      getRaceEntries(),
+      getUsers(),
+      getFreeEntries(),
+    ]);
+    defaultData = { teams, raceEntries, users, freeEntries };
+  }
 
-  return <AuthProvider defaultUser={user}>{children}</AuthProvider>;
+  console.log(`defaultData`, defaultData);
+
+  return (
+    <AuthProvider defaultUser={user} defaultData={defaultData}>
+      {children}
+    </AuthProvider>
+  );
 }

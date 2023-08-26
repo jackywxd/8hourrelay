@@ -1,6 +1,14 @@
 import { event2023 } from "./Event";
 import { TeamState } from "./Team";
 
+export interface FreeEntry {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  isClaimed?: boolean;
+}
+
 export type Gender = "Male" | "Female";
 
 // entries user can update after register payment
@@ -26,7 +34,7 @@ export class RaceEntry {
   birthYear?: string;
   personalBest?: string;
   gender?: Gender;
-  uid!: string;
+  uid!: string; // user ID
   email!: string;
   phone?: string;
   year!: string;

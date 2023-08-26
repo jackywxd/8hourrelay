@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authConfig } from "../../../config/server-config";
+import { authConfig } from "@/config/server-config";
 import { getTokens } from "next-firebase-auth-edge/lib/next/tokens";
 import { refreshAuthCookies } from "next-firebase-auth-edge/lib/next/middleware";
 import { getFirebaseAuth } from "next-firebase-auth-edge/lib/auth";
@@ -17,6 +17,7 @@ export async function POST(request: NextRequest) {
   }
 
   await setCustomUserClaims(tokens.decodedToken.uid, {
+    role: "admin",
     someCustomClaim: {
       updatedAt: Date.now(),
     },

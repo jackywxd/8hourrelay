@@ -1,15 +1,14 @@
-import styles from "./page.module.css";
-import { ServerAuthProvider } from "../../auth/server-auth-provider";
+import { ServerAuthProvider } from "../../../auth/server-auth-provider";
 import { UserProfile } from "./UserProfile";
 import { Metadata } from "next";
 import { getTokens } from "next-firebase-auth-edge/lib/next/tokens";
 import { cookies } from "next/headers";
-import { authConfig } from "../../config/server-config";
-import { getFirebaseAdminApp } from "../firebase";
+import { authConfig } from "../../../config/server-config";
+import { getFirebaseAdminApp } from "../../firebase";
 import { getFirestore } from "firebase-admin/firestore";
-import { Badge } from "../../ui/Badge";
-import { HomeLink } from "../../ui/HomeLink";
-import { MainTitle } from "../../ui/MainTitle";
+import { Badge } from "../../../ui/Badge";
+import { HomeLink } from "../../../ui/HomeLink";
+import { MainTitle } from "../../../ui/MainTitle";
 
 const db = getFirestore(getFirebaseAdminApp());
 async function getUserCounter(): Promise<number> {
@@ -19,25 +18,27 @@ async function getUserCounter(): Promise<number> {
     throw new Error("Cannot get counter of unauthenticated user");
   }
 
+  console.log(`decodedtokens`, tokens.decodedToken);
+
   const snapshot = await db
-    .collection("user-counters")
-    .doc(tokens.decodedToken.uid)
+    .collection("Race")
+    .doc("2023")
+    .collection("Teams")
+    .where("createdBy", "==", tokens.decodedToken.uid)
     .get();
 
-  const currentUserCounter = await snapshot.data();
-
-  if (!currentUserCounter) {
+  if (snapshot.empty) {
     return 0;
   }
-
-  return currentUserCounter.count;
+  const currentUserCounter = await snapshot.docs[0].data();
+  console.log(`currentUserCounter`, currentUserCounter);
 }
 
 export default async function Profile() {
   const count = await getUserCounter();
 
   return (
-    <div className={styles.container}>
+    <div>
       <MainTitle>
         <HomeLink />
         <span>Profile</span>
@@ -61,6 +62,6 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: `${tokens.decodedToken.email} profile page | next-firebase-auth-edge example`,
+    title: `${tokens.decodedToken.email} profile page | 8 Hour Realy Admin Console`,
   };
 }

@@ -1,6 +1,9 @@
-import "./globals.css";
-import styles from "./layout.module.css";
 import { Metadata } from "next";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
+
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -11,25 +14,18 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <body>
-        <div className={styles.container}>
-          <main className={styles.main}>{children}</main>
-          <footer className={styles.footer}>
-            <a
-              href="https://github.com/awinogrodzki/next-firebase-auth-edge"
-              target="_blank"
-            >
-              github.com/awinogrodzki/next-firebase-auth-edge
-            </a>
-          </footer>
-        </div>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          {children}
+          <ToastContainer />
+        </ThemeProvider>
       </body>
     </html>
   );
 }
 
 export const metadata: Metadata = {
-  title: "next-firebase-auth-edge example page",
+  title: "8 Hour Relay: Admin",
   viewport: "width=device-width, initial-scale=1",
-  description: "Next.js page showcasing next-firebase-auth-edge features",
+  description: "Admin Console for 8 Hour Relay",
   icons: "/favicon.ico",
 };

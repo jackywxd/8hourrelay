@@ -1,19 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { useAuth } from "../../../auth/context";
-import styles from "./UserProfile.module.css";
-import { useFirebaseAuth } from "../../../auth/firebase";
+import { useAuth } from "@/auth/context";
+import { useFirebaseAuth } from "@/auth/firebase";
 import { useLoadingCallback } from "react-loading-hook";
-import { clientConfig } from "../../../config/client-config";
-import { Button } from "../../../ui/Button";
-import { LoadingIcon } from "../../../ui/icons";
+import { clientConfig } from "@/config/client-config";
+import { Button } from "@/components/ui/button";
+import { LoadingIcon } from "@/ui/icons";
 import { useRouter } from "next/navigation";
-import { incrementCounter } from "../../actions/user-counters";
+import { incrementCounter } from "@/actions/user-counters";
 import { signOut, reload } from "firebase/auth";
-import { ButtonGroup } from "../../../ui/ButtonGroup";
-import { Card } from "../../../ui/Card";
-import { Badge } from "../../../ui/Badge";
+import { ButtonGroup } from "@/ui/ButtonGroup";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface UserProfileProps {
   count: number;
@@ -64,9 +63,9 @@ export function UserProfile({ count }: UserProfileProps) {
 
   if (!user && hasLoggedOut) {
     return (
-      <div className={styles.container}>
-        <div className={styles.section}>
-          <h3 className={styles.title}>
+      <div>
+        <div>
+          <h3>
             <span>You are being logged out...</span>
             <LoadingIcon />
           </h3>
@@ -80,34 +79,32 @@ export function UserProfile({ count }: UserProfileProps) {
   }
 
   return (
-    <div className={styles.container}>
-      <Card className={styles.section}>
-        <h3 className={styles.title}>You are logged in as</h3>
-        <div className={styles.content}>
-          <div className={styles.avatar}>
-            {user.photoURL && <img src={user.photoURL} />}
-          </div>
+    <div>
+      <Card>
+        <h3>You are logged in as</h3>
+        <div>
+          <div>{user.photoURL && <img src={user.photoURL} />}</div>
           <span>{user.email}</span>
         </div>
 
         {!user.emailVerified && (
-          <div className={styles.content}>
+          <div>
             <Badge>Email not verified.</Badge>
           </div>
         )}
-
+        <Button
+          variant="outline"
+          disabled={isClaimsLoading}
+          onClick={handleClaims}
+        >
+          Refresh custom user claims
+        </Button>
         <ButtonGroup>
-          <div className={styles.claims}>
+          <div>
             <h5>Custom claims</h5>
             <pre>{JSON.stringify(user.customClaims, undefined, 2)}</pre>
           </div>
-          <Button
-            loading={isClaimsLoading}
-            disabled={isClaimsLoading}
-            onClick={handleClaims}
-          >
-            Refresh custom user claims
-          </Button>
+
           <Button
             loading={isLogoutLoading}
             disabled={isLogoutLoading}
@@ -118,8 +115,8 @@ export function UserProfile({ count }: UserProfileProps) {
           <Button onClick={handleRedirect}>Redirect</Button>
         </ButtonGroup>
       </Card>
-      <Card className={styles.section}>
-        <h3 className={styles.title}>
+      <Card>
+        <h3>
           {/* defaultCount is updated by server */}
           Counter: {count}
         </h3>

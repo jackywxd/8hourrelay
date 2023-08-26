@@ -9,9 +9,11 @@ import {
 import { useFirebaseAuth } from "./firebase";
 import { AuthContext, User } from "./context";
 import { filterStandardClaims } from "next-firebase-auth-edge/lib/auth/claims";
+import { AdminStore } from "@/store/adminStore";
 
 export interface AuthProviderProps {
   defaultUser: User | null;
+  defaultData: any;
   children: React.ReactNode;
 }
 
@@ -24,10 +26,15 @@ function toUser(user: FirebaseUser, idTokenResult: IdTokenResult): User {
 
 export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({
   defaultUser,
+  defaultData,
   children,
 }) => {
   const { getFirebaseAuth } = useFirebaseAuth();
   const [user, setUser] = React.useState(defaultUser);
+  const [adminStore] = React.useState(() => {
+    const store = new AdminStore(defaultData);
+    return store;
+  });
 
   const handleIdTokenChanged = async (firebaseUser: FirebaseUser | null) => {
     if (!firebaseUser) {
@@ -57,6 +64,7 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({
     <AuthContext.Provider
       value={{
         user,
+        store: adminStore,
       }}
     >
       {children}
