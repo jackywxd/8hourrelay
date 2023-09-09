@@ -35,16 +35,16 @@ export class AdminStore {
     users,
     freeEntries,
   }: {
-    teams: Team[];
+    teams: TeamData[];
     raceEntries: RaceEntry[];
-    users: User[];
+    users: UserData[];
     freeEntries: RaceEntry[];
   }) {
-    this.teams = this.initTeamData(teams, raceEntries);
-    this.users = this.initUserData(users, raceEntries);
+    this.teams = teams;
+    this.users = users;
     this.raceEntries = raceEntries ?? [];
     this.freeEntries = freeEntries ?? [];
-    console.log("AdminStore initialized!!", { teams: toJS(this.teams) });
+    console.log("AdminStore initialized!!");
     makeAutoObservable(this);
   }
 
@@ -63,9 +63,9 @@ export class AdminStore {
 
   initTeamData(teams: Team[], raceEntries: RaceEntry[]) {
     const teamDatas: TeamData[] = [];
-    teams.forEach((team) => {
+    teams?.forEach((team) => {
       const teamData = { ...team, raceEntries: [] } as TeamData;
-      const raceEntry = raceEntries.filter((re) => re.teamId === team.id);
+      const raceEntry = raceEntries?.filter((re) => re.teamId === team.id);
       if (raceEntry) teamData.raceEntries = raceEntry;
       if (team.teamMembers?.length !== raceEntry.length) {
         console.error("ERROR teamMembers is not eaqual to raceEntries");
@@ -77,9 +77,9 @@ export class AdminStore {
 
   initUserData(users: User[], raceEntries: RaceEntry[]) {
     const teamDatas: UserData[] = [];
-    users.forEach((user) => {
+    users?.forEach((user) => {
       const userData = { ...user, raceEntries: [] } as TeamData;
-      const raceEntry = raceEntries.filter((re) => re.uid === user.uid);
+      const raceEntry = raceEntries?.filter((re) => re.uid === user.uid);
       if (raceEntry) {
         userData.raceEntries = raceEntry;
       }

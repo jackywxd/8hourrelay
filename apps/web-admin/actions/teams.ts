@@ -2,7 +2,7 @@
 
 import { getFirestore } from "firebase-admin/firestore";
 import { getFirebaseAdminApp } from "@/app/firebase";
-import { Team } from "@8hourrelay/models";
+import { Race, RaceEntry, Team } from "@8hourrelay/models";
 
 const firebaseDb = getFirestore(getFirebaseAdminApp());
 
@@ -19,8 +19,8 @@ export async function getTeams() {
       .filter((f) => f)
       .map((data) => {
         const d = data.data();
-        const team = { ...d, id: data.id };
-        return team as Team;
+        const team = { ...d, id: data.id, raceEntries: [] as RaceEntry[] };
+        return team;
       });
     return teams;
   }

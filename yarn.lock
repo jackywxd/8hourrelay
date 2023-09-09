@@ -4438,7 +4438,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-dialog@npm:1.0.4":
+"@radix-ui/react-dialog@npm:1.0.4, @radix-ui/react-dialog@npm:^1.0.4":
   version: 1.0.4
   resolution: "@radix-ui/react-dialog@npm:1.0.4"
   dependencies:
@@ -6315,6 +6315,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-csv@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@types/react-csv@npm:1.1.3"
+  dependencies:
+    "@types/react": "*"
+  checksum: 1b4b131bf79ab8fcf973dc26c9ed6cfca6e09d6abf4ce1d32b4caaba6a069beb6435b77048ce496820a7c3add0f137b5358b6d4f29d2fbd676c7b000d0345673
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:18.0.9":
   version: 18.0.9
   resolution: "@types/react-dom@npm:18.0.9"
@@ -6934,22 +6943,30 @@ __metadata:
   resolution: "admin-web@workspace:apps/web-admin"
   dependencies:
     "@8hourrelay/models": "*"
+    "@radix-ui/react-dialog": ^1.0.4
+    "@radix-ui/react-dropdown-menu": ^2.0.5
     "@radix-ui/react-icons": ^1.3.0
     "@radix-ui/react-navigation-menu": ^1.1.3
+    "@radix-ui/react-popover": ^1.0.6
+    "@radix-ui/react-select": ^1.2.2
+    "@radix-ui/react-separator": ^1.0.3
     "@radix-ui/react-slot": ^1.0.2
     "@radix-ui/react-tabs": ^1.0.4
     "@tanstack/react-table": ^8.9.3
     "@types/node": 18.11.9
     "@types/react": 18.0.25
+    "@types/react-csv": ^1.1.3
     "@types/react-dom": 18.0.9
     class-variance-authority: ^0.7.0
     clsx: ^2.0.0
+    cmdk: ^0.2.0
     firebase: ^9.18.0
     firebase-admin: ^11.9.0
     next: 13.4.12
     next-firebase-auth-edge: 0.8.0
     postcss: ^8.4.24
     react: 18.2.0
+    react-csv: ^2.2.2
     react-dom: 18.2.0
     react-loading-hook: ^1.0.0
     tailwind-merge: ^1.14.0
@@ -18367,6 +18384,13 @@ __metadata:
     react: ^16.8.5 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.5 || ^17.0.0 || ^18.0.0
   checksum: 5f90f7c0ab77a14dfcd496cbd94bbde457612f380c6fc815f3bba7b52effd75132948fcaa661a902a184bb1e6ae5896dcf5b0c77c4ddf809a2c65288f3eed5a7
+  languageName: node
+  linkType: hard
+
+"react-csv@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "react-csv@npm:2.2.2"
+  checksum: a6ffabd67fc9ba1478b003977923cfa3ccdd9553ac5edcc3824b4a5ea849b87cb2acfcc0781b0cd0a259bf56e6a7dfd35cfc307576aa51819fc5a32b03118fab
   languageName: node
   linkType: hard
 

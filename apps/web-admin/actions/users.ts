@@ -14,8 +14,8 @@ export async function getUsers() {
       .filter((f) => f)
       .map((data) => {
         const d = data.data();
-        const user = { ...d, uid: data.id };
-        return user as User;
+        const user = { ...d, uid: data.id, raceEntries: [] as RaceEntry[] };
+        return user;
       });
     return users;
   }

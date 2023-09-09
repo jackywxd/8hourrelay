@@ -9,8 +9,9 @@ import { getTeams } from "@/actions/teams";
 import { getRaceEntries } from "@/actions/raceEntries";
 import { getUsers } from "@/actions/users";
 import { getFreeEntries } from "@/actions/freeEntries";
+import { getAllData } from "@/actions/data-api";
 
-const mapTokensToUser = ({ decodedToken }: Tokens): User => {
+export const mapTokensToUser = ({ decodedToken }: Tokens): User => {
   const {
     uid,
     email,
@@ -40,18 +41,8 @@ export async function ServerAuthProvider({
 }) {
   const tokens = await getTokens(cookies(), authConfig);
   const user = tokens ? mapTokensToUser(tokens) : null;
-  let defaultData = {};
-  if (user?.customClaims?.role === "admin") {
-    const [teams, raceEntries, users, freeEntries] = await Promise.all([
-      getTeams(),
-      getRaceEntries(),
-      getUsers(),
-      getFreeEntries(),
-    ]);
-    defaultData = { teams, raceEntries, users, freeEntries };
-  }
 
-  console.log(`defaultData`, defaultData);
+  const defaultData = await getAllData(user);
 
   return (
     <AuthProvider defaultUser={user} defaultData={defaultData}>
