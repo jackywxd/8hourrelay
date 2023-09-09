@@ -12,6 +12,8 @@ const getFirebaseApp = (options: FirebaseOptions) => {
   return (!getApps().length ? initializeApp(options) : getApp()) as FirebaseApp;
 };
 
+console.log(`clientConfig`, clientConfig);
+
 export const useFirebaseAuth = () => {
   const getFirebaseAuth = () => {
     const auth = getAuth(getFirebaseApp(clientConfig));
