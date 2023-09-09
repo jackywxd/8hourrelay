@@ -1,9 +1,6 @@
-import { Metadata } from "next";
 import { getTokens } from "next-firebase-auth-edge/lib/next/tokens";
 import { cookies } from "next/headers";
 import { authConfig } from "@/config/server-config";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import RacenEntriesTable from "@/raceEntries/raceEntriesTable";
 import { mapTokensToUser } from "@/auth/server-auth-provider";
 import { UserNav } from "@/components/user-nav";
 
@@ -20,8 +17,8 @@ export default async function LoginLayout({
     return null;
   }
 
-  /* @ts-expect-error https://github.com/vercel/next.js/issues/43537 */
   return (
+    /* @ts-expect-error https://github.com/vercel/next.js/issues/43537 */
     <ServerAuthProvider>
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">

@@ -80,30 +80,15 @@ export function LoginPage() {
         </div>
       )}
       {!hasLogged && (
-        <PasswordForm
-          loading={isEmailLoading}
-          onSubmit={handleLoginWithEmailAndPassword}
-          error={error}
-        >
-          <ButtonGroup>
-            <Link
-              className={styles.link}
-              href={passRedirectParam("/reset-password")}
-            >
-              Reset password
-            </Link>
-            <Link href={passRedirectParam("/register")}>
-              <Button>Register</Button>
-            </Link>
-            <Button
-              loading={isGoogleLoading}
-              disabled={isGoogleLoading}
-              onClick={handleLoginWithGoogle}
-            >
-              Log in with Google
-            </Button>
-          </ButtonGroup>
-        </PasswordForm>
+        <ButtonGroup>
+          <Button
+            loading={isGoogleLoading}
+            disabled={isGoogleLoading}
+            onClick={handleLoginWithGoogle}
+          >
+            Log in with Google
+          </Button>
+        </ButtonGroup>
       )}
     </div>
   );
