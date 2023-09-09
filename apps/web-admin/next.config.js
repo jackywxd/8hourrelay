@@ -1,8 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
   experimental: {
     serverActions: true,
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
