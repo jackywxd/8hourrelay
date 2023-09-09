@@ -1,7 +1,6 @@
 "use client";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { columns } from "@/raceEntries/columns";
-import { DataTable } from "@/raceEntries/data-table";
+import { DataTable } from "@/components/data-table";
 import { useAuth } from "@/auth/context";
 import { toJS } from "mobx";
 

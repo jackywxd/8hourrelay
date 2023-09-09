@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { DataTableFacetedFilter } from "./data-table-facedted-filter";
 import { CSVLink, CSVDownload } from "react-csv";
 import { Data } from "react-csv/components/CommonPropTypes";
+import { DataTableViewOptions } from "@/components/data-table-view-option";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -35,7 +36,7 @@ export function DataTableToolbar<TData>({
         {table.getColumn("team") && (
           <DataTableFacetedFilter
             column={table.getColumn("team")}
-            title="Team Filter"
+            title="Team"
             options={teamOptions}
           />
         )}
@@ -49,6 +50,7 @@ export function DataTableToolbar<TData>({
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
+        <DataTableViewOptions table={table} />
       </div>
       <div>
         <CSVLink

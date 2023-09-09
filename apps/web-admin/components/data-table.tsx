@@ -57,6 +57,7 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
     state: {
       sorting,
+      columnVisibility,
       columnFilters,
     },
   });
