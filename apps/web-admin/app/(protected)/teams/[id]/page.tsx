@@ -7,11 +7,18 @@ import { getAllData } from "@/actions/data-api";
 import { Team } from "@8hourrelay/models";
 
 export async function generateStaticParams() {
-  const data = await getAllData(null);
+  try {
+    const data = await getAllData(null);
 
-  return data.teams?.map((team) => ({
-    id: team.id,
-  }));
+    if (data.teams) {
+      return data.teams?.map((team) => ({
+        id: team.id,
+      }));
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  return [];
 }
 
 export default async function Page({ params }: { params: { id: string } }) {

@@ -26,6 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DataTablePagination } from "@/components/pagenation";
 import { DataTableToolbar } from "@/components/toolbar";
+import { RaceEntry } from "@8hourrelay/models";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -60,7 +61,10 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const teams = data.map((item) => item.team);
+  const teams = (data as RaceEntry[])
+    .filter((f) => f !== undefined)
+    .map((item: RaceEntry) => item?.team)
+    .filter((f) => f !== undefined);
   const teamsOptions = [...new Set(teams)].map((team) => ({
     label: team,
     value: team,

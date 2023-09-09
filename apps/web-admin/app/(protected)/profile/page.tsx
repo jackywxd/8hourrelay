@@ -11,6 +11,7 @@ import { HomeLink } from "../../../ui/HomeLink";
 import { MainTitle } from "../../../ui/MainTitle";
 
 const db = getFirestore(getFirebaseAdminApp());
+
 async function getUserCounter(): Promise<number> {
   const tokens = await getTokens(cookies(), authConfig);
 
@@ -32,6 +33,7 @@ async function getUserCounter(): Promise<number> {
   }
   const currentUserCounter = await snapshot.docs[0].data();
   console.log(`currentUserCounter`, currentUserCounter);
+  return currentUserCounter.counter;
 }
 
 export default async function Profile() {

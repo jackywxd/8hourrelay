@@ -9,12 +9,12 @@ export const columns: ColumnDef<TeamData>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const name = row.getValue("name");
+      const name = row.getValue("name") as string;
+      if (!name) return <div></div>;
       const id = row.original.id;
-      console.log(row);
       return (
         <Link href={`/teams/${id}`}>
-          <div>{name}</div>
+          <span>{name}</span>
         </Link>
       );
     },

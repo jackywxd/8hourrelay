@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableFacetedFilter } from "./data-table-facedted-filter";
 import { CSVLink, CSVDownload } from "react-csv";
+import { Data } from "react-csv/components/CommonPropTypes";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  teamOptions: { label: string; value: string }[];
+  teamOptions: any;
   data: TData[];
 }
 
@@ -51,7 +52,7 @@ export function DataTableToolbar<TData>({
       </div>
       <div>
         <CSVLink
-          data={data}
+          data={data as Data}
           filename={"my-file.csv"}
           className="btn btn-primary bg-black hover:bg-gray-800"
           target="_blank"

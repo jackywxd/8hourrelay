@@ -13,6 +13,10 @@ export async function generateStaticParams() {
 export default function TeamTable() {
   const { store } = useAuth();
   const data = toJS(store?.teams);
+  if (!data) {
+    return null;
+  }
+
   return (
     <div className="container mx-auto py-10">
       <div className="flex flex-row gap-5 justify-between">

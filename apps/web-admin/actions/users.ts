@@ -2,7 +2,7 @@
 
 import { getFirestore } from "firebase-admin/firestore";
 import { getFirebaseAdminApp } from "@/app/firebase";
-import { User } from "@8hourrelay/models";
+import { RaceEntry } from "@8hourrelay/models";
 
 const firebaseDb = getFirestore(getFirebaseAdminApp());
 

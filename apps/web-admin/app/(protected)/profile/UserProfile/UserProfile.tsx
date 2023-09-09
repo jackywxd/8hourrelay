@@ -105,11 +105,7 @@ export function UserProfile({ count }: UserProfileProps) {
             <pre>{JSON.stringify(user.customClaims, undefined, 2)}</pre>
           </div>
 
-          <Button
-            loading={isLogoutLoading}
-            disabled={isLogoutLoading}
-            onClick={handleLogout}
-          >
+          <Button disabled={isLogoutLoading} onClick={handleLogout}>
             Log out
           </Button>
           <Button onClick={handleRedirect}>Redirect</Button>
@@ -122,7 +118,6 @@ export function UserProfile({ count }: UserProfileProps) {
         </h3>
         <ButtonGroup>
           <Button
-            loading={isIncrementCounterApiLoading}
             disabled={
               isIncrementCounterApiLoading || isIncrementCounterActionPending
             }
@@ -131,7 +126,6 @@ export function UserProfile({ count }: UserProfileProps) {
             Update counter w/ api endpoint
           </Button>
           <Button
-            loading={isIncrementCounterActionPending}
             disabled={
               isIncrementCounterActionPending || isIncrementCounterApiLoading
             }
