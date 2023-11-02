@@ -1,4 +1,4 @@
-import { Gender } from "./RaceEntry";
+import { Gender, RaceEntry } from "./RaceEntry";
 
 export class User {
   uid!: string;
@@ -20,6 +20,7 @@ export class User {
   phone?: string;
   address?: string;
   provider?: string;
+  raceEntries?: RaceEntry[];
   // this value is the year of race, if it is set, the user created a team for that year;
   // so next year user can creat a new team again
   teamYear?: "2023" | "2024";

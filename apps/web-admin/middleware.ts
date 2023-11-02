@@ -2,10 +2,28 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { authentication } from "next-firebase-auth-edge/lib/next/middleware";
 import { authConfig } from "./config/server-config";
+import { getFirebaseAuth } from "next-firebase-auth-edge/lib/auth";
 
-const PUBLIC_PATHS = ["/register", "/login", "/reset-password"];
+const PUBLIC_PATHS = [
+  "/register",
+  "/login",
+  "/reset-password",
+  // "/api/get-users",
+  // "/api/get-teams",
+  // "/api/get-race-entries",
+  // "/api/get-free-entries",
+];
 
-const ADMIN_USERS = ["admin@heidi.cloud", "jackywxd@gmail.com"];
+const ADMIN_USERS = [
+  "admin@heidi.cloud",
+  "jackywxd@gmail.com",
+  "jimlao@gmail.com",
+];
+
+const { setCustomUserClaims } = getFirebaseAuth(
+  authConfig.serviceAccount,
+  authConfig.apiKey
+);
 
 function redirectToHome(request: NextRequest) {
   const url = request.nextUrl.clone();
@@ -61,6 +79,23 @@ export async function middleware(request: NextRequest) {
       // Authenticated user should not be able to access /login, /register and /reset-password routes
       if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
         return redirectToHome(request);
+      }
+
+      if (
+        decodedToken.email &&
+        ADMIN_USERS.includes(decodedToken?.email) &&
+        !decodedToken.role
+      ) {
+        console.log(`updating user claims`);
+        await setCustomUserClaims(decodedToken.uid, {
+          role: "admin",
+          someCustomClaim: {
+            updatedAt: Date.now(),
+          },
+        });
+      } else {
+        console.log(`user claims already updated`);
+        console.log(`decodedToken`, decodedToken);
       }
 
       return NextResponse.next();

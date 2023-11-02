@@ -1,25 +1,18 @@
 "use server";
 
-import { getFirestore } from "firebase-admin/firestore";
-import { getFirebaseAdminApp } from "@/app/firebase";
-import { RaceEntry } from "@8hourrelay/models";
-
-const firebaseDb = getFirestore(getFirebaseAdminApp());
-
+const HOST_URL = process.env.NEXT_PUBLIC_HOST_NAME || "http://localhost:3000";
 export async function getRaceEntries() {
-  const year = new Date().getFullYear().toString();
-  if (!firebaseDb) return null;
-  const racesRef = await firebaseDb.collectionGroup("RaceEntry").get();
-  if (racesRef.size > 0) {
-    const entries = racesRef.docs
-      .filter((f) => f)
-      .map((data) => {
-        const d = data.data();
-        const race = { ...d, id: data.id };
-        return race as RaceEntry;
-      });
-    return entries;
+  const res = await fetch(`${HOST_URL}/get-race-entries`);
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  console.log(`res.ok: ${res.ok}`, res);
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data");
   }
-  console.log(`No Race Entry found`);
-  return null;
+
+  const entries = res.json();
+
+  return entries;
 }
