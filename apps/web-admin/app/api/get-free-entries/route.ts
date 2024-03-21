@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authConfig } from "@/config/server-config";
 import { getFirestore } from "firebase-admin/firestore";
 import { getTokens } from "next-firebase-auth-edge/lib/next/tokens";
-import { getFirebaseAdminApp } from "@/app/firebase";
+import { getFirebaseAdminApp } from "@/libs/firebase";
 import { FreeEntry } from "@8hourrelay/models";
 
 export async function GET(request: NextRequest) {

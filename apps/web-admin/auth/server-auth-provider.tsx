@@ -5,7 +5,6 @@ import { authConfig } from "../config/server-config";
 import { Tokens } from "next-firebase-auth-edge/lib/auth";
 import { User } from "./context";
 import { filterStandardClaims } from "next-firebase-auth-edge/lib/auth/claims";
-import { getAllData } from "@/actions/data-api";
 
 export const mapTokensToUser = ({ decodedToken }: Tokens): User => {
   const {
@@ -26,6 +25,7 @@ export const mapTokensToUser = ({ decodedToken }: Tokens): User => {
     photoURL: photoURL ?? null,
     phoneNumber: phoneNumber ?? null,
     emailVerified: emailVerified ?? false,
+    role: customClaims.role ?? null,
     customClaims,
   };
 };
@@ -38,14 +38,5 @@ export async function ServerAuthProvider({
   const tokens = await getTokens(cookies(), authConfig);
   const user = tokens ? mapTokensToUser(tokens) : null;
 
-  if (!user) {
-    return null;
-  }
-  const defaultData = await getAllData(user);
-
-  return (
-    <AuthProvider defaultUser={user} defaultData={defaultData}>
-      {children}
-    </AuthProvider>
-  );
+  return <AuthProvider defaultUser={user}>{children}</AuthProvider>;
 }

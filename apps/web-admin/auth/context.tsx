@@ -7,6 +7,7 @@ import { AdminStore } from "@/store/adminStore";
 
 export interface User extends Omit<UserInfo, "providerId"> {
   emailVerified: boolean;
+  role: string | null;
   customClaims: Claims;
 }
 

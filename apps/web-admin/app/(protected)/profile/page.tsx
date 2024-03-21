@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { getTokens } from "next-firebase-auth-edge/lib/next/tokens";
 import { cookies } from "next/headers";
 import { authConfig } from "../../../config/server-config";
-import { getFirebaseAdminApp } from "../../firebase";
+import { getFirebaseAdminApp } from "../../../libs/firebase";
 import { getFirestore } from "firebase-admin/firestore";
 import { Badge } from "../../../ui/Badge";
 import { HomeLink } from "../../../ui/HomeLink";

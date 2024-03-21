@@ -22,6 +22,7 @@ export function LoginPage() {
   const { getFirebaseAuth } = useFirebaseAuth();
   const redirect = params?.get("redirect");
 
+  console.log("Login Page redirect value", redirect);
   const [handleLoginWithEmailAndPassword, isEmailLoading, error] =
     useLoadingCallback(async ({ email, password }: PasswordFormValue) => {
       setHasLogged(false);

@@ -10,11 +10,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  console.log("root layout");
   return (
-    <html lang="en">
+    <html lang="en" className="h-full ">
       <head />
-      <body>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <body className="h-full">
+        <ThemeProvider attribute="class" >
           {children}
           <ToastContainer />
         </ThemeProvider>
@@ -25,7 +26,7 @@ export default function RootLayout({
 
 export const metadata: Metadata = {
   title: "8 Hour Relay: Admin",
-  viewport: "width=device-width, initial-scale=1",
+  // viewport: "width=device-width, initial-scale=1",
   description: "Admin Console for 8 Hour Relay",
   icons: "/favicon.ico",
 };

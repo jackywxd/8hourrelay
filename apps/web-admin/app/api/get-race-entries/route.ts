@@ -2,14 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { authConfig } from "@/config/server-config";
 import { getFirestore } from "firebase-admin/firestore";
 import { getTokens } from "next-firebase-auth-edge/lib/next/tokens";
-import { getFirebaseAdminApp } from "@/app/firebase";
+import { getFirebaseAdminApp } from "@/libs/firebase";
 import { RaceEntry } from "@8hourrelay/models";
 
 export async function GET(request: NextRequest) {
+  // const tokens = await getTokens(request.cookies, authConfig);
+
+  // console.log(`get data tokens`, tokens?.decodedToken);
+  // if (!tokens) {
+  //   throw new Error("Cannot update counter of unauthenticated user");
+  // }
+
   console.log(`getting race entries`);
   const raceEntries = await getAllRaceEntries();
 
-  console.log(`result: ${JSON.stringify(raceEntries)}`);
+  // console.log(`result: ${JSON.stringify(raceEntries)}`);
   return NextResponse.json(raceEntries);
 }
 

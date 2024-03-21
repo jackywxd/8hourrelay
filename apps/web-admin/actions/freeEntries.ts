@@ -1,7 +1,7 @@
 "use server";
 
 import { getFirestore } from "firebase-admin/firestore";
-import { getFirebaseAdminApp } from "@/app/firebase";
+import { getFirebaseAdminApp } from "@/libs/firebase";
 import { FreeEntry, User } from "@8hourrelay/models";
 
 const firebaseDb = getFirestore(getFirebaseAdminApp());
